@@ -12,8 +12,7 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
-public class FastParser
-{
+public class FastParser {
 	private static final int NUM_COLS = 1404;
 	private static final float START_LAT = 7.0f;
 	private static final float START_LONG = -169.0f;
@@ -22,8 +21,7 @@ public class FastParser
 	private static final int INPUT_BUFFER_SIZE = 23500000;
 	private static final int OUTPUT_BUFFER_SIZE = 2350000;
 
-	public static void main(String[] args) throws Exception
-	{
+	public static void main(String[] args) throws Exception {
 		BufferedInputStream buffIS = new BufferedInputStream(new FileInputStream("ch4y2001m0.txt"), INPUT_BUFFER_SIZE);
 		RandomAccessFile raf = new RandomAccessFile("output.csv", "rw");
 		FileChannel rwChannel = raf.getChannel();
@@ -58,7 +56,8 @@ public class FastParser
 
 		// Go past first capital A in the file.
 		// Can use since values are hard coded as constants.
-		// If ASCII may change in the future, we can change the code to parse it (at a cost)...
+		// If ASCII may change in the future, we can change the code to parse it
+		// (at a cost)...
 		int next = buffIS.read();
 		while (next != 65)
 			next = buffIS.read();
@@ -76,58 +75,44 @@ public class FastParser
 
 		// Keep going till EOF.
 		next = buffIS.read();
-		while (next != -1)
-		{
+		while (next != -1) {
 			// Go past until we hit a decimal point.
-			if (next == 46)
-			{
+			if (next == 46) {
 				// Calc lat and long and add to buffer.
 				curLong = (++cellNum) % NUM_COLS == 0 ? START_LONG : curLong + CELL_SIZE;
 				curLat -= CELL_SIZE;
 
 				// Make sure it isn't NODATA_VALUE
-				if (prev[0] != 45 && prev[1] != 57 && prev[2] != 57 && prev[3] != 57 && prev[4] != 57)
-				{
+				if (prev[0] != 45 && prev[1] != 57 && prev[2] != 57 && prev[3] != 57 && prev[4] != 57) {
 					wrBuf.put(ByteBuffer.allocate(4).putFloat(curLat));
 					wrBuf.put((byte) 44);// comma
 					wrBuf.putFloat(curLong);
 					wrBuf.put((byte) 44);
 
 					// Read previous #s till we hit a space.
-					if (prev[4] != 32)
-					{
+					if (prev[4] != 32) {
 						wrBuf.put((byte) prev[0]);
 						wrBuf.put((byte) prev[1]);
 						wrBuf.put((byte) prev[2]);
 						wrBuf.put((byte) prev[3]);
 						wrBuf.put((byte) prev[4]);
-					}
-					else if (prev[3] != 32)
-					{
+					} else if (prev[3] != 32) {
 						wrBuf.put((byte) prev[0]);
 						wrBuf.put((byte) prev[1]);
 						wrBuf.put((byte) prev[2]);
 						wrBuf.put((byte) prev[3]);
-					}
-					else if (prev[2] != 32)
-					{
+					} else if (prev[2] != 32) {
 						wrBuf.put((byte) prev[0]);
 						wrBuf.put((byte) prev[1]);
 						wrBuf.put((byte) prev[2]);
-					}
-					else if (prev[1] != 32)
-					{
+					} else if (prev[1] != 32) {
 						wrBuf.put((byte) prev[0]);
 						wrBuf.put((byte) prev[1]);
-					}
-					else if (prev[0] != 32)
+					} else if (prev[0] != 32)
 						wrBuf.put((byte) prev[0]);
-					
-					
 
 					// Read next #s till we hit a space.
-					while (next != 32 && next != 10)
-					{
+					while (next != 32 && next != 10) {
 						wrBuf.put((byte) next);
 						next = buffIS.read();
 					}
