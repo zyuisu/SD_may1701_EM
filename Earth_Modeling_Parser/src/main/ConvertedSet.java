@@ -2,6 +2,7 @@ package main;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -19,7 +20,7 @@ public class ConvertedSet extends HashSet<String> implements Serializable {
 														// ObjectOutputStream at
 														// a later date.
 	public static final String CONVERTED_LOCATION = "resources\\converted.txt";
-	private PrintWriter printWriter;
+	private FileWriter fileWriter;
 	HashSet<String> set;
 
 	/**
@@ -30,7 +31,7 @@ public class ConvertedSet extends HashSet<String> implements Serializable {
 	 */
 	public ConvertedSet() throws IOException {
 		set = new HashSet<String>();
-		printWriter = new PrintWriter(CONVERTED_LOCATION);
+		fileWriter = new FileWriter(CONVERTED_LOCATION, true);
 
 		addFromConverted();
 	}
@@ -57,12 +58,18 @@ public class ConvertedSet extends HashSet<String> implements Serializable {
 
 	/**
 	 * @Override Adds the fileName to the master list and adds it to the set.
-	 * @return true if was added, false if it already exists.
+	 * @return true if was added, false if it already exists or there was an I/O error.
 	 */
 	public boolean add(String fileName) {
 		if (set.add(fileName)) {
-			printWriter.println(fileName);
-			printWriter.flush();
+			try {
+				fileWriter.write(fileName + "\n");
+				fileWriter.flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
 			return true;
 		}
 

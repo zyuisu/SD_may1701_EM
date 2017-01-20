@@ -25,10 +25,10 @@ public class EarthModellingDaemon {
 
 			while (inputDir.list().length > 0) {
 				// ASCII to CSV
-				String firstFileLocation = inputDir.getAbsolutePath() + "//" + inputDir.list()[0];
+				String firstFileLocation = inputDir.getAbsolutePath() + "\\" + inputDir.list()[0];
 
 				if (!convertedSet.add(inputDir.list()[0])) {
-					System.out.println("The file " + inputDir.list()[0] + "has already been converted!");
+					System.out.println("The file " + firstFileLocation + " has already been converted!");
 				} else {
 					convertAsciiToCsv(firstFileLocation);
 					// TO-DO: CSV to Excel
@@ -36,7 +36,6 @@ public class EarthModellingDaemon {
 
 				deleteFile(firstFileLocation);
 			}
-
 			Thread.sleep(TIME_TO_SLEEP);
 		}
 	}
