@@ -19,30 +19,55 @@ public class EarthModellingDaemon {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		File inputDir = new File(INPUT_DIRECTORY_LOCATION);
+		ConvertedSet convertedSet = new ConvertedSet();
 
 		while (true) {
 
 			while (inputDir.list().length > 0) {
 				// ASCII to CSV
 				String firstFileLocation = inputDir.getAbsolutePath() + "//" + inputDir.list()[0];
-				String[] arguments = { firstFileLocation };
 
-				System.out.println("Converting file: " + firstFileLocation);
-				AsciiToCsv.main(arguments);
-				System.out.println("File converted!");
+				if (!convertedSet.add(inputDir.list()[0])) {
+					System.out.println("The file " + inputDir.list()[0] + "has already been converted!");
+				} else {
+					convertAsciiToCsv(firstFileLocation);
+					// TO-DO: CSV to Excel
+				}
 
-				File f = new File(firstFileLocation);
-				if (f.delete())
-					System.out.println("File is deleted!");
-				else
-					System.out.println("Delete operation failed!"); // SEVERE,
-																	// shouldn't
-																	// happen.
-
-				// TO-DO: CSV to Excel
+				deleteFile(firstFileLocation);
 			}
 
 			Thread.sleep(TIME_TO_SLEEP);
 		}
+	}
+
+	/**
+	 * Deletes the file at the specified location.
+	 * 
+	 * @param fileLocation
+	 *            - The absolute file path of the file on the disk.
+	 */
+	private static void deleteFile(String fileLocation) {
+		File f = new File(fileLocation);
+		if (f.delete())
+			System.out.println("File is deleted!");
+		else
+			System.out.println("Delete operation failed!"); // SEVERE,
+															// shouldn't
+															// happen.
+	}
+
+	/**
+	 * Converts an ASCII file to a CSV file via AsciiToCsv.java
+	 * 
+	 * @param fileLocation
+	 *            - The absolute file path of the ascii.txt file on the disk.
+	 * @throws IOException
+	 */
+	private static void convertAsciiToCsv(String fileLocation) throws IOException {
+		System.out.println("Converting file: " + fileLocation);
+		String[] arguments = { fileLocation };
+		AsciiToCsv.main(arguments);
+		System.out.println("File converted!");
 	}
 }
