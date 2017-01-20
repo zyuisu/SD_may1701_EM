@@ -12,8 +12,10 @@ import parser.AsciiToCsv;
 
 public class EarthModellingDaemon {
 
+	public static final String INPUT_DIRECTORY_LOCATION = "Original_ASCII_files\\";
+	
 	public static void main(String[] args) throws IOException, InterruptedException {
-		File inputDir = new File("Original_ASCII_files\\");
+		File inputDir = new File(INPUT_DIRECTORY_LOCATION);
 
 		while (true) {
 			
