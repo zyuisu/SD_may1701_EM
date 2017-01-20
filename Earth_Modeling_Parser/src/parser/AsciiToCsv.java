@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Parser {
+public class AsciiToCsv {
 
 	public static void main(String args[]) throws IOException {
 
