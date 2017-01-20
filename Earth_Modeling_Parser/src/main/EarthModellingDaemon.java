@@ -21,7 +21,19 @@ public class EarthModellingDaemon {
 			
 			while (inputDir.list().length > 0) {
 				// ASCII to CSV
-				AsciiToCsv.main(null);
+				String firstFileLocation = inputDir.getAbsolutePath() + "//" + inputDir.list()[0];
+				String[] arguments = {firstFileLocation};
+				
+				System.out.println("Converting file: " + firstFileLocation);
+				AsciiToCsv.main(arguments);
+				System.out.println("File converted!");
+				
+				File f = new File(firstFileLocation);
+				if (f.delete())
+					System.out.println("File is deleted!");
+				else
+					System.out.println("Delete operation failed!"); //SEVERE, shouldn't happen.
+				
 				//TO-DO: CSV to Excel
 			}
 

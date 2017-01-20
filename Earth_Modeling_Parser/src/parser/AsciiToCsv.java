@@ -1,7 +1,13 @@
 package parser;
 
+/**
+ * Converts ASCII text to CSV.
+ * @author Kellen Johnson
+ */
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -11,18 +17,29 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class AsciiToCsv {
-
+	
+	public static final String CSV_OUTPUT_DIRECTORY_LOCATION = "Parsed_CSVs\\";
+	
+	/**
+	 * Converts the first file in the specified directory to CSV and stores it at the specified location.
+	 * @param args[0] = Location on the disk of the file to parse.
+	 * @throws IOException
+	 */
 	public static void main(String args[]) throws IOException {
 
-		String file_to_parse = "ch4y2001m5";
+		String file_to_parse = args[0];
+		File ftp = new File(file_to_parse);
+		String fileName = ftp.getName();
+		fileName = fileName.substring(0, fileName.length()-4);
+		
 		ArrayList<String> lines = new ArrayList<String>();
 
-		BufferedReader f = new BufferedReader(new FileReader("Original_ASCII_files\\" + file_to_parse + ".txt"));
+		BufferedReader f = new BufferedReader(new FileReader(file_to_parse));
 
 		Scanner scanner;
 		try {
 			PrintWriter output = new PrintWriter(
-					new BufferedWriter(new FileWriter("Parsed_CSVs\\" + file_to_parse + ".csv")));
+					new BufferedWriter(new FileWriter(CSV_OUTPUT_DIRECTORY_LOCATION + fileName + ".csv")));
 			output.println("latitude,longitude,value");
 			scanner = new Scanner(f);
 
@@ -62,7 +79,7 @@ public class AsciiToCsv {
 			double NODATA_value = scanheaders.nextDouble();
 			scanheaders.close();
 
-			System.out.println(ncols + " ");
+			//System.out.println(ncols + " ");
 			int counter = 0;
 			double longitude = xllcorner;
 			double latitude = yllcorner + (cellsize * (nrows - 1));
