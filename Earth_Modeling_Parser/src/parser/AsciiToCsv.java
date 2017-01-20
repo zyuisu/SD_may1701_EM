@@ -17,12 +17,15 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class AsciiToCsv {
-	
+
 	public static final String CSV_OUTPUT_DIRECTORY_LOCATION = "Parsed_CSVs\\";
-	
+
 	/**
-	 * Converts the first file in the specified directory to CSV and stores it at the specified location.
-	 * @param args[0] = Location on the disk of the file to parse.
+	 * Converts the first file in the specified directory to CSV and stores it
+	 * at the specified location.
+	 * 
+	 * @param args[0]
+	 *            = Location on the disk of the file to parse.
 	 * @throws IOException
 	 */
 	public static void main(String args[]) throws IOException {
@@ -30,8 +33,8 @@ public class AsciiToCsv {
 		String file_to_parse = args[0];
 		File ftp = new File(file_to_parse);
 		String fileName = ftp.getName();
-		fileName = fileName.substring(0, fileName.length()-4);
-		
+		fileName = fileName.substring(0, fileName.length() - 4);
+
 		ArrayList<String> lines = new ArrayList<String>();
 
 		BufferedReader f = new BufferedReader(new FileReader(file_to_parse));
@@ -79,7 +82,7 @@ public class AsciiToCsv {
 			double NODATA_value = scanheaders.nextDouble();
 			scanheaders.close();
 
-			//System.out.println(ncols + " ");
+			// System.out.println(ncols + " ");
 			int counter = 0;
 			double longitude = xllcorner;
 			double latitude = yllcorner + (cellsize * (nrows - 1));
