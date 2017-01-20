@@ -1,4 +1,4 @@
-package Earth_Modeling_Parser;
+package parser;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
