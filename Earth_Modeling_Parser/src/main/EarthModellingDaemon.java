@@ -13,6 +13,9 @@ import parser.AsciiToCsv;
 public class EarthModellingDaemon {
 
 	public static final String INPUT_DIRECTORY_LOCATION = "Original_ASCII_files\\";
+	public static final Long TIME_TO_SLEEP = 600000L; // 10 minutes before this
+														// daemon wakes up
+														// again.
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		File inputDir = new File(INPUT_DIRECTORY_LOCATION);
@@ -39,7 +42,7 @@ public class EarthModellingDaemon {
 				// TO-DO: CSV to Excel
 			}
 
-			Thread.sleep(600000);
+			Thread.sleep(TIME_TO_SLEEP);
 		}
 	}
 }
