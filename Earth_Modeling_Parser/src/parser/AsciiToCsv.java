@@ -2,6 +2,7 @@ package parser;
 
 /**
  * Converts ASCII text to CSV.
+ * 
  * @author Kellen Johnson
  */
 
@@ -16,16 +17,17 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import org.pmw.tinylog.Logger;
+
 public class AsciiToCsv {
 
 	public static final String CSV_OUTPUT_DIRECTORY_LOCATION = "Parsed_CSVs\\";
 
 	/**
-	 * Converts the first file in the specified directory to CSV and stores it
-	 * at the specified location.
+	 * Converts the first file in the specified directory to CSV and stores it at the specified location.
 	 * 
 	 * @param args[0]
-	 *            = Location on the disk of the file to parse.
+	 *           = Location on the disk of the file to parse.
 	 * @throws IOException
 	 */
 	public static void main(String args[]) throws IOException {
@@ -41,8 +43,7 @@ public class AsciiToCsv {
 
 		Scanner scanner;
 		try {
-			PrintWriter output = new PrintWriter(
-					new BufferedWriter(new FileWriter(CSV_OUTPUT_DIRECTORY_LOCATION + fileName + ".csv")));
+			PrintWriter output = new PrintWriter(new BufferedWriter(new FileWriter(CSV_OUTPUT_DIRECTORY_LOCATION + fileName + ".csv")));
 			output.println("latitude,longitude,value");
 			scanner = new Scanner(f);
 
@@ -100,23 +101,19 @@ public class AsciiToCsv {
 						if (max == 2017 && min == 2017) {
 							max = value;
 							min = value;
-							lines.add((latitude - rows * cellsize) + "," + (longitude + columns * cellsize) + ","
-									+ value);
+							lines.add((latitude - rows * cellsize) + "," + (longitude + columns * cellsize) + "," + value);
 						} else if (value > max) {
 							max = value;
-							lines.add(1, (latitude - rows * cellsize) + "," + (longitude + columns * cellsize) + ","
-									+ value);
+							lines.add(1, (latitude - rows * cellsize) + "," + (longitude + columns * cellsize) + "," + value);
 						} else if (value < min) {
 							min = value;
-							lines.add(0, (latitude - rows * cellsize) + "," + (longitude + columns * cellsize) + ","
-									+ value);
+							lines.add(0, (latitude - rows * cellsize) + "," + (longitude + columns * cellsize) + "," + value);
 							if (lines.size() > 2) {
 								String temp = lines.remove(2);
 								lines.add(1, temp);
 							}
 						} else {
-							lines.add((latitude - rows * cellsize) + "," + (longitude + columns * cellsize) + ","
-									+ value);
+							lines.add((latitude - rows * cellsize) + "," + (longitude + columns * cellsize) + "," + value);
 						}
 
 					}
@@ -143,7 +140,7 @@ public class AsciiToCsv {
 			scanner.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.error(e);
 		}
 
 	}

@@ -4,10 +4,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Scanner;
+
+import org.pmw.tinylog.Logger;
 
 /**
  * Keeps track of all the ASCII files that have been converted by the daemon.
@@ -16,16 +17,13 @@ import java.util.Scanner;
  */
 public class ConvertedSet extends HashSet<String> implements Serializable {
 
-	private static final long serialVersionUID = 1L; // If we wish to use
-														// ObjectOutputStream at
-														// a later date.
+	private static final long serialVersionUID = 1L; // If we wish to use ObjectOutputStream at a later date.
 	public static final String CONVERTED_LOCATION = "resources\\converted.txt";
 	private FileWriter fileWriter;
 	HashSet<String> set;
 
 	/**
-	 * Constructor for ConvertedSet creates a set by checking against the
-	 * previous converted.txt file (located in CONVERTED_LOCATION).
+	 * Constructor for ConvertedSet creates a set by checking against the previous converted.txt file (located in CONVERTED_LOCATION).
 	 * 
 	 * @throws IOException
 	 */
@@ -66,8 +64,7 @@ public class ConvertedSet extends HashSet<String> implements Serializable {
 				fileWriter.write(fileName + "\n");
 				fileWriter.flush();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Logger.error(e);
 				return false;
 			}
 			return true;
