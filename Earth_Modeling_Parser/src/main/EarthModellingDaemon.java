@@ -34,7 +34,7 @@ public class EarthModellingDaemon {
 					Logger.warn("The file " + firstFileLocation + " has already been converted!");
 				} else {
 					convertAsciiToCsv(firstFileLocation);
-					// TO-DO: CSV to Excel
+					// TO-DO: CSV to Geodatabase
 				}
 
 				deleteFile(firstFileLocation);
