@@ -29,6 +29,7 @@ public class AsciiToCsv {
 	 * @param args[0]
 	 *           = Location on the disk of the file to parse.
 	 * @throws IOException
+	 *            - Can't write to the CSV at the specified location!
 	 */
 	public static void main(String args[]) throws IOException {
 

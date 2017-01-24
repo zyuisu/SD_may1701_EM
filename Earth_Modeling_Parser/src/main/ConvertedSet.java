@@ -26,6 +26,7 @@ public class ConvertedSet extends HashSet<String> implements Serializable {
 	 * Constructor for ConvertedSet creates a set by checking against the previous converted.txt file (located in CONVERTED_LOCATION).
 	 * 
 	 * @throws IOException
+	 *            - Can't add to the existing converted.txt file!
 	 */
 	public ConvertedSet() throws IOException {
 		set = new HashSet<String>();
@@ -38,6 +39,7 @@ public class ConvertedSet extends HashSet<String> implements Serializable {
 	 * Scans the converted.txt file and adds all values to the HashSet.
 	 * 
 	 * @throws IOException
+	 *            - Can't read to the existing converted.txt file!
 	 */
 	private void addFromConverted() throws IOException {
 		BufferedReader buffR;
