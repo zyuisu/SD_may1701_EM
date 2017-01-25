@@ -18,3 +18,4 @@ local.properties
 resources/converted.txt
 Parsed_CSVs/
 Original_ASCII_files/
+*.log
