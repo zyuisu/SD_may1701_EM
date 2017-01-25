@@ -19,15 +19,17 @@ import java.util.Scanner;
 
 import org.pmw.tinylog.Logger;
 
+import main.EarthModellingDaemon;
+
 public class AsciiToCsv {
 
-	public static final String CSV_OUTPUT_DIRECTORY_LOCATION = "Parsed_CSVs\\";
+	public static final String CSV_OUTPUT_DIRECTORY_LOCATION = EarthModellingDaemon.CSV_INPUT_DIRECTORY_LOCATION;
 
 	/**
 	 * Converts the first file in the specified directory to CSV and stores it at the specified location.
 	 * 
 	 * @param args[0]
-	 *           = Location on the disk of the file to parse.
+	 *           - Location on the disk of the file to parse.
 	 * @throws IOException
 	 *            - Can't write to the CSV at the specified location!
 	 */
@@ -135,12 +137,11 @@ public class AsciiToCsv {
 			}
 
 			// Print out Max and Min (TESTING PURPOSES)
-			// System.out.println(max + " " + min);
+			Logger.debug("Max: {}, Min: {}", max, min);
 
 			output.close();
 			scanner.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			Logger.error(e);
 		}
 

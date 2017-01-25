@@ -19,40 +19,48 @@ import parser.AsciiToCsv;
 
 public class EarthModellingDaemon {
 
-	public static final String INPUT_DIRECTORY_LOCATION = "Original_ASCII_files\\";
-	public static final Long TIME_TO_SLEEP = 600000L; // 10 minutes before this daemon wakes up again.
-	public static final String PYTHON_lOCATION = "C:\\Python27\\python.exe";
+	public static final String ASCII_INPUT_DIRECTORY_LOCATION = "Original_ASCII_files\\";
+	public static final String CSV_INPUT_DIRECTORY_LOCATION = "Parsed_CSV_files\\";
+	public static final Long TIME_TO_SLEEP = 60000L; // 1 minutes before this daemon wakes up again.
+	public static final String PYTHON_LOCATION = "C:\\Python27\\python.exe";
 	// C:\\Python27\\ArcGISx6410.4\\python.exe --OR-- C:\\Python27\\ArcGIS10.4\\python.exe
 	public static final String CSV_TO_GEODATABASE_LOCATION = "C:\\Users\\Anish Kunduru\\Documents\\Spring 2017\\SE 492\\git\\SD_may1701_EM\\Earth_Modeling_Parser\\src\\parser\\CsvToGeodatabase.py";
 	// C:\\EarthModeling\\SD_may1701_EM\\Earth_Modeling_Parser\\src\\parser\\CsvToGeodatabase.py
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		File inputDir = new File(INPUT_DIRECTORY_LOCATION);
+		File asciiInputDir = new File(ASCII_INPUT_DIRECTORY_LOCATION);
+		File csvInputDir = new File(CSV_INPUT_DIRECTORY_LOCATION);
+
 		ConvertedSet convertedSet = new ConvertedSet();
 
 		while (true) {
 
 			Logger.info("Server daemon waking up...");
 
-			while (inputDir.list().length > 0) {
-				// ASCII to CSV
-				String firstFileLocation = inputDir.getAbsolutePath() + "\\" + inputDir.list()[0];
+			while (asciiInputDir.list().length > 0) {
+				String firstAsciiFileName = asciiInputDir.list()[0];
+				String firstAsciiFileLocation = asciiInputDir.getAbsolutePath() + "\\" + firstAsciiFileName;
 
-				if (!convertedSet.add(inputDir.list()[0])) {
-					Logger.warn("The file {} has already been converted!", firstFileLocation);
+				if (!convertedSet.add(asciiInputDir.list()[0])) {
+					Logger.warn("The file {} has already been converted!", firstAsciiFileLocation);
 				} else {
-					convertAsciiToCsv(firstFileLocation);
+					convertAsciiToCsv(firstAsciiFileLocation);
 
 					// CSV to Geodatabase
 					// NOTE: str contains the output of the python script in case you need it.
 					// Otherwise, you can simply use runPythonScript(scriptToRun...
-					// Anything returned in str is always logged.
+					// Anything returned in ArrayList str is always logged.
+					/*
+					 * In your case, this would be: String csvFileLocation = csvInputDir.getAbsolutePath() + "\\" + firstAsciiFileName.substring(0, firstAsciiFileName.length() - 4); String[] arguments = { csvFileLocation }; runPythonScript(CSV_TO_GEODATABASE_LOCATION, arguments); deleteFile(csvFileLocation);
+					 * 
+					 */
 					ArrayList<String> str = runPythonScript(CSV_TO_GEODATABASE_LOCATION);
+					// TEMP DEBUG
 					for (String s : str)
 						System.out.println(s);
 				}
 
-				deleteFile(firstFileLocation);
+				deleteFile(firstAsciiFileLocation);
 			}
 			Thread.sleep(TIME_TO_SLEEP);
 		}
@@ -79,7 +87,7 @@ public class EarthModellingDaemon {
 	 * @param scriptLocation
 	 *           - The location of the *.py script on the disk. Example: C:\\Python\\awesome.py
 	 * @param arguments
-	 *           - An tokenized array of arguments, if the program has any.
+	 *           - A tokenized array of arguments, if the program has any.
 	 * @return An ArrayList of the standard output of the script.
 	 * @throws IOException
 	 *            - Can't find the script at the specified location!
@@ -95,7 +103,7 @@ public class EarthModellingDaemon {
 		ProcessBuilder builder = new ProcessBuilder();
 
 		ArrayList<String> commands = new ArrayList<String>();
-		commands.add(PYTHON_lOCATION);
+		commands.add(PYTHON_LOCATION);
 		commands.add(scriptLocation);
 		if (arguments != null) {
 			for (String s : arguments)
@@ -110,7 +118,7 @@ public class EarthModellingDaemon {
 	}
 
 	/**
-	 * Creates a new thread to run the Process and blocks this.Thread() until it is complete.
+	 * Creates a new thread to run the Process and blocks this.Thread until it is complete.
 	 * 
 	 * @param process
 	 *           - The process that you wish to execute.
@@ -167,9 +175,9 @@ public class EarthModellingDaemon {
 	 *            - Can't find the file at the specified location!
 	 */
 	private static void convertAsciiToCsv(String fileLocation) throws IOException {
-		Logger.info("Converting file: {}", fileLocation);
+		Logger.info("Converting file: {} to CSV", fileLocation);
 		String[] arguments = { fileLocation };
 		AsciiToCsv.main(arguments);
-		Logger.info("File converted!");
+		Logger.info("File converted to CSV!");
 	}
 }
