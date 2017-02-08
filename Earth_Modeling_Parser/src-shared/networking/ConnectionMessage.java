@@ -32,7 +32,7 @@ public class ConnectionMessage implements Serializable {
 	 * @throws IllegalAccessException
 	 *            If a null value is passed.
 	 */
-	public ConnectionMessage(Type type, String usernamme, String password) throws IllegalAccessException {
+	public ConnectionMessage(Type type, String username, String password) throws IllegalAccessException {
 		if (type == null || username == null || password == null)
 			throw new IllegalAccessException("All values must be set.");
 

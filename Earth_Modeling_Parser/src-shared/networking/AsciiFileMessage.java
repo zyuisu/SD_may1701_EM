@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class AsciiFileMessage implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public enum CompoundType {
 		CH4, CO2
 	};
@@ -32,10 +32,12 @@ public class AsciiFileMessage implements Serializable {
 	 *           An int that is greater than or equal to 1000. Represents the year that this dataset is to represent.
 	 * @param month
 	 *           An int that is between 0 and 12, inclusive. Represents the month that this dataset is to represent.
+	 * @param overwriteExisting
+	 *           True if a map exists and should be overwritten; false otherwise.
 	 * @throws IllegalAccessException
 	 *            If an null file or compoundType is passed.
 	 */
-	public AsciiFileMessage(CompoundType compoundType, byte[] file, int year, int month) throws IllegalAccessException {
+	public AsciiFileMessage(CompoundType compoundType, byte[] file, int year, int month, boolean overwriteExisting) throws IllegalAccessException {
 		if (file == null || compoundType == null)
 			throw new IllegalAccessException("file and compoundType must be set.");
 
