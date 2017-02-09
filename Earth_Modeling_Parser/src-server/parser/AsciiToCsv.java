@@ -1,10 +1,10 @@
-package parser;
-
 /**
- * Converts ASCII text to CSV.
- * 
  * @author Kellen Johnson
+ * 
+ *         Converts ASCII text to CSV.
  */
+
+package parser;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -19,16 +19,14 @@ import java.util.Scanner;
 
 import org.pmw.tinylog.Logger;
 
-import main.EarthModellingDaemon;
+import utils.FileLocations;
 
 public class AsciiToCsv {
-
-	public static final String CSV_OUTPUT_DIRECTORY_LOCATION = EarthModellingDaemon.CSV_INPUT_DIRECTORY_LOCATION;
 
 	/**
 	 * Converts the first file in the specified directory to CSV and stores it at the specified location.
 	 * 
-	 * @param args[0]
+	 * @param args[0]"Parsed_CSV_files\\";
 	 *           - Location on the disk of the file to parse.
 	 * @throws IOException
 	 *            - Can't write to the CSV at the specified location!
@@ -46,7 +44,7 @@ public class AsciiToCsv {
 
 		Scanner scanner;
 		try {
-			PrintWriter output = new PrintWriter(new BufferedWriter(new FileWriter(CSV_OUTPUT_DIRECTORY_LOCATION + fileName + ".csv")));
+			PrintWriter output = new PrintWriter(new BufferedWriter(new FileWriter(FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION + fileName + ".csv")));
 			output.println("latitude,longitude,value");
 			scanner = new Scanner(f);
 

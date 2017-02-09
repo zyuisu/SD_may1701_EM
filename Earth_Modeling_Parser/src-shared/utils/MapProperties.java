@@ -1,0 +1,67 @@
+/**
+ * @author Anish Kunduru
+ * 
+ *         Convenient wrapper for all the map properties that server-side class will have to frequently pass around.
+ */
+
+package utils;
+
+public class MapProperties {
+
+	private MapCompoundType type;
+	private int year;
+	private int month;
+
+	/**
+	 * Constructor creates a new MapProperties that represents the values a map's properties can hold.
+	 * 
+	 * @param type
+	 *           The type of molecule this map represents.
+	 * @param year
+	 *           The year this map represents. Must be greater than 1500.
+	 * @param month
+	 *           The month this map represents. Must be between 0 and 11, inclusive (Jan to Dec).
+	 * @throws IllegalAccessException
+	 *            If MapCompoundType is null.
+	 */
+	public MapProperties(MapCompoundType type, int year, int month) throws IllegalAccessException {
+		if (year < 1500)
+			throw new IllegalArgumentException("Did you set an invalid year?");
+
+		if (month < 0 || month > 11)
+			throw new IllegalArgumentException("Month cannot be less than 0 or greater than 11 (Jan to Dec).");
+
+		if (type == null)
+			throw new IllegalAccessException("type must be set.");
+
+	}
+
+	/**
+	 * Returns a "Stringized" version of this map's properties.
+	 */
+	@Override
+	public String toString() {
+		return type.name() + "y" + year + "m" + month;
+	}
+
+	/**
+	 * @return The MapCompound that represents this map's molecule.
+	 */
+	public MapCompoundType getMapCompoundType() {
+		return type;
+	}
+
+	/**
+	 * @return The year that this map represents.
+	 */
+	public int getYear() {
+		return year;
+	}
+
+	/**
+	 * @return The month that this map represents.
+	 */
+	public int getMonth() {
+		return month;
+	}
+}

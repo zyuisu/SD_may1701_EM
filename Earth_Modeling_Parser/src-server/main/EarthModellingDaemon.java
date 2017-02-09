@@ -1,7 +1,7 @@
 /**
- * Main server thread that wakes up to check if any ASCII files have been added.
- * 
  * @author Anish Kunduru
+ * 
+ *         Main server thread that wakes up to check if any ASCII files have been added.
  */
 
 package main;
@@ -15,21 +15,19 @@ import java.util.Arrays;
 
 import org.pmw.tinylog.Logger;
 
+import networking.AsciiFileMessage;
 import parser.AsciiToCsv;
+import utils.FileLocations;
+import utils.MapCompoundType;
+import utils.MapProperties;
 
 public class EarthModellingDaemon {
 
-	public static final String ASCII_INPUT_DIRECTORY_LOCATION = "Original_ASCII_files\\";
-	public static final String CSV_INPUT_DIRECTORY_LOCATION = "Parsed_CSV_files\\";
-	public static final Long TIME_TO_SLEEP = 60000L; // 1 minutes before this daemon wakes up again.
-	public static final String PYTHON_LOCATION = "C:\\Python27\\python.exe";
-	// C:\\Python27\\ArcGISx6410.4\\python.exe --OR-- C:\\Python27\\ArcGIS10.4\\python.exe
-	public static final String CSV_TO_GEODATABASE_LOCATION = "C:\\Users\\Anish Kunduru\\Documents\\Spring 2017\\SE 492\\git\\SD_may1701_EM\\Earth_Modeling_Parser\\src\\parser\\CsvToGeodatabase.py";
-	// C:\\EarthModeling\\SD_may1701_EM\\Earth_Modeling_Parser\\src\\parser\\CsvToGeodatabase.py
+	public static final Long TIME_TO_SLEEP = 60000L; // 1 minute before this daemon wakes up again.
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		File asciiInputDir = new File(ASCII_INPUT_DIRECTORY_LOCATION);
-		File csvInputDir = new File(CSV_INPUT_DIRECTORY_LOCATION);
+		File asciiInputDir = new File(FileLocations.ASCII_INPUT_DIRECTORY_LOCATION);
+		File csvOutputDir = new File(FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION);
 
 		ConvertedSet convertedSet = new ConvertedSet();
 
@@ -54,7 +52,7 @@ public class EarthModellingDaemon {
 					 * In your case, this would be: String csvFileLocation = csvInputDir.getAbsolutePath() + "\\" + firstAsciiFileName.substring(0, firstAsciiFileName.length() - 4); String[] arguments = { csvFileLocation }; runPythonScript(CSV_TO_GEODATABASE_LOCATION, arguments); deleteFile(csvFileLocation);
 					 * 
 					 */
-					ArrayList<String> str = runPythonScript(CSV_TO_GEODATABASE_LOCATION);
+					ArrayList<String> str = runPythonScript(FileLocations.CSV_TO_GEODATABASE_SCRIPT_LOCATION);
 					// TEMP DEBUG
 					for (String s : str)
 						System.out.println(s);
@@ -103,7 +101,7 @@ public class EarthModellingDaemon {
 		ProcessBuilder builder = new ProcessBuilder();
 
 		ArrayList<String> commands = new ArrayList<String>();
-		commands.add(PYTHON_LOCATION);
+		commands.add(FileLocations.PYTHON_BINARY_LOCATION);
 		commands.add(scriptLocation);
 		if (arguments != null) {
 			for (String s : arguments)
@@ -179,5 +177,28 @@ public class EarthModellingDaemon {
 		String[] arguments = { fileLocation };
 		AsciiToCsv.main(arguments);
 		Logger.info("File converted to CSV!");
+	}
+
+	public static synchronized boolean removeExistingMap(MapProperties properties) {
+		// TO-DO
+		// If exists in convertedSet, stop map, remove from GIS server.
+		// Remove from convertedSet.
+		// Remove any associated files.
+		return false;
+	}
+
+	public static synchronized boolean createMap(byte[] asciiFile, MapProperties properties) {
+		// TO-DO
+		// Convert byte array to file and save it.
+		// createMap(file, properties)
+		return false;
+	}
+
+	private static synchronized boolean createMap(File file, MapProperties properties) {
+		// TO-DO
+		// Check against converted set.
+		// Call scripts.
+		// Delete files.
+		return false;
 	}
 }
