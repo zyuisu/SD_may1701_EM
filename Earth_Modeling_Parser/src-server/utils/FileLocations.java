@@ -16,6 +16,7 @@ public class FileLocations {
 	public static final String CSV_TO_GEODATABASE_SCRIPT_LOCATION = "C:\\Users\\Anish Kunduru\\Documents\\Spring 2017\\SE 492\\git\\SD_may1701_EM\\Earth_Modeling_Parser\\src\\parser\\CsvToGeodatabase.py";
 	// C:\\EarthModeling\\SD_may1701_EM\\Earth_Modeling_Parser\\src\\parser\\CsvToGeodatabase.py
 	public static final String APPROVED_CLIENTS_FILE_LOCATION = "approvedClients.txt";
+	public static final String TEMP_WORKING_DIRECTORY_LOCATION = "Temp_Working_Files\\";
 
 	private FileLocations() {
 	};

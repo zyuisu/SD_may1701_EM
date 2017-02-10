@@ -24,27 +24,29 @@ import utils.FileLocations;
 public class AsciiToCsv {
 
 	/**
-	 * Converts the first file in the specified directory to CSV and stores it at the specified location.
-	 * 
-	 * @param args[0]"Parsed_CSV_files\\";
-	 *           - Location on the disk of the file to parse.
-	 * @throws IOException
-	 *            - Can't write to the CSV at the specified location!
+	 * Empty constructor.
 	 */
-	public static void main(String args[]) throws IOException {
+	public AsciiToCsv() {
+	}
+	
+	/**
+	 * Parse an ASCII file to CSV and output a reference to the parsed file.
+	 * @param ftp The file that you wish to parse.
+	 * @return The File reference where the parsed file is stored.
+	 * @throws IOException Likely means that a file wasn't found.
+	 */
+	public File parseToCsv(File ftp) throws IOException {
 
-		String file_to_parse = args[0];
-		File ftp = new File(file_to_parse);
 		String fileName = ftp.getName();
 		fileName = fileName.substring(0, fileName.length() - 4);
+		File outFile = new File(FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION + fileName + ".csv");
 
 		ArrayList<String> lines = new ArrayList<String>();
 
-		BufferedReader f = new BufferedReader(new FileReader(file_to_parse));
-
+		BufferedReader f = new BufferedReader(new FileReader(ftp));
 		Scanner scanner;
 		try {
-			PrintWriter output = new PrintWriter(new BufferedWriter(new FileWriter(FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION + fileName + ".csv")));
+			PrintWriter output = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
 			output.println("latitude,longitude,value");
 			scanner = new Scanner(f);
 
@@ -143,6 +145,7 @@ public class AsciiToCsv {
 			Logger.error(e);
 		}
 
+		return outFile;
 	}
 
 }
