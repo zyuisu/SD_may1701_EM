@@ -35,7 +35,7 @@ public class LoginScreenController implements IControlledScreen {
 	@FXML
 	private Button loginButton;
 	@FXML
-   private Label errorMessage;
+	private Label errorMessage;
 
 	// So we can set the screen's parent later on.
 	MainController parentController;
@@ -45,13 +45,12 @@ public class LoginScreenController implements IControlledScreen {
 	 */
 	@FXML
 	public void initialize() {
-      // Event handlers for buttons.
-      // The arrow means lambda expression in Java.
-      // Lambda expressions allow you to create anonymous methods, which is perfect for eventHandling.
-      loginButton.setOnAction(event ->
-      {
-      	errorMessage.setText("Don't poke me!");
-      });
+		// Event handlers for buttons.
+		// The arrow means lambda expression in Java.
+		// Lambda expressions allow you to create anonymous methods, which is perfect for eventHandling.
+		loginButton.setOnAction(event -> {
+			errorMessage.setText("Don't poke me!");
+		});
 
 	}
 
