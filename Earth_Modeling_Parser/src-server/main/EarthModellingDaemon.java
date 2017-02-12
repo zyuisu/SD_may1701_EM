@@ -1,22 +1,15 @@
 /*
-
-Copyright (C) 2017 Anish Kunduru
-
-    This file is part the Visual Earth Modeling System (VEMS).
-
-    VEMS is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    VEMS is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with VEMS. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * 
+ * Copyright (C) 2017 Anish Kunduru
+ * 
+ * This file is part the Visual Earth Modeling System (VEMS).
+ * 
+ * VEMS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * 
+ * VEMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with VEMS. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * @author Anish Kunduru
@@ -135,10 +128,9 @@ public class EarthModellingDaemon {
 		ArrayList<String> commands = new ArrayList<String>();
 		commands.add(FileLocations.PYTHON_BINARY_LOCATION);
 		commands.add(scriptLocation);
-		if (arguments != null) {
+		if (arguments != null)
 			for (String s : arguments)
 				commands.add(s);
-		}
 		builder.command(commands);
 
 		builder.redirectErrorStream(true);
@@ -189,15 +181,16 @@ public class EarthModellingDaemon {
 	 *           The absolute file path of the file on the disk.
 	 */
 	private static void deleteFile(String fileLocation) {
-		deleteFile(new File(fileLocation));	
+		deleteFile(new File(fileLocation));
 	}
-	
+
 	/**
 	 * Deletes the specified file.
-	 * @param file The file that you wish to delete.
+	 * 
+	 * @param file
+	 *           The file that you wish to delete.
 	 */
-	private static void deleteFile(File f)
-	{
+	private static void deleteFile(File f) {
 		if (f.delete())
 			Logger.info("File is deleted!");
 		else
@@ -218,7 +211,7 @@ public class EarthModellingDaemon {
 		Logger.info("Converting file: {} to CSV", asciiFile);
 		File f = asciiParser.parseToCsv(asciiFile);
 		Logger.info("File converted to CSV!");
-		
+
 		return f;
 	}
 
@@ -244,9 +237,8 @@ public class EarthModellingDaemon {
 			if (!convertedSet.add(properties)) {
 				Logger.warn("The file {} has already been converted!", asciiFile.getName());
 				return false;
-			} else {
+			} else
 				convertAsciiToCsv(asciiFile);
-			}
 
 			// Call scripts
 

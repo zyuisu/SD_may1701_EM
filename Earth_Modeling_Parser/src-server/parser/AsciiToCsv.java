@@ -1,22 +1,15 @@
 /*
-
-Copyright (C) 2016-2017 Kellen Johnson
-
-    This file is part the Visual Earth Modeling System (VEMS).
-
-    VEMS is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    VEMS is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with VEMS. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * 
+ * Copyright (C) 2016-2017 Kellen Johnson
+ * 
+ * This file is part the Visual Earth Modeling System (VEMS).
+ * 
+ * VEMS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * 
+ * VEMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with VEMS. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * @author Kellen Johnson
@@ -48,12 +41,15 @@ public class AsciiToCsv {
 	 */
 	public AsciiToCsv() {
 	}
-	
+
 	/**
 	 * Parse an ASCII file to CSV and output a reference to the parsed file.
-	 * @param ftp The file that you wish to parse.
+	 * 
+	 * @param ftp
+	 *           The file that you wish to parse.
 	 * @return The File reference where the parsed file is stored.
-	 * @throws IOException Likely means that a file wasn't found.
+	 * @throws IOException
+	 *            Likely means that a file wasn't found.
 	 */
 	public File parseToCsv(File ftp) throws IOException {
 
@@ -120,7 +116,7 @@ public class AsciiToCsv {
 				Scanner linescan = new Scanner(scanning);
 				while (linescan.hasNext()) {
 					double value = linescan.nextDouble();
-					if (value != NODATA_value) {
+					if (value != NODATA_value)
 						if (max == 2017 && min == 2017) {
 							max = value;
 							min = value;
@@ -135,16 +131,12 @@ public class AsciiToCsv {
 								String temp = lines.remove(2);
 								lines.add(1, temp);
 							}
-						} else {
+						} else
 							lines.add((latitude - rows * cellsize) + "," + (longitude + columns * cellsize) + "," + value);
-						}
-
-					}
 					columns++;
 					if (columns % 1404 == 0) {
-						if (rows < 923) {
+						if (rows < 923)
 							columns = 0;
-						}
 						rows++;
 					}
 					counter++;
@@ -152,9 +144,8 @@ public class AsciiToCsv {
 				linescan.close();
 			}
 
-			while (!lines.isEmpty()) {
+			while (!lines.isEmpty())
 				output.println(lines.remove(0));
-			}
 
 			// Print out Max and Min (TESTING PURPOSES)
 			Logger.debug("Max: {}, Min: {}", max, min);

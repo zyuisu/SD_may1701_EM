@@ -1,0 +1,71 @@
+/*
+ * 
+ * Copyright (C) 2017 Anish Kunduru
+ * 
+ * This file is part the Visual Earth Modeling System (VEMS).
+ * 
+ * VEMS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * 
+ * VEMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with VEMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * Our main GUI program displays our application.
+ * 
+ * @author Anish Kunduru
+ */
+
+package view;
+
+import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import singleton.MainModel;
+
+public class MainView extends Application {
+	@Override
+	public void start(Stage primaryStage) {
+		// Initialize mainController.
+		MainController mainController = new MainController();
+
+		// Add the controller to the singleton.
+		MainModel.getModel().currentMainData().setMainController(mainController);
+
+		// Initialize display components.
+		Group root = new Group();
+		Scene scene = new Scene(root, 1280, 720);
+
+		// Add mainController.
+		root.getChildren().addAll(mainController);
+
+		// Pin the root to scene and display it.
+		primaryStage.setScene(scene);
+		primaryStage.show();
+
+		// Properly terminate the application if the user presses the "X" window button.
+		primaryStage.setOnCloseRequest(event -> {
+			mainController.closeApplication();
+		});
+
+		// Set the title and make the application a fixed size.
+		primaryStage.setTitle("Visual Earth Modelling System");
+		primaryStage.setResizable(false);
+		primaryStage.sizeToScene();
+
+		// Add the stage to the singleton.
+		MainModel.getModel().currentMainData().setMainStage(primaryStage);
+
+		// Go to the first screen.
+		mainController.goToLoginScreen();
+	}
+
+	/**
+	 * This method is actually not used in a correctly deployed JavaFX application. Instead, the start method above is called. This main serves as a fallback in case of improper configuration.
+	 */
+	public static void main(String[] args) {
+		launch(args);
+	}
+}
