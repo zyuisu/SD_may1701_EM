@@ -35,7 +35,6 @@ import java.util.Arrays;
 
 import org.pmw.tinylog.Logger;
 
-import networking.AsciiFileMessage;
 import parser.AsciiToCsv;
 import utils.FileLocations;
 import utils.MapCompoundType;
