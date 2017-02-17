@@ -38,15 +38,56 @@ public class MapProperties {
 	 *            If MapCompoundType is null.
 	 */
 	public MapProperties(MapCompoundType type, int year, int month) throws IllegalAccessException {
-		if (year < 1500)
-			throw new IllegalArgumentException("Did you set an invalid year?");
+
+		if (isValidYearAndType(type, year)) {
+			this.type = type;
+			this.year = year;
+		}
 
 		if (month < 0 || month > 11)
 			throw new IllegalArgumentException("Month cannot be less than 0 or greater than 11 (Jan to Dec).");
+		else
+			this.month = month;
+	}
+
+	/**
+	 * Constructor creates a new MapProperties that represents the values a map's properties can hold.
+	 * 
+	 * @param type
+	 *           The type of molecule this map represents.
+	 * @param year
+	 *           The year this map represents. Must be greater than 1500.
+	 * @throws IllegalAccessException
+	 *            If MapCompoundType is null.
+	 */
+	public MapProperties(MapCompoundType type, int year) throws IllegalAccessException {
+		if (isValidYearAndType(type, year)) {
+			this.type = type;
+			this.year = year;
+		}
+
+		this.month = -1;
+	}
+
+	/**
+	 * Helper for constructor to check validity of a year and type.
+	 * 
+	 * @param type
+	 *           The MapCompound that this map is to represent.
+	 * @param year
+	 *           The year that this map is to represent.
+	 * @return true if valid; exception if not
+	 * @throws IllegalAccessException
+	 *            If a null value was passed as the type.
+	 */
+	private boolean isValidYearAndType(MapCompoundType type, int year) throws IllegalAccessException {
+		if (year < 1500)
+			throw new IllegalArgumentException("Did you set an invalid year?");
 
 		if (type == null)
 			throw new IllegalAccessException("type must be set.");
 
+		return true;
 	}
 
 	/**
@@ -72,7 +113,7 @@ public class MapProperties {
 	}
 
 	/**
-	 * @return The month that this map represents.
+	 * @return The month that this map represents; -1 if this map does not have a representative month.
 	 */
 	public int getMonth() {
 		return month;
