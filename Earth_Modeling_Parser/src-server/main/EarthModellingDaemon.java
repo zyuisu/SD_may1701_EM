@@ -118,16 +118,52 @@ public class EarthModellingDaemon {
 	 *            Interrupt was encountered before the process could finish executing!
 	 */
 	private static ArrayList<String> runPythonScript(String scriptLocation, String[] arguments) throws IOException, InterruptedException {
+		String[] strArr = new String[arguments.length + 1];
+		strArr[0] = scriptLocation;
+		for (int i = 0; i < arguments.length; i++)
+			strArr[i + 1] = arguments[i];
+
+		return runExecutable(FileLocations.PYTHON_EXECUTABLE_BINARY_LOCATION, arguments);
+	}
+
+	/**
+	 * Overloaded helper if you wish to call a runnable program with no arguments.
+	 * 
+	 * @param exeLocation
+	 *           The absolute file location of the runnable on the disk.
+	 * @return An ArrayList of the standard output of the script.
+	 * @throws IOException
+	 *            Can't find the script at the specified location!
+	 * @throws InterruptedException
+	 *            Interrupt was encountered before the process could finish executing!
+	 */
+	private static ArrayList<String> runExecutable(String exeLocation) throws IOException, InterruptedException {
+		return runExecutable(exeLocation, null);
+	}
+
+	/**
+	 * Runs a an executable file with the given arguments.
+	 * 
+	 * @param exeLocation
+	 *           The absolute file location of the runnable on the disk.
+	 * @param arguments
+	 *           A tokenized array of arguments, if the program has any.
+	 * @return An ArrayList of the standard output of the script.
+	 * @throws IOException
+	 *            Can't find the script at the specified location!
+	 * @throws InterruptedException
+	 *            Interrupt was encountered before the process could finish executing!
+	 */
+	private static ArrayList<String> runExecutable(String exeLocation, String[] arguments) throws IOException, InterruptedException {
 		if (arguments == null)
-			Logger.info("Running Python scipt: {} ", scriptLocation);
+			Logger.info("Running executable: {} ", exeLocation);
 		else
-			Logger.info("Running Python scipt: {} with arguments: {}", scriptLocation, Arrays.toString(arguments));
+			Logger.info("Running executable: {} with arguments: {}", exeLocation, Arrays.toString(arguments));
 
 		ProcessBuilder builder = new ProcessBuilder();
 
 		ArrayList<String> commands = new ArrayList<String>();
-		commands.add(FileLocations.PYTHON_BINARY_LOCATION);
-		commands.add(scriptLocation);
+		commands.add(exeLocation);
 		if (arguments != null)
 			for (String s : arguments)
 				commands.add(s);
@@ -230,29 +266,26 @@ public class EarthModellingDaemon {
 		return false;
 	}
 
-	private static synchronized boolean createMap(File asciiFile, MapProperties properties) {
+	private static synchronized boolean createMap(File asciiFile, MapProperties properties) throws IOException, InterruptedException {
 
-		try {
-			// Check against converted set.
-			if (!convertedSet.add(properties)) {
-				Logger.warn("The file {} has already been converted!", asciiFile.getName());
-				return false;
-			} else {
-				File csvFile = convertAsciiToCsv(asciiFile);
-
-				String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS, csvFile.getName(), FileLocations.CSV_TABLES };
-				runPythonScript(FileLocations.CSV_TO_GEODATABASE_SCRIPT_LOCATION, arguments);
-
-				// Delete files.
-				deleteFile(asciiFile);
-
-				return true;
-			}
-
-		} catch (Exception e) {
-			Logger.error("Error trying to create map.", e);
+		// Check against converted set.
+		if (!convertedSet.add(properties)) {
+			Logger.warn("The file {} has already been converted!", asciiFile.getName());
+			return false;
 		}
 
-		return false;
+		File csvFile = convertAsciiToCsv(asciiFile);
+
+		String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, csvFile.getName(), FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION };
+		runPythonScript(FileLocations.CSV_TO_GEODATABASE_SCRIPT_LOCATION, arguments);
+
+		// TODO
+		// OTHER PYTHON SCRIPTS.
+		// NOTE: FOR PURPOSES OF DEBUGGING, I THINK WE WANT ERRORS TO BE THROWN. IT WOULD ULTIMATELY BE UP TO CALLING OBJECTS TO HANDLE/LOG ERRORS.
+
+		// Delete files.
+		deleteFile(asciiFile);
+
+		return true;
 	}
 }
