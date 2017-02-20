@@ -11,7 +11,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders
-.project
+*.project
 .externalToolBuilders/
 *.launch
 *.pydevproject
