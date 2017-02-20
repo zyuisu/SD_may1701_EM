@@ -8,7 +8,9 @@ The Visual Earth Modeling System will allow various policy makers (government, g
 TODO
 
 ## IDE Setup
-Currently, all developers use Eclipse Neon.2 for contributing to this project. Proper cross-IDE development will require a build tool like Ant to setup consistent formatting rules. Until then, code style preferences can be found in the folder named Code_Style. This project uses JavaFX 8, which requires Java 1.8 or higher (for Linux users, note that the OpenJDK does not contain the required libraries). Under Eclipse, we also recommend using the following:
+Currently, all developers use Eclipse Neon.2 for contributing to this project. Proper cross-IDE development will require a build tool like Ant to setup consistent formatting rules. Until then, code style preferences can be found in the folder named Code_Style.
+
+This project uses JavaFX 8, which requires Java 1.8 or higher (for Linux users, note that the OpenJDK does not contain the required libraries). Under Eclipse, we also recommend using the following:
   - e(fx)clipse: Can be found via Eclipse update site(s): https://www.eclipse.org/efxclipse/install.html#for-the-lazy
   - Gluon SceneBuilder: A drag and drop tool to layout JavaFX FXML pages.
 
