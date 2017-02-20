@@ -237,30 +237,22 @@ public class EarthModellingDaemon {
 			if (!convertedSet.add(properties)) {
 				Logger.warn("The file {} has already been converted!", asciiFile.getName());
 				return false;
-			} else
-				convertAsciiToCsv(asciiFile);
+			} else {
+				File csvFile = convertAsciiToCsv(asciiFile);
 
-			// Call scripts
+				String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS, csvFile.getName(), FileLocations.CSV_TABLES };
+				runPythonScript(FileLocations.CSV_TO_GEODATABASE_SCRIPT_LOCATION, arguments);
 
-			// CSV to Geodatabase
-			// NOTE: str contains the output of the python script in case you need it.
-			// Otherwise, you can simply use runPythonScript(scriptToRun...
-			// Anything returned in ArrayList str is always logged.
-			/*
-			 * In your case, this would be: String csvFileLocation = csvInputDir.getAbsolutePath() + "\\" + firstAsciiFileName.substring(0, firstAsciiFileName.length() - 4); String[] arguments = { csvFileLocation }; runPythonScript(CSV_TO_GEODATABASE_LOCATION, arguments); deleteFile(csvFileLocation);
-			 * 
-			 */
-			ArrayList<String> str = runPythonScript(FileLocations.CSV_TO_GEODATABASE_SCRIPT_LOCATION);
-			// TEMP DEBUG
-			for (String s : str)
-				System.out.println(s);
-
-			// Delete files.
-			deleteFile(asciiFile);
+				// Delete files.
+				deleteFile(asciiFile);
+				
+				return true;
+			}
 
 		} catch (Exception e) {
 			Logger.error("Error trying to create map.", e);
 		}
-		return true;
+		
+		return false;
 	}
 }
