@@ -245,14 +245,14 @@ public class EarthModellingDaemon {
 
 				// Delete files.
 				deleteFile(asciiFile);
-
+				
 				return true;
 			}
 
 		} catch (Exception e) {
 			Logger.error("Error trying to create map.", e);
 		}
-
+		
 		return false;
 	}
 }
