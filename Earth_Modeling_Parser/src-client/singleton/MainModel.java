@@ -14,7 +14,7 @@
 /**
  * @author Anish Kunduru
  *
- *         The purpose of this program is to have one central model for all our user's game data. This utilizes a software design pattern called the singleton pattern. We separate each controller's game data into a new submodel that will be implemented in this class.
+ *         The purpose of this program is to have one central model for all our user's data. This utilizes a software design pattern called the singleton pattern. We separate each controller's game data into a new submodel that will be implemented in this class.
  */
 
 package singleton;

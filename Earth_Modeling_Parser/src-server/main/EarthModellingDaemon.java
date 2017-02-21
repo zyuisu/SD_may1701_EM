@@ -273,7 +273,7 @@ public class EarthModellingDaemon {
 			Logger.warn("The file {} has already been converted!", asciiFile.getName());
 			return false;
 		}
-		
+
 		File csvFile = convertAsciiToCsv(asciiFile);
 
 		String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, csvFile.getName(), FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION };

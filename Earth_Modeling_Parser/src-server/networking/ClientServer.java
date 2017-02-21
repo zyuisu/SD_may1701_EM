@@ -20,10 +20,16 @@
 package networking;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -31,7 +37,12 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 
 import org.pmw.tinylog.Logger;
 
@@ -89,10 +100,22 @@ public class ClientServer implements Runnable {
 	 */
 	@Override
 	public void run() {
-		SSLServerSocketFactory ssf = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-
 		try {
-			ServerSocket serverSocket = ssf.createServerSocket(serverPort);
+			KeyStore ks = KeyStore.getInstance("JKS");
+			ks.load(new FileInputStream("authentication.cert"), "password".toCharArray()); // TODO keystorefile and it's password should be passed at server start-up.
+
+			KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
+			kmf.init(ks, "password".toCharArray());
+
+			TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+			tmf.init(ks);
+
+			SSLContext sc = SSLContext.getInstance("TLS");
+			TrustManager[] trustManagers = tmf.getTrustManagers();
+			sc.init(kmf.getKeyManagers(), trustManagers, null);
+
+			SSLServerSocketFactory ssf = sc.getServerSocketFactory();
+			SSLServerSocket serverSocket = (SSLServerSocket) ssf.createServerSocket(serverPort);
 
 			Logger.info("Waiting for clients on port: {}", serverPort);
 
@@ -118,6 +141,16 @@ public class ClientServer implements Runnable {
 			}
 		} catch (IOException ioe) {
 			Logger.error("IOException while creating ServerSocket on port: {}\n{}", serverPort, ioe);
+		} catch (KeyStoreException e) {
+			Logger.error("Instance of keystore isn't correctly defined.", e);
+		} catch (NoSuchAlgorithmException e) {
+			Logger.error("Error loading keystore.", e);
+		} catch (CertificateException e) {
+			Logger.error("Error loading passed certificate keystore.", e);
+		} catch (UnrecoverableKeyException e) {
+			Logger.error("Passed password doesn't unlock the keystore.", e);
+		} catch (KeyManagementException e) {
+			Logger.error("Issue retrieving keymanager.", e);
 		}
 	}
 
@@ -185,7 +218,7 @@ public class ClientServer implements Runnable {
 			return false;
 		}
 
-		// TO-DO
+		// TODO
 		// Salt passwords instead of storing as plaintext.
 		if (!approvedClients.get(username).equals(password)) {
 			Logger.warn("Authentication failure with username: {}, password: {}, @ {}", username, password, socket.getInetAddress());
