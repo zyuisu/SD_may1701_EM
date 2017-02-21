@@ -61,12 +61,51 @@ public class AsciiToCsv {
 
 		BufferedReader f = new BufferedReader(new FileReader(ftp));
 		Scanner scanner;
+		double ncols = 0, nrows = 0, xllcorner = 0, yllcorner = 0, cellsize = 0, NODATA_value = 0;
+		String scanning = "";
 		try {
 			PrintWriter output = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
 			output.println("latitude,longitude,value");
 			scanner = new Scanner(f);
 
-			String headers = scanner.nextLine();
+			boolean extract_headers = false;
+			while (!extract_headers) {
+				String headers = "";
+				while (headers.replace(" ", "").equals("")) {
+					headers = scanner.nextLine();
+				}
+				Scanner scanheaders = new Scanner(headers);
+				//System.out.print(headers);
+				String head = scanheaders.next();
+				switch (head) {
+					case "":
+						// empty line, do nothing
+						break;
+					case "ncols":
+						ncols = scanheaders.nextDouble();
+						break;
+					case "nrows":
+						nrows = scanheaders.nextDouble();
+						break;
+					case "xllcorner":
+						xllcorner = scanheaders.nextDouble();
+						break;
+					case "yllcorner":
+						yllcorner = scanheaders.nextDouble();
+						break;
+					case "cellsize":
+						cellsize = scanheaders.nextDouble();
+						break;
+					case "NODATA_value":
+						NODATA_value = scanheaders.nextDouble();
+						break;	
+				}
+				//System.out.print("yay");
+				if (ncols != 0 && nrows != 0 && xllcorner != 0 && yllcorner != 0 && cellsize != 0 && NODATA_value != 0) {
+					extract_headers = true;
+				}
+			}
+			/*String headers = scanner.nextLine();
 			Scanner scanheaders = new Scanner(headers);
 			scanheaders.next();
 			double ncols = scanheaders.nextDouble();
@@ -100,7 +139,7 @@ public class AsciiToCsv {
 			scanheaders = new Scanner(headers);
 			scanheaders.next();
 			double NODATA_value = scanheaders.nextDouble();
-			scanheaders.close();
+			scanheaders.close();*/
 
 			// System.out.println(ncols + " ");
 			int counter = 0;
@@ -112,9 +151,12 @@ public class AsciiToCsv {
 			double min = 2017;
 
 			while (scanner.hasNextLine()) {
-				String scanning = scanner.nextLine();
+				scanning = "";
+				while (scanning.replace(" ", "").equals("")) {
+					scanning = scanner.nextLine();
+				}
 				Scanner linescan = new Scanner(scanning);
-				while (linescan.hasNext()) {
+				while (linescan.hasNextDouble()) {
 					double value = linescan.nextDouble();
 					if (value != NODATA_value)
 						if (max == 2017 && min == 2017) {
@@ -134,8 +176,8 @@ public class AsciiToCsv {
 						} else
 							lines.add((latitude - rows * cellsize) + "," + (longitude + columns * cellsize) + "," + value);
 					columns++;
-					if (columns % 1404 == 0) {
-						if (rows < 923)
+					if (columns % ncols == 0) {
+						if (rows < nrows - 1)
 							columns = 0;
 						rows++;
 					}
