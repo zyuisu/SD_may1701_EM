@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -51,7 +52,7 @@ public class EarthModellingDaemon {
 		File tempOutputDir = new File(FileLocations.TEMP_WORKING_DIRECTORY_LOCATION);
 		csvOutputDir.mkdir();
 		tempOutputDir.mkdir();
-		
+
 		while (true) {
 			while (asciiInputDir.list().length > 0) {
 				String firstAsciiFileName = asciiInputDir.list()[0];
@@ -258,18 +259,31 @@ public class EarthModellingDaemon {
 	}
 
 	public static synchronized boolean removeExistingMap(MapProperties properties) {
-		// TO-DO
+		// TODO
 		// If exists in convertedSet, stop map, remove from GIS server.
 		// Remove from convertedSet.
 		// Remove any associated files.
 		return false;
 	}
 
-	public static synchronized boolean createMap(byte[] asciiFile, MapProperties properties) {
-		// TO-DO
-		// Convert byte array to file and save it.
-		// createMap(file, properties)
-		return false;
+	/**
+	 * Creates a map by calling the correct parsers and Python script(s).
+	 * 
+	 * @param asciiFile
+	 *           A byte array representing the ASCII file that you wish to generate a map from.
+	 * @param properties
+	 *           The map's properties as defined in MapProperties.
+	 * @return true if the map was successfully created; false if it wasn't.
+	 * @throws IOException
+	 *            There was an error creating or reading from a temporary file/folder.
+	 * @throws InterruptedException
+	 *            Probably means one of the intermediary Python scipts were cut short before they could complete execution.
+	 */
+	public static synchronized boolean createMap(byte[] asciiFile, MapProperties properties) throws IOException, InterruptedException {
+		File file = new File(FileLocations.TEMP_WORKING_DIRECTORY_LOCATION + properties.toString() + ".txt");
+		Files.write(file.toPath(), asciiFile);
+
+		return createMap(file, properties);
 	}
 
 	private static synchronized boolean createMap(File asciiFile, MapProperties properties) throws IOException, InterruptedException {
