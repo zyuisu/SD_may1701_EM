@@ -44,7 +44,7 @@ public class NetworkHandler {
 	// THESE CONSTANTS WILL NEED TO BE UPDATED WHEN THE SERVER FIELDS CHANGE.
 	public final String SERVER_ADDRESS = ServerInformation.SERVER_ADDRESS;
 	public final int SERVER_PORT = ServerInformation.SERVER_PORT;
-	public final String KEYSTORE_FILE = "authentication.cert";
+	public final String KEYSTORE_FILE = "/home/akunduru/Desktop/keystore.jks";
 
 	private SSLSocket socket;
 	private ObjectInputStream input;
@@ -70,10 +70,10 @@ public class NetworkHandler {
 			KeyStore ks = KeyStore.getInstance("JKS");
 			ks.load(new FileInputStream(KEYSTORE_FILE), password.toCharArray());
 
-			KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
+			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
 			kmf.init(ks, password.toCharArray());
 
-			TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+			TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
 			tmf.init(ks);
 
 			SSLContext sc = SSLContext.getInstance("TLS");
@@ -83,14 +83,18 @@ public class NetworkHandler {
 			SSLSocketFactory ssf = sc.getSocketFactory();
 			socket = (SSLSocket) ssf.createSocket(SERVER_ADDRESS, SERVER_PORT);
 			socket.startHandshake();
-
+			
 			input = new ObjectInputStream(socket.getInputStream());
+			
+			//DEBUG
+			System.out.println("yo");
+			
 			output = new ObjectOutputStream(socket.getOutputStream());
-
+			
 			listener = new NetworkListener(input);
 			listener.run();
 
-			ConnectionMessage cm = new ConnectionMessage(Type.CONNECT, username, password);
+			ConnectionMessage cm = new ConnectionMessage(Type.CONNECT, username, password);			
 			output.writeObject(cm);
 
 		} catch (IOException ioe) {

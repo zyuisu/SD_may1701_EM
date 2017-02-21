@@ -24,6 +24,7 @@ import framework.IControlledScreen;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import networking.NetworkHandler;
 import view.MainController;
 
 public class LoginScreenController implements IControlledScreen {
@@ -49,6 +50,10 @@ public class LoginScreenController implements IControlledScreen {
 		// The arrow means lambda expression in Java.
 		// Lambda expressions allow you to create anonymous methods, which is perfect for eventHandling.
 		loginButton.setOnAction(event -> {
+			
+			//DEBUG
+			NetworkHandler handler = new NetworkHandler("test", "password");
+			
 			errorMessage.setText("Don't poke me!");
 		});
 

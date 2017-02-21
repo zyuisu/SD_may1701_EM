@@ -24,11 +24,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import javax.net.ssl.SSLSocket;
+
 import org.pmw.tinylog.Logger;
 
 public class ClientThread implements Runnable {
 
-	private Socket socket;
+	private SSLSocket socket;
 	private String username;
 	private ClientServer server;
 
@@ -45,10 +47,10 @@ public class ClientThread implements Runnable {
 	 * @param server
 	 *           A reference to the parent ClientServer that is managing this client.
 	 */
-	public ClientThread(Socket socket, ClientServer server) {
+	public ClientThread(SSLSocket socket, ClientServer server) {
 		this.socket = socket;
 		this.server = server;
-
+		
 		try {
 			input = new ObjectInputStream(socket.getInputStream());
 			output = new ObjectOutputStream(socket.getOutputStream());

@@ -57,7 +57,10 @@ public class NetworkListener implements Runnable {
 		while (run)
 			try {
 				StringMessage message = (StringMessage) input.readObject();
-
+				
+				//DEBUG
+				System.out.println(message.getMessage());
+				
 				if (message.getMessageType() == Type.ERROR_MESSAGE) {
 					// TODO
 				} else {

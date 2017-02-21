@@ -41,6 +41,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
@@ -120,7 +121,7 @@ public class ClientServer implements Runnable {
 			Logger.info("Waiting for clients on port: {}", serverPort);
 
 			while (run) {
-				Socket clientSocket = serverSocket.accept();
+				SSLSocket clientSocket = (SSLSocket) serverSocket.accept();
 
 				if (!run)
 					break; // Previous call is blocking, so check again to avoid IOExceptions or stalled threads.
