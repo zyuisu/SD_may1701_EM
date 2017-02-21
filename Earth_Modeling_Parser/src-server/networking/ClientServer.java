@@ -81,7 +81,7 @@ public class ClientServer implements Runnable {
 	 */
 	private void addFromApprovedList() throws IOException {
 		BufferedReader buffR;
-		buffR = new BufferedReader(new FileReader(FileLocations.CONVERTED_FILE_LOCATION));
+		buffR = new BufferedReader(new FileReader(FileLocations.APPROVED_CLIENTS_FILE_LOCATION));
 
 		Scanner sc = new Scanner(buffR);
 		while (sc.hasNextLine()) {

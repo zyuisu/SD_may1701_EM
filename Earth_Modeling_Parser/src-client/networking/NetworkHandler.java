@@ -42,8 +42,8 @@ import networking.ConnectionMessage.Type;
 public class NetworkHandler {
 
 	// THESE CONSTANTS WILL NEED TO BE UPDATED WHEN THE SERVER FIELDS CHANGE.
-	public final String SERVER_ADDRESS = "localhost";
-	public final int SERVER_PORT = 1444;
+	public final String SERVER_ADDRESS = ServerInformation.SERVER_ADDRESS;
+	public final int SERVER_PORT = ServerInformation.SERVER_PORT;
 	public final String KEYSTORE_FILE = "authentication.cert";
 
 	private SSLSocket socket;
