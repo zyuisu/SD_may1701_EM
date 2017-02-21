@@ -75,7 +75,6 @@ public class AsciiToCsv {
 					headers = scanner.nextLine();
 				}
 				Scanner scanheaders = new Scanner(headers);
-				//System.out.print(headers);
 				String head = scanheaders.next();
 				switch (head) {
 					case "":
@@ -98,50 +97,13 @@ public class AsciiToCsv {
 						break;
 					case "NODATA_value":
 						NODATA_value = scanheaders.nextDouble();
-						break;	
+						break;
 				}
-				//System.out.print("yay");
 				if (ncols != 0 && nrows != 0 && xllcorner != 0 && yllcorner != 0 && cellsize != 0 && NODATA_value != 0) {
 					extract_headers = true;
 				}
 			}
-			/*String headers = scanner.nextLine();
-			Scanner scanheaders = new Scanner(headers);
-			scanheaders.next();
-			double ncols = scanheaders.nextDouble();
 
-			headers = scanner.nextLine();
-			headers = scanner.nextLine();
-			scanheaders = new Scanner(headers);
-			scanheaders.next();
-			double nrows = scanheaders.nextDouble();
-
-			headers = scanner.nextLine();
-			headers = scanner.nextLine();
-			scanheaders = new Scanner(headers);
-			scanheaders.next();
-			double xllcorner = scanheaders.nextDouble();
-
-			headers = scanner.nextLine();
-			headers = scanner.nextLine();
-			scanheaders = new Scanner(headers);
-			scanheaders.next();
-			double yllcorner = scanheaders.nextDouble();
-
-			headers = scanner.nextLine();
-			headers = scanner.nextLine();
-			scanheaders = new Scanner(headers);
-			scanheaders.next();
-			double cellsize = scanheaders.nextDouble();
-
-			headers = scanner.nextLine();
-			headers = scanner.nextLine();
-			scanheaders = new Scanner(headers);
-			scanheaders.next();
-			double NODATA_value = scanheaders.nextDouble();
-			scanheaders.close();*/
-
-			// System.out.println(ncols + " ");
 			int counter = 0;
 			double longitude = xllcorner;
 			double latitude = yllcorner + (cellsize * (nrows - 1));
@@ -200,5 +162,4 @@ public class AsciiToCsv {
 
 		return outFile;
 	}
-
 }
