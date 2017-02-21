@@ -21,73 +21,57 @@ package utils;
 
 public class MapProperties {
 
-	private MapCompoundType type;
+	private MapCompoundType compound;
+	private MapRegion region;
 	private int year;
 	private int month;
 
 	/**
 	 * Constructor creates a new MapProperties that represents the values a map's properties can hold.
 	 * 
-	 * @param type
+	 * @param region
+	 *           The extent of this map.
+	 * @param compound
 	 *           The type of molecule this map represents.
 	 * @param year
-	 *           The year this map represents. Must be greater than 1500.
+	 *           The year this map represents. Can't be less than 1500 or greater than 2100.
 	 * @param month
 	 *           The month this map represents. Must be between 0 and 11, inclusive (Jan to Dec).
 	 * @throws IllegalAccessException
-	 *            If MapCompoundType is null.
+	 *            If MapCompoundType or MapRegion is null.
 	 */
-	public MapProperties(MapCompoundType type, int year, int month) throws IllegalAccessException {
-
-		if (isValidYearAndType(type, year)) {
-			this.type = type;
-			this.year = year;
-		}
+	public MapProperties(MapRegion region, MapCompoundType compound, int year, int month) throws IllegalAccessException {
+		this(region, compound, year);
 
 		if (month < 0 || month > 11)
 			throw new IllegalArgumentException("Month cannot be less than 0 or greater than 11 (Jan to Dec).");
-		else
-			this.month = month;
+		this.month = month;
 	}
 
 	/**
 	 * Constructor creates a new MapProperties that represents the values a map's properties can hold.
 	 * 
-	 * @param type
+	 * @param region
+	 *           The extent of this map.
+	 * @param compound
 	 *           The type of molecule this map represents.
 	 * @param year
-	 *           The year this map represents. Must be greater than 1500.
+	 *           The year this map represents. Can't be less than 1500 or greater than 2100.
 	 * @throws IllegalAccessException
-	 *            If MapCompoundType is null.
+	 *            If MapCompoundType or MapRegion is null.
 	 */
-	public MapProperties(MapCompoundType type, int year) throws IllegalAccessException {
-		if (isValidYearAndType(type, year)) {
-			this.type = type;
-			this.year = year;
-		}
-
-		this.month = -1;
-	}
-
-	/**
-	 * Helper for constructor to check validity of a year and type.
-	 * 
-	 * @param type
-	 *           The MapCompound that this map is to represent.
-	 * @param year
-	 *           The year that this map is to represent.
-	 * @return true if valid; exception if not
-	 * @throws IllegalAccessException
-	 *            If a null value was passed as the type.
-	 */
-	private boolean isValidYearAndType(MapCompoundType type, int year) throws IllegalAccessException {
+	public MapProperties(MapRegion region, MapCompoundType compound, int year) throws IllegalAccessException {
+		if (region == null || compound == null)
+			throw new IllegalAccessException("Region and compound types must be set.");
+		this.region = region;
+		this.compound = compound;
+		
 		if (year < 1500)
-			throw new IllegalArgumentException("Did you set an invalid year?");
-
-		if (type == null)
-			throw new IllegalAccessException("type must be set.");
-
-		return true;
+			throw new IllegalArgumentException("Are you sure you set the correct year? It is less than 1500.");
+		else if (year > 2100)
+			throw new IllegalArgumentException("Are you sure you set the correct year? It is greater than 2100.");
+		this.year = year;
+		
 	}
 
 	/**
@@ -95,14 +79,21 @@ public class MapProperties {
 	 */
 	@Override
 	public String toString() {
-		return type.name() + "y" + year + "m" + month;
+		return region.name() + compound.name() + "y" + year + "m" + month;
+	}
+	
+	/**
+	 * @return The MapRegion that represents the extent of this map.
+	 */
+	public MapRegion getMapCompound(){
+		return region;
 	}
 
 	/**
 	 * @return The MapCompound that represents this map's molecule.
 	 */
 	public MapCompoundType getMapCompoundType() {
-		return type;
+		return compound;
 	}
 
 	/**

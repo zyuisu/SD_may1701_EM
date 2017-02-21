@@ -33,6 +33,7 @@ import parser.AsciiToCsv;
 import utils.FileLocations;
 import utils.MapCompoundType;
 import utils.MapProperties;
+import utils.MapRegion;
 
 public class EarthModellingDaemon {
 
@@ -79,21 +80,23 @@ public class EarthModellingDaemon {
 	private static MapProperties parseMapProperties(String s) throws IllegalAccessException {
 		int currentIndex = 0;
 
-		MapCompoundType type = null;
+		MapCompoundType compound = null;
 		if (s.substring(currentIndex, 3).toLowerCase().equals("ch4")) {
-			type = MapCompoundType.CH4;
+			compound = MapCompoundType.CH4;
 			currentIndex = 4;
 		} else if (s.substring(currentIndex, 3).toLowerCase().equals("co2")) {
-			type = MapCompoundType.CO2;
+			compound = MapCompoundType.CO2;
 			currentIndex = 4;
 		}
+		
+		MapRegion region = MapRegion.GLOBAL; // Default to global.
 
 		int year = Integer.parseInt(s.substring(currentIndex, currentIndex + 4));
 		currentIndex += 5;
 
 		int month = Integer.parseInt(s.substring(currentIndex).replace(".txt", ""));
 
-		return new MapProperties(type, year, month);
+		return new MapProperties(region, compound, year, month);
 	}
 
 	/**
