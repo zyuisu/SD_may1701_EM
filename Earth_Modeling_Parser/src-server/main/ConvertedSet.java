@@ -83,7 +83,7 @@ public class ConvertedSet extends HashSet<String> implements Serializable {
 	}
 
 	/**
-	 * Adds a given map's properties to the set. For now, this is backed by MapProperties.toString() and HashSet<String>. It is unsafe to use any other method to add map.
+	 * Adds a given map's properties to the set. For now, this is backed by MapProperties.toString() and HashSet<String>. It is unsafe to use any other method to add a map.
 	 * 
 	 * @param properties
 	 *           The MapProperties of the map that you wish to add.
