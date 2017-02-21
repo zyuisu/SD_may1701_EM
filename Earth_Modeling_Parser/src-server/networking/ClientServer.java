@@ -102,12 +102,12 @@ public class ClientServer implements Runnable {
 	public void run() {
 		try {
 			KeyStore ks = KeyStore.getInstance("JKS");
-			ks.load(new FileInputStream("authentication.cert"), "password".toCharArray()); // TODO keystorefile and it's password should be passed at server start-up.
-
-			KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
+			ks.load(new FileInputStream("/home/akunduru/Desktop/keystore.jks"), "password".toCharArray()); // TODO keystorefile and it's password should be passed at server start-up.
+			
+			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
 			kmf.init(ks, "password".toCharArray());
 
-			TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+			TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
 			tmf.init(ks);
 
 			SSLContext sc = SSLContext.getInstance("TLS");

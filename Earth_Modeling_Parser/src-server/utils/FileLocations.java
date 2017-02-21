@@ -28,7 +28,7 @@ public class FileLocations {
 	public static final String TEMP_WORKING_DIRECTORY_LOCATION = "Temp_Working_Files\\";
 	
 	public static final String CONVERTED_FILE_LOCATION = "resources\\converted.txt";
-	public static final String APPROVED_CLIENTS_FILE_LOCATION = "resources\\approvedClients.txt";
+	public static final String APPROVED_CLIENTS_FILE_LOCATION = "/home/akunduru/Desktop/approvedClients.txt"; //"resources\\approvedClients.txt";
 	
 	public static final String PYTHON_EXECUTABLE_BINARY_LOCATION = "C:\\Python27\\ArcGISx6410.4\\python.exe";
 	public static final String CSV_TO_GEODATABASE_SCRIPT_LOCATION = "Python_Scripts\\CsvToGeodatabase.py";
