@@ -29,7 +29,7 @@ public class FileLocations {
 	public static final String PYTHON_EXECUTABLE_BINARY_LOCATION = "C:\\Python27\\ArcGISx6410.4\\python.exe";
 	public static final String CSV_TO_GEODATABASE_SCRIPT_LOCATION = "Python_Scripts\\CsvToGeodatabase.py";
 	// If the git repo is locally cloned, you can simply do something like this: C:\\EarthModeling\\SD_may1701_EM\\Earth_Modeling_Parser\\src\\Python_Scripts\\CsvToGeodatabase.py
-	public static final String APPROVED_CLIENTS_FILE_LOCATION = "approvedClients.txt";
+	public static final String APPROVED_CLIENTS_FILE_LOCATION = "resources\\approvedClients.txt";
 	public static final String TEMP_WORKING_DIRECTORY_LOCATION = "Temp_Working_Files\\";
 
 	private FileLocations() {

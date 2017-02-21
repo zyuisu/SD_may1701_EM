@@ -46,6 +46,12 @@ public class EarthModellingDaemon {
 
 		Logger.info("Server daemon is starting up...");
 
+		// Create required temp directories if they don't exist.
+		File csvOutputDir = new File(FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION);
+		File tempOutputDir = new File(FileLocations.TEMP_WORKING_DIRECTORY_LOCATION);
+		csvOutputDir.mkdir();
+		tempOutputDir.mkdir();
+		
 		while (true) {
 			while (asciiInputDir.list().length > 0) {
 				String firstAsciiFileName = asciiInputDir.list()[0];
