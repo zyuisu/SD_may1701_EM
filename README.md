@@ -5,7 +5,18 @@ The product we are to build consists of a web application that allows users to q
 The Visual Earth Modeling System will allow various policy makers (government, grant societies, etc.) and land managers (real-estate, governmental, farmers, etc.) to visually examine, further analyze, and understand spatial patterns of various gas compounds, water discharges, and nutrient movement. Allowing these stakeholders to further understand the environment will aid them in making decisions in reference to pollution policy, development of land to be used for various crops, grant making, etc.
 
 ## Installation
-TO-DO
+TODO
+
+## IDE Setup
+Currently, all developers use Eclipse Neon.2 for contributing to this project. Proper cross-IDE development will require a build tool like Ant to setup consistent formatting rules. Until then, code style preferences can be found in the folder named Code_Style.
+
+This project uses JavaFX 8, which requires Java 1.8 or higher (for Linux users, note that the OpenJDK does not contain the required libraries). Under Eclipse, we also recommend using the following:
+  - e(fx)clipse: Can be found via Eclipse update site(s): https://www.eclipse.org/efxclipse/install.html#for-the-lazy
+  - Gluon SceneBuilder: A drag and drop tool to layout JavaFX FXML pages.
+
+Additionally, you will require the following tool(s):
+  - Tinylog: Available under resources/tinylog-1.1, tinylog.jar must be added under referenced libraries.
+  - ArcPy: These libraries are available under an installation of ArcGIS for Server, and are required for the Python scripts to run.
 
 ## API Reference
 Provided via Javadocs. The simpler Python scripts have their own individual documentation.
