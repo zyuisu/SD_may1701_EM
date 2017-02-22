@@ -50,7 +50,7 @@ import org.pmw.tinylog.Logger;
 import main.EarthModellingDaemon;
 import utils.FileLocations;
 
-public class ClientServer implements Runnable {
+public class ClientServer extends Thread {
 
 	private Set<ClientThread> clients;
 	private Map<String, String> approvedClients;
@@ -99,7 +99,6 @@ public class ClientServer implements Runnable {
 	/**
 	 * Starts the server and waits for connections.
 	 */
-	@Override
 	public void run() {
 		try {
 			KeyStore ks = KeyStore.getInstance("JKS");
@@ -120,23 +119,28 @@ public class ClientServer implements Runnable {
 
 			Logger.info("Waiting for clients on port: {}", serverPort);
 
+			int d = 0;
+			
 			while (run) {
+				//DEBUG
+				Logger.info("Hiya" + d++);
+				
 				SSLSocket clientSocket = (SSLSocket) serverSocket.accept();
-
+				
 				if (!run)
 					break; // Previous call is blocking, so check again to avoid IOExceptions or stalled threads.
 
 				ClientThread client = new ClientThread(clientSocket, this);
 				clients.add(client);
 
-				client.run();
+				client.start();
 			} // end run loop
 
 			try {
 				serverSocket.close();
 
 				for (ClientThread client : clients)
-					client.close();
+					client.end();
 			} catch (IOException ioe) {
 				Logger.error("Error closing the serverSocket: {}", ioe);
 			}
@@ -158,7 +162,7 @@ public class ClientServer implements Runnable {
 	/**
 	 * Gracefully shuts the server down by tripping the flag.
 	 */
-	public void stop() {
+	public void end() {
 		run = false;
 
 		// Break a blocking call by connecting to the socket.

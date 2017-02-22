@@ -28,7 +28,7 @@ import javax.net.ssl.SSLSocket;
 
 import org.pmw.tinylog.Logger;
 
-public class ClientThread implements Runnable {
+public class ClientThread extends Thread {
 
 	private SSLSocket socket;
 	private String username;
@@ -98,7 +98,6 @@ public class ClientThread implements Runnable {
 	/**
 	 * Starts the thread. Runs until the client passes a ConnectionMessage of ConnectionMessage.Type.DISCONNECT. The run flag will also be tripped by bufferMessage() if there is a timeout event on the socket that causes sending a message over output to fail. An error will be logged if this method is given an invalid object from the input stream.
 	 */
-	@Override
 	public void run() {
 		run = true;
 
@@ -134,13 +133,13 @@ public class ClientThread implements Runnable {
 			}
 
 		server.removeClient(this);
-		close();
+		end();
 	}
 
 	/**
 	 * Helper method to assist in the closing of streams. Unexpected behavior may occur if called outside of this class.
 	 */
-	protected void close() {
+	protected void end() {
 		try {
 			output.close();
 			input.close();
@@ -162,7 +161,7 @@ public class ClientThread implements Runnable {
 	 */
 	public boolean bufferMessage(StringMessage sm) {
 		if (!socket.isConnected()) {
-			close();
+			end();
 			return false;
 		}
 

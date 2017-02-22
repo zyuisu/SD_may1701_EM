@@ -9,6 +9,6 @@ public class NetworkingTest {
 
 		public static void main(String[] args) throws IOException{
 			ClientServer cs = new ClientServer(ServerInformation.SERVER_PORT);
-			cs.run();
+			cs.start();
 		}
 }

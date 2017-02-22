@@ -84,6 +84,12 @@ public class NetworkHandler {
 			socket = (SSLSocket) ssf.createSocket(SERVER_ADDRESS, SERVER_PORT);
 			socket.startHandshake();
 			
+			
+			//DEBUG
+			System.out.println(socket.getEnableSessionCreation());
+			System.out.println(socket.isConnected());
+			System.out.println("yo");
+			
 			input = new ObjectInputStream(socket.getInputStream());
 			
 			//DEBUG
@@ -92,7 +98,7 @@ public class NetworkHandler {
 			output = new ObjectOutputStream(socket.getOutputStream());
 			
 			listener = new NetworkListener(input);
-			listener.run();
+			listener.start();
 
 			ConnectionMessage cm = new ConnectionMessage(Type.CONNECT, username, password);			
 			output.writeObject(cm);
@@ -118,7 +124,7 @@ public class NetworkHandler {
 		} catch (IllegalAccessException e) {
 			System.out.println("An invalid ConnectionMessage was created.");
 			e.printStackTrace();
-		}
+		} 
 	}
 
 	/**

@@ -24,7 +24,7 @@ import java.io.ObjectInputStream;
 
 import networking.StringMessage.Type;
 
-public class NetworkListener implements Runnable {
+public class NetworkListener extends Thread {
 
 	private boolean run;
 	private ObjectInputStream input;
@@ -42,7 +42,6 @@ public class NetworkListener implements Runnable {
 	/**
 	 * Starts the listener thread, which waits for input from the server and injects it onto the proper screen. The proper screen is tightly linked, so it might be a good idea to decouple the way I'm going about this.
 	 */
-	@Override
 	public void run() {
 		run = true;
 
