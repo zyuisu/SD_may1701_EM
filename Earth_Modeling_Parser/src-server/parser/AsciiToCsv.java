@@ -71,9 +71,8 @@ public class AsciiToCsv {
 			boolean extract_headers = false;
 			while (!extract_headers) {
 				String headers = "";
-				while (headers.replace(" ", "").equals("")) {
+				while (headers.replace(" ", "").equals(""))
 					headers = scanner.nextLine();
-				}
 				Scanner scanheaders = new Scanner(headers);
 				String head = scanheaders.next();
 				switch (head) {
@@ -99,9 +98,8 @@ public class AsciiToCsv {
 						NODATA_value = scanheaders.nextDouble();
 						break;
 				}
-				if (ncols != 0 && nrows != 0 && xllcorner != 0 && yllcorner != 0 && cellsize != 0 && NODATA_value != 0) {
+				if (ncols != 0 && nrows != 0 && xllcorner != 0 && yllcorner != 0 && cellsize != 0 && NODATA_value != 0)
 					extract_headers = true;
-				}
 			}
 
 			int counter = 0;
@@ -114,9 +112,8 @@ public class AsciiToCsv {
 
 			while (scanner.hasNextLine()) {
 				scanning = "";
-				while (scanning.replace(" ", "").equals("")) {
+				while (scanning.replace(" ", "").equals(""))
 					scanning = scanner.nextLine();
-				}
 				Scanner linescan = new Scanner(scanning);
 				while (linescan.hasNextDouble()) {
 					double value = linescan.nextDouble();

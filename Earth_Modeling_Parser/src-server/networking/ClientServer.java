@@ -99,11 +99,12 @@ public class ClientServer extends Thread {
 	/**
 	 * Starts the server and waits for connections.
 	 */
+	@Override
 	public void run() {
 		try {
 			KeyStore ks = KeyStore.getInstance("JKS");
 			ks.load(new FileInputStream("/home/akunduru/Desktop/keystore.jks"), "password".toCharArray()); // TODO keystorefile and it's password should be passed at server start-up.
-			
+
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
 			kmf.init(ks, "password".toCharArray());
 
@@ -119,14 +120,9 @@ public class ClientServer extends Thread {
 
 			Logger.info("Waiting for clients on port: {}", serverPort);
 
-			int d = 0;
-			
 			while (run) {
-				//DEBUG
-				Logger.info("Hiya" + d++);
-				
 				SSLSocket clientSocket = (SSLSocket) serverSocket.accept();
-				
+
 				if (!run)
 					break; // Previous call is blocking, so check again to avoid IOExceptions or stalled threads.
 

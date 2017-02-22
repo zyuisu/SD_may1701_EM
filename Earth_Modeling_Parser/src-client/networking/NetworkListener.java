@@ -42,6 +42,7 @@ public class NetworkListener extends Thread {
 	/**
 	 * Starts the listener thread, which waits for input from the server and injects it onto the proper screen. The proper screen is tightly linked, so it might be a good idea to decouple the way I'm going about this.
 	 */
+	@Override
 	public void run() {
 		run = true;
 
@@ -56,10 +57,10 @@ public class NetworkListener extends Thread {
 		while (run)
 			try {
 				StringMessage message = (StringMessage) input.readObject();
-				
-				//DEBUG
+
+				// DEBUG
 				System.out.println(message.getMessage());
-				
+
 				if (message.getMessageType() == Type.ERROR_MESSAGE) {
 					// TODO
 				} else {

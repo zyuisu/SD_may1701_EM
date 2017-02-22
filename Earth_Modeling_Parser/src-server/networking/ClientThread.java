@@ -22,7 +22,6 @@ package networking;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 
 import javax.net.ssl.SSLSocket;
 
@@ -50,7 +49,7 @@ public class ClientThread extends Thread {
 	public ClientThread(SSLSocket socket, ClientServer server) {
 		this.socket = socket;
 		this.server = server;
-		
+
 		try {
 			input = new ObjectInputStream(socket.getInputStream());
 			output = new ObjectOutputStream(socket.getOutputStream());
@@ -98,6 +97,7 @@ public class ClientThread extends Thread {
 	/**
 	 * Starts the thread. Runs until the client passes a ConnectionMessage of ConnectionMessage.Type.DISCONNECT. The run flag will also be tripped by bufferMessage() if there is a timeout event on the socket that causes sending a message over output to fail. An error will be logged if this method is given an invalid object from the input stream.
 	 */
+	@Override
 	public void run() {
 		run = true;
 

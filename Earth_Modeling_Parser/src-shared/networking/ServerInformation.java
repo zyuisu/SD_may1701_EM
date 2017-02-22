@@ -20,9 +20,10 @@
 package networking;
 
 public class ServerInformation {
-	
+
 	public final static String SERVER_ADDRESS = "localhost";
-	public final static int SERVER_PORT = 1444; 
-	
-	private ServerInformation(){};
+	public final static int SERVER_PORT = 1443;
+
+	private ServerInformation() {
+	};
 }

@@ -50,10 +50,10 @@ public class LoginScreenController implements IControlledScreen {
 		// The arrow means lambda expression in Java.
 		// Lambda expressions allow you to create anonymous methods, which is perfect for eventHandling.
 		loginButton.setOnAction(event -> {
-			
-			//DEBUG
+
+			// DEBUG
 			NetworkHandler handler = new NetworkHandler("test", "password");
-			
+
 			errorMessage.setText("Don't poke me!");
 		});
 

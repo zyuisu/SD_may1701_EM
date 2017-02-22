@@ -83,24 +83,14 @@ public class NetworkHandler {
 			SSLSocketFactory ssf = sc.getSocketFactory();
 			socket = (SSLSocket) ssf.createSocket(SERVER_ADDRESS, SERVER_PORT);
 			socket.startHandshake();
-			
-			
-			//DEBUG
-			System.out.println(socket.getEnableSessionCreation());
-			System.out.println(socket.isConnected());
-			System.out.println("yo");
-			
-			input = new ObjectInputStream(socket.getInputStream());
-			
-			//DEBUG
-			System.out.println("yo");
-			
+
 			output = new ObjectOutputStream(socket.getOutputStream());
-			
+			input = new ObjectInputStream(socket.getInputStream());
+
 			listener = new NetworkListener(input);
 			listener.start();
 
-			ConnectionMessage cm = new ConnectionMessage(Type.CONNECT, username, password);			
+			ConnectionMessage cm = new ConnectionMessage(Type.CONNECT, username, password);
 			output.writeObject(cm);
 
 		} catch (IOException ioe) {
@@ -124,7 +114,7 @@ public class NetworkHandler {
 		} catch (IllegalAccessException e) {
 			System.out.println("An invalid ConnectionMessage was created.");
 			e.printStackTrace();
-		} 
+		}
 	}
 
 	/**

@@ -65,13 +65,13 @@ public class MapProperties {
 			throw new IllegalAccessException("Region and compound types must be set.");
 		this.region = region;
 		this.compound = compound;
-		
+
 		if (year < 1500)
 			throw new IllegalArgumentException("Are you sure you set the correct year? It is less than 1500.");
 		else if (year > 2100)
 			throw new IllegalArgumentException("Are you sure you set the correct year? It is greater than 2100.");
 		this.year = year;
-		
+
 	}
 
 	/**
@@ -81,11 +81,11 @@ public class MapProperties {
 	public String toString() {
 		return region.name() + compound.name() + "y" + year + "m" + month;
 	}
-	
+
 	/**
 	 * @return The MapRegion that represents the extent of this map.
 	 */
-	public MapRegion getMapCompound(){
+	public MapRegion getMapCompound() {
 		return region;
 	}
 

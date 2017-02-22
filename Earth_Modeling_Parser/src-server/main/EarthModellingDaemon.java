@@ -88,7 +88,7 @@ public class EarthModellingDaemon {
 			compound = MapCompoundType.CO2;
 			currentIndex = 4;
 		}
-		
+
 		MapRegion region = MapRegion.GLOBAL; // Default to global.
 
 		int year = Integer.parseInt(s.substring(currentIndex, currentIndex + 4));
