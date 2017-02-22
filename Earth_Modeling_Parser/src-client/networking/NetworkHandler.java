@@ -84,6 +84,7 @@ public class NetworkHandler {
 			socket = (SSLSocket) ssf.createSocket(SERVER_ADDRESS, SERVER_PORT);
 			socket.startHandshake();
 
+			// Grab output after handshake, before input.
 			output = new ObjectOutputStream(socket.getOutputStream());
 			input = new ObjectInputStream(socket.getInputStream());
 

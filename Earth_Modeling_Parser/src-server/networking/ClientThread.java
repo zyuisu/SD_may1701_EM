@@ -55,6 +55,8 @@ public class ClientThread extends Thread {
 			output = new ObjectOutputStream(socket.getOutputStream());
 		} catch (IOException ioe) {
 			Logger.error("Exception creating I/O streams: {}", ioe);
+		} catch (Exception e) {
+			Logger.error(e);
 		}
 	}
 
@@ -84,11 +86,13 @@ public class ClientThread extends Thread {
 			return true;
 
 		} catch (IOException ioe) {
-			Logger.error("Exception parsing I/O sream: {}", ioe);
+			Logger.error("Exception parsing I/O stream: {}", ioe);
 		} catch (ClassNotFoundException cnfe) {
 			Logger.error("Couldn't parse with a defined class. Check src-shared.networking? {}", cnfe);
 		} catch (IllegalAccessException iae) {
 			Logger.error("Error message was defined with incorrect parameters: {}", iae);
+		} catch (Exception e) {
+			Logger.error(e);
 		}
 
 		return false;
@@ -122,13 +126,16 @@ public class ClientThread extends Thread {
 				} else
 					bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "The input object passed is not a value message class defined in src-shared.networking."));
 			} catch (IOException ioe) {
-				Logger.error("Exception parsing I/O sream: {}", ioe);
+				Logger.error("Exception parsing I/O stream: {}", ioe);
 				break; // //////////////////// So we don't lock up the thread. ////////////////////////////
 			} catch (ClassNotFoundException cnfe) {
 				Logger.error("Couldn't parse with a defined class. Check src-shared.networking? {}", cnfe);
 				break; // //////////////////// So we don't lock up the thread. ////////////////////////////
 			} catch (IllegalAccessException iae) {
 				Logger.error("Error message was defined with incorrect parameters: {}", iae);
+				break; // //////////////////// So we don't lock up the thread. ////////////////////////////
+			} catch (Exception e) {
+				Logger.error(e);
 				break; // //////////////////// So we don't lock up the thread. ////////////////////////////
 			}
 
@@ -147,6 +154,8 @@ public class ClientThread extends Thread {
 			run = false;
 		} catch (IOException ioe) {
 			Logger.error("There was a issue trying to close the socket or I/O streams: {}", ioe);
+		} catch (Exception e) {
+			Logger.error(e);
 		}
 
 		Logger.info("{} sucessfully disconnected from the server", username);
@@ -169,6 +178,8 @@ public class ClientThread extends Thread {
 			output.writeObject(sm);
 		} catch (IOException ioe) {
 			Logger.error("{} had an error when attempting to write to the output stream: {}", username, ioe);
+		} catch (Exception e) {
+			Logger.error(e);
 		}
 		return true;
 	}

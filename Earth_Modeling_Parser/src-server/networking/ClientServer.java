@@ -65,7 +65,7 @@ public class ClientServer extends Thread {
 	 * @throws IOException
 	 *            If there is an error reading from the approvedClients.txt file.
 	 */
-	public ClientServer(int portNumber) throws IOException {
+	public ClientServer(int portNumber) {
 		serverPort = portNumber;
 		clients = new HashSet<ClientThread>();
 		run = true;
@@ -80,20 +80,26 @@ public class ClientServer extends Thread {
 	 * @throws IOException
 	 *            Can't read from the existing approvedClients.txt file!
 	 */
-	private void addFromApprovedList() throws IOException {
-		BufferedReader buffR;
-		buffR = new BufferedReader(new FileReader(FileLocations.APPROVED_CLIENTS_FILE_LOCATION));
+	private void addFromApprovedList() {
+		try {
+			BufferedReader buffR;
+			buffR = new BufferedReader(new FileReader(FileLocations.APPROVED_CLIENTS_FILE_LOCATION));
 
-		Scanner sc = new Scanner(buffR);
-		while (sc.hasNextLine()) {
-			String line = sc.nextLine().trim();
-			StringTokenizer tok = new StringTokenizer(line);
-			if (tok.countTokens() == 2)
-				approvedClients.put(tok.nextToken(), tok.nextToken());
+			Scanner sc = new Scanner(buffR);
+			while (sc.hasNextLine()) {
+				String line = sc.nextLine().trim();
+				StringTokenizer tok = new StringTokenizer(line);
+				if (tok.countTokens() == 2)
+					approvedClients.put(tok.nextToken(), tok.nextToken());
+			}
+
+			sc.close();
+			buffR.close();
+		} catch (IOException iae) {
+			Logger.error("Error reading from the approved clients file: {}", iae);
+		} catch (Exception e) {
+			Logger.error(e);
 		}
-
-		sc.close();
-		buffR.close();
 	}
 
 	/**
@@ -152,6 +158,8 @@ public class ClientServer extends Thread {
 			Logger.error("Passed password doesn't unlock the keystore.", e);
 		} catch (KeyManagementException e) {
 			Logger.error("Issue retrieving keymanager.", e);
+		} catch (Exception e) {
+			Logger.error(e);
 		}
 	}
 
@@ -166,6 +174,8 @@ public class ClientServer extends Thread {
 			new Socket("localhost", serverPort);
 		} catch (IOException ioe) {
 			Logger.error("Error trying to stop the server: {}", ioe);
+		} catch (Exception e) {
+			Logger.error(e);
 		}
 	}
 
@@ -193,6 +203,8 @@ public class ClientServer extends Thread {
 			}
 		} catch (IllegalAccessException iae) {
 			Logger.error("StringMessage message was defined with incorrect parameters: {}", iae);
+		} catch (Exception e) {
+			Logger.error(e);
 		}
 	}
 
