@@ -21,7 +21,7 @@ package framework;
 
 public interface IDestroyable {
 	/**
-	 * Dispose resources.
+	 * Dispose resources, so a screen can be gracefully shut down.
 	 */
 	public void onDestroy();
 }

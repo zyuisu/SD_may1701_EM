@@ -26,28 +26,32 @@ public class StringMessage implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public enum Type {
-		ERROR_MESSAGE, MESSAGE
+		ERROR_MESSAGE, INFORMATION_MESSAGE, WARNING_MESSAGE
 	};
 
 	private Type messageType;
-	private String message;
+	private String msgHeader;
+	private String msgContent;
 
 	/**
 	 * Constructs a StringMessage based on passed parameters.
 	 * 
 	 * @param type
 	 *           The StringMessage.TYPE that this type represents.
-	 * @param message
-	 *           The String that you would like to send along with your message.
+	 * @param msgHeader
+	 *           The String that will be displayed as the header of the message. Should be simple.
+	 * @param msgContent
+	 *           The String that will explain the issue in greater detail.
 	 * @throws IllegalAccessException
 	 *            If a null value is passed.
 	 */
-	public StringMessage(Type type, String message) throws IllegalAccessException {
-		if (type == null || message == null)
+	public StringMessage(Type type, String msgHeader, String msgContent) throws IllegalAccessException {
+		if (type == null || msgHeader == null || msgContent == null)
 			throw new IllegalAccessException("All values must be set.");
 
 		messageType = type;
-		this.message = message;
+		this.msgHeader = msgHeader;
+		this.msgContent = msgContent;
 	}
 
 	/**
@@ -60,11 +64,16 @@ public class StringMessage implements Serializable {
 	}
 
 	/**
-	 * Returns the String included in this message.
-	 * 
-	 * @return The String that this object was constructed with.
+	 * @return A brief message to summarize the issue. Should be simple.
 	 */
-	public String getMessage() {
-		return message;
+	public String getMsgHeader() {
+		return msgHeader;
+	}
+
+	/**
+	 * @return A String representing the message in greater detail (full message).
+	 */
+	public String getMsgContent() {
+		return msgContent;
 	}
 }

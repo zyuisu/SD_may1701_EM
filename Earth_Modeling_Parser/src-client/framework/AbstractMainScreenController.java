@@ -25,7 +25,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
 
-public abstract class AbstractScreenController extends StackPane {
+public abstract class AbstractMainScreenController extends StackPane {
 	// Destroyable will allow us to gracefully shut down dependencies and threading operations a screen may need to create.
 	protected IDestroyable destroyableController;
 
@@ -38,7 +38,7 @@ public abstract class AbstractScreenController extends StackPane {
 	 */
 	protected IControlledScreen loadScreen(String fxmlLocation) {
 		// Get the FXML loader and attempt to load it.
-		FXMLLoader fxmlLoader = new FXMLLoader(AbstractScreenController.class.getResource(fxmlLocation));
+		FXMLLoader fxmlLoader = new FXMLLoader(AbstractMainScreenController.class.getResource(fxmlLocation));
 
 		// There might be an error loading the FXML.
 		try {

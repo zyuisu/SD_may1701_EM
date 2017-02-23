@@ -19,15 +19,11 @@
 
 package singleton;
 
-import login.LoginScreenController;
-import view.MainController;
+import framework.AbstractNetworkedScreenController;
 
 public class ControllerData {
-	// Check current controller.
-	String currentController;
-
 	// All possible controllers.
-	LoginScreenController loginScreenController;
+	private AbstractNetworkedScreenController currentController;
 
 	/**
 	 * Default constructor to use in singleton.
@@ -36,48 +32,21 @@ public class ControllerData {
 	}
 
 	/**
-	 * Set the current controller so that it can be accessed by other pages.
+	 * Set the current controller so that it can be accessed by other pages. The loadScreen() types should be defined in MainController as MainController.NAME_SCREEN.
 	 * 
 	 * @param currentController
-	 *           The currently active controller.
+	 *           The currently active controller. This application will require all controllers to be able to handler networked requests by being of type AbstractNetworkedScreenController.
 	 */
-	public void setCurrentController(String currentController) {
-		this.currentController = currentController;
+	public void setCurrentController(AbstractNetworkedScreenController controller) {
+		currentController = controller;
 	}
 
 	/**
 	 * Lets you know what the current controller is as set by the MainController.
 	 * 
-	 * @return A String representing the current controller.
+	 * @return The currently viewable controller.
 	 */
-	public String getCurrentController() {
+	public AbstractNetworkedScreenController getCurrentController() {
 		return currentController;
-	}
-
-	/**
-	 * Allows you to set a LoginScreenControllerController.
-	 * 
-	 * @param controller
-	 *           The controller that you want to assign.
-	 * @return True if the passed controller was set; false if it was determined not to be a LoginScreenController.
-	 */
-	public boolean setLoginScreenController(LoginScreenController controller) {
-		if (controller instanceof LoginScreenController) {
-			loginScreenController = controller;
-			return true;
-		}
-
-		// Implied else.
-		return false;
-	}
-
-	/**
-	 * @return LoginScreenController if it is the currently active screen. Otherwise you will get a null.
-	 */
-	public LoginScreenController getLoginScreenController() {
-		if (currentController.equals(MainController.LOGIN_SCREEN))
-			return loginScreenController;
-		else
-			return null;
 	}
 }

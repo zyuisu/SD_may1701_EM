@@ -22,22 +22,21 @@ package utils;
 public class FileLocations {
 
 	public static final String ASCII_INPUT_DIRECTORY_LOCATION = "Original_ASCII_files\\";
-	public static final String CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION = "Auto_GDB\\";
-	public static final String CSV_TABLES_OUTPUT_DIRECTORY_LOCATION = "CSV_Tables\\";
 	public static final String CSV_OUTPUT_DIRECTORY_LOCATION = "Parsed_CSV_files\\";
 	public static final String TEMP_WORKING_DIRECTORY_LOCATION = "Temp_Working_Files\\";
 
 	public static final String CONVERTED_FILE_LOCATION = "resources\\converted.txt";
 	public static final String APPROVED_CLIENTS_FILE_LOCATION = "/home/akunduru/Desktop/approvedClients.txt"; // "resources\\approvedClients.txt";
 
-	public static final String CURRENT_WORKING_DIRECTORY_LOCATION  = "C:\\EarthModelingDaemon\\";
+	public static final String CURRENT_WORKING_DIRECTORY_LOCATION = "C:\\EarthModelingDaemon\\";
 	public static final String MAP_TEMPLATES_DIRECTORY_LOCATION = "Map_Templates\\";
 	public static final String MAPS_PUBLISHING_DIRECTORY_LOCATION = "Maps_Publishing\\";
 	public static final String TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION = "temp_publishing\\";
 	public static final String CREATED_LAYERS_DIRECTORY_LOCATION = "Created_Layers\\";
 	public static final String BLANK_MAP_FILE_LOCATION = "Maps_Publishing\\blank_map.mxd";
-	
-	
+	public static final String CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION = "Auto_GDB\\";
+	public static final String CSV_TABLES_OUTPUT_DIRECTORY_LOCATION = "CSV_Tables\\";
+
 	public static final String PYTHON_EXECUTABLE_BINARY_LOCATION = "C:\\Python27\\ArcGISx6410.4\\python.exe";
 	public static final String CSV_TO_GEODATABASE_SCRIPT_LOCATION = "Python_Scripts\\CsvToGeodatabase.py";
 	// If the git repo is locally cloned, you can simply do something like this: C:\\EarthModeling\\SD_may1701_EM\\Earth_Modeling_Parser\\src\\Python_Scripts\\CsvToGeodatabase.py

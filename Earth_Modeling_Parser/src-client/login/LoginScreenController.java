@@ -21,21 +21,17 @@ package login;
 
 import java.io.File;
 
-import framework.AbstractScreenController;
-import framework.IControlledScreen;
+import framework.AbstractNetworkedScreenController;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import networking.NetworkHandler;
-import view.MainController;
+import singleton.MainModel;
 
-public class LoginScreenController implements IControlledScreen {
+public class LoginScreenController extends AbstractNetworkedScreenController {
 	// PUBLIC CONSTANTS THAT WILL NEED TO BE UPDATED WHEN SERVER FIELDS CHANGE.
 	public final String SERVER_ADDRESS = "localhost";
 	// public final String SERVER_ADDRESS = "proj-se491.cs.iastate.edu";
@@ -49,9 +45,6 @@ public class LoginScreenController implements IControlledScreen {
 	private TextField usernameTextField;
 	@FXML
 	private PasswordField passwordField;
-
-	// So we can set the screen's parent later on.
-	MainController parentController;
 
 	/**
 	 * Initializes the controller class. Automatically called after the FXML file has been loaded.
@@ -68,44 +61,20 @@ public class LoginScreenController implements IControlledScreen {
 			if (username.equals("") || password.equals(""))
 				errorAlert("Invalid Login Fields", "Your username or password is blank.", "Please enter a valid username and password.");
 			else {
-				FileChooser fc = new FileChooser();
-				fc.setTitle("Select KeyStore");
-				fc.setSelectedExtensionFilter(new ExtensionFilter("KeyStore File", "*.jks"));
-				File keyStoreFile = fc.showOpenDialog(loginButton.getScene().getWindow());
+				ExtensionFilter[] filter = { new ExtensionFilter("KeyStore File", "*.jks") };
+				File keyStoreFile = promptUserForFile("Select KeyStore", loginButton, filter);
 
-				if (keyStoreFile != null)
+				if (keyStoreFile == null)
+					errorAlert("Unable to Authenticate", "You must provide your key to authenticate with the server.", "Please select a keystore file and try again.");
+				else
 					try {
 						NetworkHandler handler = new NetworkHandler(username, password, keyStoreFile, password); // keystore master password == user password for now.
+						MainModel.getModel().getNetworkData().setNewHandler(handler);
 					} catch (Exception e) {
 						errorAlert("Error Connecting to VEMS", e.getMessage(), "Please correct the issue and try again.");
 					}
+
 			}
 		});
-	}
-
-	/**
-	 * Displays an error notification to the user. Basiclaly acts as a wrapper for Alert.
-	 * 
-	 * @param title
-	 *           The text to be displayed in the title bar.
-	 * @param header
-	 *           The text to be displayed in the Alert's window.
-	 * @param content
-	 *           The text to be displayed in the Alert's content box.
-	 */
-	private void errorAlert(String title, String header, String content) {
-		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle(title);
-		alert.setHeaderText(header);
-		alert.setContentText(content);
-		alert.showAndWait();
-	}
-
-	/**
-	 * This method will allow for the injection of each screen's parent.
-	 */
-	@Override
-	public void setScreenParent(AbstractScreenController screenParent) {
-		parentController = (MainController) screenParent;
 	}
 }

@@ -26,5 +26,5 @@ public interface IControlledScreen {
 	 * @param screenController
 	 *           The parent controller of our custom abstract type.
 	 */
-	public void setScreenParent(AbstractScreenController screenController);
+	public void setScreenParent(AbstractMainScreenController screenController);
 }

@@ -32,7 +32,7 @@ public class MainView extends Application {
 		MainController mainController = new MainController();
 
 		// Add the controller to the singleton.
-		MainModel.getModel().currentMainData().setMainController(mainController);
+		MainModel.getModel().getMainData().setMainController(mainController);
 
 		// Initialize display components.
 		Group root = new Group();
@@ -48,6 +48,7 @@ public class MainView extends Application {
 		// Properly terminate the application if the user presses the "X" window button.
 		primaryStage.setOnCloseRequest(event -> {
 			mainController.closeApplication();
+			stop();
 		});
 
 		// Set the title and make the application a fixed size.
@@ -56,10 +57,19 @@ public class MainView extends Application {
 		primaryStage.sizeToScene();
 
 		// Add the stage to the singleton.
-		MainModel.getModel().currentMainData().setMainStage(primaryStage);
+		MainModel.getModel().getMainData().setMainStage(primaryStage);
 
 		// Go to the first screen.
 		mainController.goToLoginScreen();
+	}
+
+	/**
+	 * To destroy resources upon application close. Should be called in all instances of a properly closed JavaFX application.
+	 */
+	@Override
+	public void stop() {
+		if (MainModel.getModel().getNetworkData().isHandlerSet())
+			MainModel.getModel().getNetworkData().closeHandler();
 	}
 
 	/**

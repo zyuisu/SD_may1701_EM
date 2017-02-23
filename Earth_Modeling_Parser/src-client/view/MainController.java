@@ -19,7 +19,7 @@
 
 package view;
 
-import framework.AbstractScreenController;
+import framework.AbstractMainScreenController;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -29,9 +29,9 @@ import javafx.util.Duration;
 import login.LoginScreenController;
 import singleton.MainModel;
 
-public class MainController extends AbstractScreenController {
+public class MainController extends AbstractMainScreenController {
 	// Constants that represent the screen names and locations in the workspace.
-	public static final String LOGIN_SCREEN = "login";
+	// I assume that anyone that builds upon this application can be well behaved and doesn't need enums.
 	public static final String LOGIN_SCREEN_FXML = "/login/LoginScreen.fxml";
 
 	/**
@@ -40,11 +40,10 @@ public class MainController extends AbstractScreenController {
 	public void goToLoginScreen() {
 		try {
 			LoginScreenController controller = (LoginScreenController) loadScreen(LOGIN_SCREEN_FXML);
-			MainModel.getModel().currentControllerData().setCurrentController(LOGIN_SCREEN);
-			MainModel.getModel().currentControllerData().setLoginScreenController(controller);
+			MainModel.getModel().getControllerData().setCurrentController(controller);
 		} catch (Exception e) {
 			// DEBUG
-			System.out.println("Error trying to load the after game screen. This is likely an issue with its controller AND/OR FXML dependencies.\n" + e.getMessage());
+			System.out.println("Error trying to load the login screen. This is likely an issue with its controller AND/OR FXML dependencies.\n" + e.getMessage());
 			e.printStackTrace();
 		}
 	}

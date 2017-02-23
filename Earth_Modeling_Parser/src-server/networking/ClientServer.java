@@ -191,15 +191,15 @@ public class ClientServer extends Thread {
 		try {
 			if (afm.getOverwriteExisting())
 				if (!EarthModellingDaemon.removeExistingMap(afm.getMapProperties()))
-					client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue removing the existing map. Check the server logs for more information."));
+					client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue removing the existing map.", "Check the server logs for more information."));
 
 			try {
 				if (!EarthModellingDaemon.createMap(afm.getFile(), afm.getMapProperties()))
-					client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue creating the new map. Is it possible that the map you wish to create already exists? If not, check the server logs for more information."));
+					client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue creating the new map.", " Is it possible that the map you wish to create already exists? If not, check the server logs for more information."));
 				else
-					client.bufferMessage(new StringMessage(StringMessage.Type.MESSAGE, "The map " + afm.getMapProperties().toString() + " was sucessfully created"));
+					client.bufferMessage(new StringMessage(StringMessage.Type.INFORMATION_MESSAGE, "Success!", "The map " + afm.getMapProperties().toString() + " was sucessfully created"));
 			} catch (Exception e) {
-				client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "One of the map generation methods failed. Try again, utilizing the overwrite setting. If there is still an issue, check the server logs for more information."));
+				client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "One of the map generation methods failed.", "Try again, utilizing the overwrite setting. If there is still an issue, check the server logs for more information."));
 			}
 		} catch (IllegalAccessException iae) {
 			Logger.error("StringMessage message was defined with incorrect parameters: {}", iae);

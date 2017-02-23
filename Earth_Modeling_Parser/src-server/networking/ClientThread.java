@@ -78,7 +78,7 @@ public class ClientThread extends Thread {
 				return false;
 
 			if (!server.validateUser(cm.getUsername(), cm.getPassword(), socket)) {
-				bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "Invalid username or password!"));
+				bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "Invalid username or password!", "Please re-enter your username and password and try again."));
 				return false;
 			}
 
@@ -124,7 +124,7 @@ public class ClientThread extends Thread {
 					if (cm.getMessageType() == ConnectionMessage.Type.DISCONNECT)
 						run = false;
 				} else
-					bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "The input object passed is not a value message class defined in src-shared.networking."));
+					bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "Message sending error.", "The input object passed is not a value message class defined in src-shared.networking. Try again."));
 			} catch (IOException ioe) {
 				Logger.error("Exception parsing I/O stream: {}", ioe);
 				break; // //////////////////// So we don't lock up the thread. ////////////////////////////
