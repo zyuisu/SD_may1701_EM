@@ -48,7 +48,7 @@ public class NetworkListener extends Thread {
 
 		// Give NetworkHandler enough time to initalize stuff.
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			System.out.println("There was an issue putting the listener thread to sleep.");
 			e.printStackTrace();

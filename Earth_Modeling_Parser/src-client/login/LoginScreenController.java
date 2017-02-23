@@ -19,11 +19,19 @@
 
 package login;
 
+import java.io.File;
+
 import framework.AbstractScreenController;
 import framework.IControlledScreen;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import networking.NetworkHandler;
 import view.MainController;
 
@@ -36,7 +44,11 @@ public class LoginScreenController implements IControlledScreen {
 	@FXML
 	private Button loginButton;
 	@FXML
-	private Label errorMessage;
+	private Label message;
+	@FXML
+	private TextField usernameTextField;
+	@FXML
+	private PasswordField passwordField;
 
 	// So we can set the screen's parent later on.
 	MainController parentController;
@@ -50,13 +62,43 @@ public class LoginScreenController implements IControlledScreen {
 		// The arrow means lambda expression in Java.
 		// Lambda expressions allow you to create anonymous methods, which is perfect for eventHandling.
 		loginButton.setOnAction(event -> {
+			String username = usernameTextField.getText().trim();
+			String password = passwordField.getText().trim();
 
-			// DEBUG
-			NetworkHandler handler = new NetworkHandler("test", "password");
+			if (username.equals("") || password.equals(""))
+				errorAlert("Invalid Login Fields", "Your username or password is blank.", "Please enter a valid username and password.");
+			else {
+				FileChooser fc = new FileChooser();
+				fc.setTitle("Select KeyStore");
+				fc.setSelectedExtensionFilter(new ExtensionFilter("KeyStore File", "*.jks"));
+				File keyStoreFile = fc.showOpenDialog(loginButton.getScene().getWindow());
 
-			errorMessage.setText("Don't poke me!");
+				if (keyStoreFile != null)
+					try {
+						NetworkHandler handler = new NetworkHandler(username, password, keyStoreFile, password); // keystore master password == user password for now.
+					} catch (Exception e) {
+						errorAlert("Error Connecting to VEMS", e.getMessage(), "Please correct the issue and try again.");
+					}
+			}
 		});
+	}
 
+	/**
+	 * Displays an error notification to the user. Basiclaly acts as a wrapper for Alert.
+	 * 
+	 * @param title
+	 *           The text to be displayed in the title bar.
+	 * @param header
+	 *           The text to be displayed in the Alert's window.
+	 * @param content
+	 *           The text to be displayed in the Alert's content box.
+	 */
+	private void errorAlert(String title, String header, String content) {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle(title);
+		alert.setHeaderText(header);
+		alert.setContentText(content);
+		alert.showAndWait();
 	}
 
 	/**

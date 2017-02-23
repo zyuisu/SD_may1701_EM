@@ -19,6 +19,7 @@
 
 package networking;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -44,7 +45,6 @@ public class NetworkHandler {
 	// THESE CONSTANTS WILL NEED TO BE UPDATED WHEN THE SERVER FIELDS CHANGE.
 	public final String SERVER_ADDRESS = ServerInformation.SERVER_ADDRESS;
 	public final int SERVER_PORT = ServerInformation.SERVER_PORT;
-	public final String KEYSTORE_FILE = "/home/akunduru/Desktop/keystore.jks";
 
 	private SSLSocket socket;
 	private ObjectInputStream input;
@@ -60,62 +60,59 @@ public class NetworkHandler {
 	 * @param username
 	 *           A valid username that will be accepted by the server.
 	 * @param password
-	 *           A valid password that will be accepted by the server. Also represents the master password for the keystore.
+	 *           The password associated with this username.
+	 * @param keyStoreFile
+	 *           The keystore certification file. This is required to authenticate a secure connection to the server.
+	 * @param keyStorePassword
+	 *           The master password that the keystore was generated with.
+	 * @throws IOException
+	 *            Error creating IO Streams.
+	 * @throws KeyStoreException
+	 *            Instance of keystore is not correctly defined.
+	 * @throws CertificateException
+	 *            Error loading passed certificate keystore.
+	 * @throws NoSuchAlgorithmException
+	 *            Error loading keystore.
+	 * @throws UnrecoverableKeyException
+	 *            Passed password doesn't unlock keystore.
+	 * @throws KeyManagementException
+	 *            Issue retrieving keymanager.
 	 */
-	public NetworkHandler(String username, String password) {
+	public NetworkHandler(String username, String password, File keyStoreFile, String keyStorePassword) throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
 		this.username = username;
 		this.password = password;
 
+		KeyStore ks = KeyStore.getInstance("JKS");
+		ks.load(new FileInputStream(keyStoreFile), keyStorePassword.toCharArray());
+
+		KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+		kmf.init(ks, keyStorePassword.toCharArray());
+
+		TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+		tmf.init(ks);
+
+		SSLContext sc = SSLContext.getInstance("TLS");
+		TrustManager[] trustManagers = tmf.getTrustManagers();
+		sc.init(kmf.getKeyManagers(), trustManagers, null);
+
+		SSLSocketFactory ssf = sc.getSocketFactory();
+		socket = (SSLSocket) ssf.createSocket(SERVER_ADDRESS, SERVER_PORT);
+		socket.startHandshake();
+
+		// Grab output after handshake, before input.
+		output = new ObjectOutputStream(socket.getOutputStream());
+		input = new ObjectInputStream(socket.getInputStream());
+
+		listener = new NetworkListener(input);
+		listener.start();
+
 		try {
-			KeyStore ks = KeyStore.getInstance("JKS");
-			ks.load(new FileInputStream(KEYSTORE_FILE), password.toCharArray());
-
-			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-			kmf.init(ks, password.toCharArray());
-
-			TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
-			tmf.init(ks);
-
-			SSLContext sc = SSLContext.getInstance("TLS");
-			TrustManager[] trustManagers = tmf.getTrustManagers();
-			sc.init(kmf.getKeyManagers(), trustManagers, null);
-
-			SSLSocketFactory ssf = sc.getSocketFactory();
-			socket = (SSLSocket) ssf.createSocket(SERVER_ADDRESS, SERVER_PORT);
-			socket.startHandshake();
-
-			// Grab output after handshake, before input.
-			output = new ObjectOutputStream(socket.getOutputStream());
-			input = new ObjectInputStream(socket.getInputStream());
-
-			listener = new NetworkListener(input);
-			listener.start();
-
-			ConnectionMessage cm = new ConnectionMessage(Type.CONNECT, username, password);
-			output.writeObject(cm);
-
-		} catch (IOException ioe) {
-			System.out.println("IOException while creating the socket or initalizing socket streams.");
-			ioe.printStackTrace();
-		} catch (KeyStoreException e) {
-			System.out.println("Instance of keystore isn't correctly defined.");
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			System.out.println("Error loading keystore.");
-			e.printStackTrace();
-		} catch (CertificateException e) {
-			System.out.println("Error loading passed certificate keystore.");
-			e.printStackTrace();
-		} catch (UnrecoverableKeyException e) {
-			System.out.println("Passed password doesn't unlock the keystore.");
-			e.printStackTrace();
-		} catch (KeyManagementException e) {
-			System.out.println("Issue retrieving keymanager.");
-			e.printStackTrace();
+			output.writeObject(new ConnectionMessage(Type.CONNECT, username, password));
 		} catch (IllegalAccessException e) {
 			System.out.println("An invalid ConnectionMessage was created.");
 			e.printStackTrace();
 		}
+
 	}
 
 	/**
@@ -139,7 +136,7 @@ public class NetworkHandler {
 	 * 
 	 * @param afm
 	 *           The AsciiFileMessage that you wish to send through the buffer.
-	 * @return true if the message was sucessfully sent; false if something failed.
+	 * @return true if the message was successfully sent; false if something failed.
 	 */
 	public boolean bufferAsciiFileMessage(AsciiFileMessage afm) {
 		if (!socket.isConnected()) {
