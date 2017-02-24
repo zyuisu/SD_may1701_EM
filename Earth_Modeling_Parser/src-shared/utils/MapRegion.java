@@ -20,5 +20,5 @@
 package utils;
 
 public enum MapRegion {
-	NORTH_AMERICA, GLOBAL;
+	MISSIPPI_RIVER_BASIN, MIDWESTERN_US, GLOBAL;
 }
