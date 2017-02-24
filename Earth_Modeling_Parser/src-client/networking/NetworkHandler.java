@@ -121,8 +121,6 @@ public class NetworkHandler {
 	private void close() {
 		try {
 			socket.close();
-			input.close();
-			output.close();
 		} catch (IOException ioe) {
 			System.out.println("Error closing I/O streams.");
 			ioe.printStackTrace();
@@ -162,6 +160,7 @@ public class NetworkHandler {
 		try {
 			ConnectionMessage cm = new ConnectionMessage(Type.DISCONNECT, username, password);
 			output.writeObject(cm);
+			output.flush();
 		} catch (Exception e) {
 			System.out.println("Error sending the disconnect request to the server.");
 			e.printStackTrace();

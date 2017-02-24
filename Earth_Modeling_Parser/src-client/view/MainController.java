@@ -20,30 +20,49 @@
 package view;
 
 import framework.AbstractMainScreenController;
+import framework.AbstractNetworkedScreenController;
+import framework.IControlledScreen;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Parent;
 import javafx.util.Duration;
-import login.LoginScreenController;
 import singleton.MainModel;
 
 public class MainController extends AbstractMainScreenController {
 	// Constants that represent the screen names and locations in the workspace.
 	// I assume that anyone that builds upon this application can be well behaved and doesn't need enums.
 	public static final String LOGIN_SCREEN_FXML = "/login/LoginScreen.fxml";
+	public static final String UPLOAD_ASCII_SCREEN_FXML = "/uploadAscii/UploadAsciiScreen.fxml";
 
 	/**
 	 * Method so that we can dynamically access the login screen at runtime.
 	 */
 	public void goToLoginScreen() {
+		goToScreen(LOGIN_SCREEN_FXML);
+	}
+
+	/**
+	 * Sends the user to the upload ascii screen.
+	 */
+	public void goToUploadAsciiScreen() {
+		goToScreen(UPLOAD_ASCII_SCREEN_FXML);
+	}
+
+	/**
+	 * Helper method to load a screen.
+	 * 
+	 * @param fxmlLocation
+	 *           The location of the FXML file on the disk.
+	 */
+	private void goToScreen(String fxmlLocation) {
 		try {
-			LoginScreenController controller = (LoginScreenController) loadScreen(LOGIN_SCREEN_FXML);
-			MainModel.getModel().getControllerData().setCurrentController(controller);
+			IControlledScreen controller = loadScreen(fxmlLocation);
+			MainModel.getModel().getControllerData().setCurrentController((AbstractNetworkedScreenController) controller);
 		} catch (Exception e) {
 			// DEBUG
-			System.out.println("Error trying to load the login screen. This is likely an issue with its controller AND/OR FXML dependencies.\n" + e.getMessage());
+			System.out.println("Error trying to load the " + fxmlLocation + " screen. This is likely an issue with its controller AND/OR FXML dependencies. Is the FXML stored at the stated location? Is the controller linked to the FXML?\n" + e.getMessage());
 			e.printStackTrace();
 		}
 	}

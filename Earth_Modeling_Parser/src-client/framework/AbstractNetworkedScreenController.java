@@ -30,7 +30,7 @@ import view.MainController;
 
 public class AbstractNetworkedScreenController implements IControlledScreen {
 	// So we can set the screen's parent later on.
-	MainController parentController;
+	protected MainController parentController;
 
 	/**
 	 * Displays an error notification to the user. Basically acts as a wrapper for Alert.

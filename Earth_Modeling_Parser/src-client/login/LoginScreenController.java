@@ -24,7 +24,6 @@ import java.io.File;
 import framework.AbstractNetworkedScreenController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -39,8 +38,6 @@ public class LoginScreenController extends AbstractNetworkedScreenController {
 	// Functional components.
 	@FXML
 	private Button loginButton;
-	@FXML
-	private Label message;
 	@FXML
 	private TextField usernameTextField;
 	@FXML
@@ -70,6 +67,7 @@ public class LoginScreenController extends AbstractNetworkedScreenController {
 					try {
 						NetworkHandler handler = new NetworkHandler(username, password, keyStoreFile, password); // keystore master password == user password for now.
 						MainModel.getModel().getNetworkData().setNewHandler(handler);
+						parentController.goToUploadAsciiScreen();
 					} catch (Exception e) {
 						errorAlert("Error Connecting to VEMS", e.getMessage(), "Please correct the issue and try again.");
 					}
