@@ -20,6 +20,7 @@
 package framework;
 
 import java.io.File;
+import java.util.List;
 
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -101,7 +102,7 @@ public class AbstractNetworkedScreenController implements IControlledScreen {
 	 *           The title of the prompt.
 	 * @param node
 	 *           The Node that you wish the prompt to be generated on. (via its getScene().getWindow())
-	 * @return The file that the usre selected; null if they didn't select anything (hit the cancel button).
+	 * @return The file that the user selected; null if they didn't select anything (hit the cancel button).
 	 */
 	protected File promptUserForFile(String promptTitle, Node node) {
 		return promptUserForFile(promptTitle, node, null);
@@ -127,6 +128,42 @@ public class AbstractNetworkedScreenController implements IControlledScreen {
 				fc.getExtensionFilters().add(f);
 
 		return fc.showOpenDialog(node.getScene().getWindow());
+	}
+
+	/**
+	 * Prompt the user to select file(s) from their system explorer.
+	 * 
+	 * @param promptTitle
+	 *           The title of the prompt.
+	 * @param node
+	 *           The Node that you wish the prompt to be generated on. (via its getScene().getWindow())
+	 * @return A List of file(s) that the user selected; null if they didn't select anything (hit the cancel button).
+	 */
+	protected List<File> promptUserForMultipleFiles(String promptTitle, Node node) {
+		return promptUserForMultipleFiles(promptTitle, node, null);
+	}
+
+	/**
+	 * Prompt the user to select file(s) from their system explorer.
+	 * 
+	 * @param promptTitle
+	 *           The title of the prompt.
+	 * @param node
+	 *           The Node that you wish the prompt to be generated on. (via its getScene().getWindow())
+	 * @param filters
+	 *           A list of ExtensionFilters, if you wish to limit the visible and allowed files for a user to select.
+	 * @return A List of file(s) that the user selected; null if they didn't select anything (hit the cancel button).
+	 */
+	protected List<File> promptUserForMultipleFiles(String promptTitle, Node node, ExtensionFilter[] filters) {
+
+		FileChooser fc = new FileChooser();
+		fc.setTitle(promptTitle);
+
+		if (filters != null)
+			for (ExtensionFilter f : filters)
+				fc.getExtensionFilters().add(f);
+
+		return fc.showOpenMultipleDialog(node.getScene().getWindow());
 	}
 
 	/**

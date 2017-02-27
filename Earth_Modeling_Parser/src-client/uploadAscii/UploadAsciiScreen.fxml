@@ -11,8 +11,14 @@
 	a copy of the GNU General Public License along with VEMS. If not, see <http://www.gnu.org/licenses/>. 
 -->
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uploadAscii.UploadAsciiScreenController">
@@ -22,5 +28,18 @@
 				<Font size="14.0" />
 			</font>
 		</Label>
+      <VBox prefHeight="484.0" prefWidth="313.0">
+         <children>
+            <ComboBox fx:id="regionCB" prefWidth="150.0" promptText="Select Region:" />
+            <ComboBox fx:id="compoundCB" prefWidth="150.0" promptText="Select Compound:" visible="false" />
+            <TextField fx:id="yearTextField" promptText="Enter the year." visible="false" />
+            <TextField fx:id="monthTextField" promptText="Enter the month (0-11)." visible="false" />
+         </children>
+      </VBox>
+      <TextArea fx:id="selectedFilesTextArea" layoutX="423.0" layoutY="23.0" prefHeight="450.0" prefWidth="722.0" />
+      <Button fx:id="selectFilesBtn" layoutX="251.0" layoutY="527.0" mnemonicParsing="false" text="Select File(s) To Upload" />
+      <Button fx:id="sendToServerBtn" layoutX="1030.0" layoutY="561.0" mnemonicParsing="false" text="Send to Server" />
+      <CheckBox fx:id="overwriteCheckBox" layoutX="21.0" layoutY="518.0" mnemonicParsing="false" text="Overwrite Existing Map(s)?" />
+      <CheckBox fx:id="yearlyMapCheckBoc" layoutX="321.0" layoutY="123.0" mnemonicParsing="false" selected="true" text="Yearly Map (no month)" />
 	</children>
 </AnchorPane>
