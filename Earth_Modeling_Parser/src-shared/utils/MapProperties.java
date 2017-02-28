@@ -109,4 +109,19 @@ public class MapProperties {
 	public int getMonth() {
 		return month;
 	}
+
+	/**
+	 * Returns true if a type MapProperties and all instance variables are equal; false otherwise.
+	 */
+	@Override
+	public boolean equals(Object o) {
+		if (o == null || !(o instanceof MapProperties))
+			return false;
+
+		MapProperties mp = (MapProperties) o;
+		if (mp.compound == this.compound && mp.region == this.region && mp.year == this.year && mp.month == this.month)
+			return true;
+
+		return false;
+	}
 }

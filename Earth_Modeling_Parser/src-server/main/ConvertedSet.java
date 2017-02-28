@@ -19,86 +19,77 @@
 
 package main;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.Set;
 
 import org.pmw.tinylog.Logger;
 
 import utils.FileLocations;
+import utils.MapCompoundType;
 import utils.MapProperties;
+import utils.MapRegion;
 
-public class ConvertedSet extends HashSet<String> implements Serializable {
+public class ConvertedSet extends HashSet<MapProperties> implements Serializable {
 
-	private static final long serialVersionUID = 2L; // If we wish to use ObjectOutputStream at a later date. This would allow us to easily store MapProperties in this set versus unsafe strings.
+	private static final long serialVersionUID = 3L;
 
-	private FileWriter fileWriter;
-	Set<String> set;
+	private Set<MapProperties> set;
 
 	/**
-	 * Constructor for ConvertedSet creates a set by checking against the previous converted.txt file (located in CONVERTED_LOCATION).
+	 * Constructor for ConvertedSet creates a set by checking against the serialized object.
 	 * 
 	 * @throws IOException
-	 *            Can't add to the existing converted.txt file!
+	 *            Can't add to the existing converted.ser file!
 	 */
 	public ConvertedSet() throws IOException {
-		set = new HashSet<String>();
-		fileWriter = new FileWriter(FileLocations.CONVERTED_FILE_LOCATION, true);
+		set = new HashSet<MapProperties>();
 
 		addFromConverted();
 	}
 
 	/**
-	 * Scans the converted.txt file and adds all values to the HashSet.
+	 * Scans the converted.ser file and sets it to the HashSet reference.
 	 * 
 	 * @throws IOException
-	 *            Can't read from the existing converted.txt file!
+	 *            Can't read from the existing converted.ser file!
 	 */
 	private void addFromConverted() throws IOException {
-		BufferedReader buffR;
-		buffR = new BufferedReader(new FileReader(FileLocations.CONVERTED_FILE_LOCATION));
+		ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FileLocations.CONVERTED_FILE_LOCATION)));
 
-		Scanner sc = new Scanner(buffR);
-		while (sc.hasNextLine()) {
-			String line = sc.nextLine().trim();
-			if (!line.equals(""))
-				set.add(line);
+		try {
+			Set<MapProperties> inSet = (Set<MapProperties>) ois.readObject();
+			set = inSet;
+		} catch (Exception e) {
+			Logger.error(e);
 		}
 
-		sc.close();
-		buffR.close();
+		ois.close();
 	}
 
 	/**
-	 * Overrides the HashSet.add(E e) to ensure no one else can call it. Always returns false.
-	 */
-	@Override
-	public boolean add(String str) {
-		return false;
-	}
-
-	/**
-	 * Adds a given map's properties to the set. For now, this is backed by MapProperties.toString() and HashSet<String>. It is unsafe to use any other method to add a map.
+	 * Adds a given map's properties to the set. It is unsafe to use any other method to add a map.
 	 * 
 	 * @param properties
 	 *           The MapProperties of the map that you wish to add.
 	 * @return true if it doesn't exist in the set and was added; false otherwise.
 	 */
+	@Override
 	public boolean add(MapProperties properties) {
-		String str = properties.toString();
-
-		if (super.add(str)) {
+		if (set.add(properties)) {
 			try {
-				fileWriter.write(str + "\n");
-				fileWriter.flush();
-			} catch (IOException e) {
+				ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(FileLocations.CONVERTED_FILE_LOCATION, false)));
+				oos.writeObject(set);
+				oos.close();
+			} catch (Exception e) {
 				Logger.error(e);
-				return false;
 			}
 			return true;
 		}
@@ -107,13 +98,94 @@ public class ConvertedSet extends HashSet<String> implements Serializable {
 	}
 
 	/**
-	 * Removes a given map's properties from the set. For now, this is backed by MapPropreties.toString() and HashSet<String>. It is unsafe to use any other method to remove a map.
+	 * Removes a given map's properties from the set. It is unsafe to use any other method to remove a map.
 	 * 
 	 * @param properties
 	 *           The MapProperties of the map that you wish to remove.
 	 * @return true if it exists in the set and was removed; false otherwise.
 	 */
 	public boolean remove(MapProperties properties) {
-		return super.remove(properties.toString());
+		if (set.remove(properties)) {
+			try {
+				ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(FileLocations.CONVERTED_FILE_LOCATION, false)));
+				oos.writeObject(set);
+				oos.close();
+			} catch (Exception e) {
+				Logger.error(e);
+			}
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Finds all the possible map compounds given a map region.
+	 * 
+	 * @param region
+	 *           The region that you wish to check for valid compounds.
+	 * @return All valid MapCompoundTypes that exist given a particular region. An empty array will be passed if no valid MapCompoundTypes exist.
+	 */
+	public MapCompoundType[] getPossibleMapCompounds(MapRegion region) {
+		Set<MapCompoundType> types = new HashSet<MapCompoundType>();
+
+		for (MapProperties p : set)
+			if (p.getMapRegion() == region)
+				types.add(p.getMapCompoundType());
+
+		return types.toArray(new MapCompoundType[types.size()]);
+	}
+
+	/**
+	 * Finds all the possible years given a map region and a map compound.
+	 * 
+	 * @param region
+	 *           The region that you wish to check for valid years.
+	 * @param compound
+	 *           The compound that you wish to check for valid years.
+	 * @return All valid years that exist given a particular region and compound. An empty array will be passed if no valid years exist.
+	 */
+	public int[] getPossibleYears(MapRegion region, MapCompoundType compound) {
+		Set<Integer> years = new HashSet<Integer>();
+
+		for (MapProperties p : set)
+			if (p.getMapRegion() == region && p.getMapCompoundType() == compound)
+				years.add(p.getYear());
+
+		int[] ret = new int[years.size()];
+		int index = 0;
+		for (int y : years)
+			ret[index++] = y;
+
+		return ret;
+	}
+
+	/**
+	 * Finds all possible months given a map region, map compound, an a year.
+	 * 
+	 * @param region
+	 *           The region that you wish to check for valid months.
+	 * @param compound
+	 *           The compound that you wish to check for valid months.
+	 * @param year
+	 *           The year that you wish to check for valid months.
+	 * @return All valid months that exist given a particular region and compound. An empty array will be passed if no valid months exist.
+	 */
+	public int[] getPossibleMonths(MapRegion region, MapCompoundType compound, int year) {
+		Set<Integer> months = new HashSet<Integer>();
+
+		for (MapProperties p : set)
+			if (p.getMapRegion() == region && p.getMapCompoundType() == compound && p.getYear() == year)
+				months.add(p.getMonth());
+
+		if (months.contains(-1))
+			return new int[0];
+
+		int[] ret = new int[months.size()];
+		int index = 0;
+		for (int y : months)
+			ret[index++] = y;
+
+		return ret;
 	}
 }

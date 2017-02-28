@@ -20,10 +20,14 @@
 package main;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -311,9 +315,9 @@ public class EarthModellingDaemon {
 		String tempMapName = properties.getMapCompoundType().name();
 		// The name of the inner layer (fancy unicode Ch4 / ...)
 		String innerLayerName = "";
-		
-		String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, properties.getMapCompoundType().name(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, tempMapName, FileLocations.BLANK_MAP_FILE_LOCATION,
-				FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, innerLayerName };
+
+		String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, properties.getMapCompoundType().name(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, tempMapName,
+				FileLocations.BLANK_MAP_FILE_LOCATION, FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, innerLayerName };
 		runPythonScript(FileLocations.CSV_TO_GEODATABASE_SCRIPT_LOCATION, arguments);
 		// TODO
 		// OTHER PYTHON SCRIPTS.
@@ -323,5 +327,24 @@ public class EarthModellingDaemon {
 		deleteFile(asciiFile);
 
 		return true;
+	}
+
+	private static void generateNewHTML() throws IOException {
+		File temp = new File(FileLocations.TEMP_WORKING_DIRECTORY_LOCATION + "temp.html");
+		PrintWriter output = new PrintWriter(new BufferedWriter(new FileWriter(temp)));
+
+		StringBuffer strBuff = new StringBuffer();
+
+		// LOGIC HERE.
+		for (MapRegion mr : MapRegion.values())
+			// populate JS arrays...
+			// use convertedSet.getPossibleMapCompounds(), getPossibleYears, getPossibleMonths...
+			strBuff.append("buffer them shits");
+
+		output.write(strBuff.toString());
+		output.flush();
+		output.close();
+		Files.copy(temp.toPath(), new File(FileLocations.HTML_FILE_LOCATION).toPath(), StandardCopyOption.REPLACE_EXISTING);
+		deleteFile(temp);
 	}
 }
