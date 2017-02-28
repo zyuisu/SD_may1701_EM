@@ -265,7 +265,11 @@ public class EarthModellingDaemon {
 		// TODO
 		// If exists in convertedSet, stop map, remove from GIS server.
 		// Remove from convertedSet.
-		// Remove any associated files.
+		// Delete corresponding mxd in maps_publishing
+		// Delete service definition in temp_publishing
+		// Delete table files from tables folder (.dbf, .dbf.xml, .cpg)
+		// Delete .lyr from created_layers
+		// Delete gdb from auto_gdbs
 		return false;
 	}
 
@@ -304,10 +308,11 @@ public class EarthModellingDaemon {
 
 		// TODO
 		// The name of the map being used as a template (BlobText.mxd....)
-		String tempMapName = "?";
+		String tempMapName = properties.getMapCompoundType().name();
 		// The name of the inner layer (fancy unicode Ch4 / ...)
-		String innerLayerName = "?";
-		String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, csvFile.getName(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, tempMapName, FileLocations.BLANK_MAP_FILE_LOCATION,
+		String innerLayerName = "";
+		
+		String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, properties.getMapCompoundType().name(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, tempMapName, FileLocations.BLANK_MAP_FILE_LOCATION,
 				FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, innerLayerName };
 		runPythonScript(FileLocations.CSV_TO_GEODATABASE_SCRIPT_LOCATION, arguments);
 		// TODO

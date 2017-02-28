@@ -40,6 +40,6 @@
       <Button fx:id="selectFilesBtn" layoutX="251.0" layoutY="527.0" mnemonicParsing="false" text="Select File(s) To Upload" />
       <Button fx:id="sendToServerBtn" layoutX="1030.0" layoutY="561.0" mnemonicParsing="false" text="Send to Server" />
       <CheckBox fx:id="overwriteCheckBox" layoutX="21.0" layoutY="518.0" mnemonicParsing="false" text="Overwrite Existing Map(s)?" />
-      <CheckBox fx:id="yearlyMapCheckBoc" layoutX="321.0" layoutY="123.0" mnemonicParsing="false" selected="true" text="Yearly Map (no month)" />
+      <CheckBox fx:id="yearlyMapCheckBox" layoutX="321.0" layoutY="123.0" mnemonicParsing="false" selected="true" text="Yearly Map (no month)" />
 	</children>
 </AnchorPane>

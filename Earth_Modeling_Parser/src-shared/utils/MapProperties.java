@@ -85,7 +85,7 @@ public class MapProperties {
 	/**
 	 * @return The MapRegion that represents the extent of this map.
 	 */
-	public MapRegion getMapCompound() {
+	public MapRegion getMapRegion() {
 		return region;
 	}
 

@@ -21,7 +21,7 @@ package utils;
 
 public class FileLocations {
 
-	public static final String KEYSTORE_FILE_LOCATION = "asdlfasdfasdfsadfdsf";
+	public static final String KEYSTORE_FILE_LOCATION = "C:/Users/KFed/Desktop/KellenIsAwesome/keystore.jks";
 
 	public static final String ASCII_INPUT_DIRECTORY_LOCATION = "Original_ASCII_files\\";
 	public static final String CSV_OUTPUT_DIRECTORY_LOCATION = "Parsed_CSV_files\\";
