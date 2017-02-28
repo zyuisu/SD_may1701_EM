@@ -42,7 +42,7 @@ import utils.MapRegion;
 public class EarthModellingDaemon {
 
 	public static final Long TIME_TO_SLEEP = 60000L; // 1 minute before this daemon wakes up again.
-	public static AsciiToCsv asciiParser;
+	private static AsciiToCsv asciiParser;
 	private static ConvertedSet convertedSet;
 
 	public static void main(String[] args) throws IOException, IllegalAccessException {
