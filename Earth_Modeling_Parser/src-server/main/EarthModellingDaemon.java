@@ -45,7 +45,7 @@ public class EarthModellingDaemon {
 	public static AsciiToCsv asciiParser;
 	private static ConvertedSet convertedSet;
 
-	public static void main(String[] args) throws IOException, InterruptedException {
+	public static void main(String[] args) throws IOException {
 		File asciiInputDir = new File(FileLocations.ASCII_INPUT_DIRECTORY_LOCATION);
 		convertedSet = new ConvertedSet();
 		asciiParser = new AsciiToCsv();
@@ -68,12 +68,18 @@ public class EarthModellingDaemon {
 					Logger.error("Error parsing {} in default directory: {}", firstAsciiFileName, e);
 				}
 			}
-			Thread.sleep(TIME_TO_SLEEP);
+
+			try {
+				Thread.sleep(TIME_TO_SLEEP);
+			} catch (InterruptedException e) {
+				// Do nothing, because map processing is likely happening right now.
+			}
 		}
+
 	}
 
 	/**
-	 * Helper to parse map properties based on file naming convention Dr. Lu uses. Only intended to be used as a failsafe or for testing.
+	 * Helper to parse map properties based on file naming convention Dr. Lu uses. Only intended to be used for testing, as generated MapProperties are not correct and are dependent on file name formatting.
 	 * 
 	 * @param s
 	 *           The string that represents the filename. If this string is not formatted, this method will throw some kind of exception.
@@ -81,6 +87,7 @@ public class EarthModellingDaemon {
 	 * @throws IllegalAccessException
 	 *            Probably means that we were not able to find a match for MapCompoundType.
 	 */
+	@Deprecated
 	private static MapProperties parseMapProperties(String s) throws IllegalAccessException {
 		int currentIndex = 0;
 
