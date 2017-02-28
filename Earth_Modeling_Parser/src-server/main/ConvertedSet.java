@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -124,7 +125,7 @@ public class ConvertedSet extends HashSet<MapProperties> implements Serializable
 	 * 
 	 * @param region
 	 *           The region that you wish to check for valid compounds.
-	 * @return All valid MapCompoundTypes that exist given a particular region. An empty array will be passed if no valid MapCompoundTypes exist.
+	 * @return All sorted array (sorted based on enum values) of all valid MapCompoundTypes that exist given a particular region. An empty array will be passed if no valid MapCompoundTypes exist.
 	 */
 	public MapCompoundType[] getPossibleMapCompounds(MapRegion region) {
 		Set<MapCompoundType> types = new HashSet<MapCompoundType>();
@@ -133,7 +134,9 @@ public class ConvertedSet extends HashSet<MapProperties> implements Serializable
 			if (p.getMapRegion() == region)
 				types.add(p.getMapCompoundType());
 
-		return types.toArray(new MapCompoundType[types.size()]);
+		MapCompoundType[] typeArr = types.toArray(new MapCompoundType[types.size()]);
+		Arrays.sort(typeArr);
+		return typeArr;
 	}
 
 	/**
@@ -143,7 +146,7 @@ public class ConvertedSet extends HashSet<MapProperties> implements Serializable
 	 *           The region that you wish to check for valid years.
 	 * @param compound
 	 *           The compound that you wish to check for valid years.
-	 * @return All valid years that exist given a particular region and compound. An empty array will be passed if no valid years exist.
+	 * @return A sorted array of all valid years that exist given a particular region and compound. An empty array will be passed if no valid years exist.
 	 */
 	public int[] getPossibleYears(MapRegion region, MapCompoundType compound) {
 		Set<Integer> years = new HashSet<Integer>();
@@ -157,6 +160,7 @@ public class ConvertedSet extends HashSet<MapProperties> implements Serializable
 		for (int y : years)
 			ret[index++] = y;
 
+		Arrays.sort(ret);
 		return ret;
 	}
 
@@ -169,7 +173,7 @@ public class ConvertedSet extends HashSet<MapProperties> implements Serializable
 	 *           The compound that you wish to check for valid months.
 	 * @param year
 	 *           The year that you wish to check for valid months.
-	 * @return All valid months that exist given a particular region and compound. An empty array will be passed if no valid months exist.
+	 * @return A sorted array of all valid months that exist given a particular region and compound. An empty array will be passed if no valid months exist.
 	 */
 	public int[] getPossibleMonths(MapRegion region, MapCompoundType compound, int year) {
 		Set<Integer> months = new HashSet<Integer>();
@@ -186,6 +190,7 @@ public class ConvertedSet extends HashSet<MapProperties> implements Serializable
 		for (int y : months)
 			ret[index++] = y;
 
+		Arrays.sort(ret);
 		return ret;
 	}
 }
