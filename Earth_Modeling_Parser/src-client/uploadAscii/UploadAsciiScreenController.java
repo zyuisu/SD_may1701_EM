@@ -2,9 +2,6 @@ package uploadAscii;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import framework.AbstractNetworkedScreenController;
 import javafx.fxml.FXML;
@@ -17,7 +14,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser.ExtensionFilter;
 import networking.AsciiFileMessage;
 import networking.DeleteMapMessage;
-import singleton.MainModel;
 import utils.MapCompoundType;
 import utils.MapProperties;
 import utils.MapRegion;
@@ -41,11 +37,11 @@ public class UploadAsciiScreenController extends AbstractNetworkedScreenControll
 	@FXML
 	private Button sendToServerBtn;
 	@FXML
+	private CheckBox deleteMapCheckBox;
+	@FXML
 	private CheckBox overwriteCheckBox;
 	@FXML
 	private CheckBox yearlyMapCheckBox;
-	@FXML
-	private CheckBox deleteMapCheckBox;
 
 	private File selectedFile;
 
@@ -89,7 +85,7 @@ public class UploadAsciiScreenController extends AbstractNetworkedScreenControll
 			try {
 				MapProperties mp = parseMapProperties();
 
-				if (mp != null) {
+				if (mp != null)
 					if (deleteMapCheckBox.isSelected()) {
 						DeleteMapMessage dmm = new DeleteMapMessage(mp);
 
@@ -99,10 +95,8 @@ public class UploadAsciiScreenController extends AbstractNetworkedScreenControll
 						AsciiFileMessage afm = new AsciiFileMessage(mp, fileAsBytes, overwriteCheckBox.isSelected());
 
 						sendMessageToServer(afm);
-					} else //Delete map option unselected && selectedFile == null.
+					} else // Delete map option unselected && selectedFile == null.
 						errorAlert("Unselected ASCII", "You must select an ASCII file.", "Please select an ASCII file to upload, and try again.");
-
-				}
 			} catch (Exception e) {
 				errorAlert("Cannot Construct Server Message", "Something is wrong with your selection:", e.getMessage());
 			}

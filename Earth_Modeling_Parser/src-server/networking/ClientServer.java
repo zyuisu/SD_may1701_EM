@@ -213,20 +213,22 @@ public class ClientServer extends Thread {
 			Logger.error(e);
 		}
 	}
-	
+
 	/**
 	 * Deletes a map by calling the appropriate daemon method.
-	 * @param dmm The DeleteMapMessage that represents the map to be deleted.
-	 * @param client A reference to the ClientThread that is making the call (to return error or success messages).
+	 * 
+	 * @param dmm
+	 *           The DeleteMapMessage that represents the map to be deleted.
+	 * @param client
+	 *           A reference to the ClientThread that is making the call (to return error or success messages).
 	 */
-	public synchronized void parseDeleteMapMessage(DeleteMapMessage dmm, ClientThread client)
-	{
-		try{
+	public synchronized void parseDeleteMapMessage(DeleteMapMessage dmm, ClientThread client) {
+		try {
 			if (EarthModellingDaemon.removeMapFromServer(dmm.getMapProperties()))
 				client.bufferMessage(new StringMessage(StringMessage.Type.INFORMATION_MESSAGE, "Success!", "The map " + dmm.getMapProperties().toString() + " was sucessfully deleted."));
 			else
 				client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue removing the existing map.", "Check if the given map exists in the server manager and try again."));
-		}catch (IllegalAccessException iae) {
+		} catch (IllegalAccessException iae) {
 			Logger.error("StringMessage message was defined with incorrect parameters: {}", iae);
 		} catch (Exception e) {
 			Logger.error(e);

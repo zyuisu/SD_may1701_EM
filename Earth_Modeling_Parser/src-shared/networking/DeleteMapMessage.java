@@ -24,20 +24,22 @@ import utils.MapProperties;
 public class DeleteMapMessage {
 
 	private MapProperties properties;
-	
+
 	/**
 	 * Constructs a new message with the given constraints.
-	 * @param properties The MapProperties of the map that you wish to delete.
-	 * @throws IllegalAccessException The value of properties cannot be null.
+	 * 
+	 * @param properties
+	 *           The MapProperties of the map that you wish to delete.
+	 * @throws IllegalAccessException
+	 *            The value of properties cannot be null.
 	 */
-	public DeleteMapMessage(MapProperties properties) throws IllegalAccessException
-	{
+	public DeleteMapMessage(MapProperties properties) throws IllegalAccessException {
 		if (properties == null)
 			throw new IllegalAccessException("Properties must be set.");
-		
+
 		this.properties = properties;
 	}
-	
+
 	/**
 	 * @return The utils.MapProperties that represent this ASCII file.
 	 */

@@ -264,14 +264,13 @@ public class EarthModellingDaemon {
 
 		return f;
 	}
-	
-	public static synchronized boolean removeMapFromServer(MapProperties properties)
-	{
-		if(!removeLocalMapFiles(properties))
+
+	public static synchronized boolean removeMapFromServer(MapProperties properties) {
+		if (!removeLocalMapFiles(properties))
 			return false;
-		
-		//TODO
-		//Run commandline arg to delete a map from the server.
+
+		// TODO
+		// Run commandline arg to delete a map from the server.
 		return false;
 	}
 
