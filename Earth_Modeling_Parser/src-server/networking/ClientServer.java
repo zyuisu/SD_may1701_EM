@@ -56,19 +56,25 @@ public class ClientServer extends Thread {
 	private Map<String, String> approvedClients;
 	private int serverPort;
 	private boolean run;
+	private String keyStoreLocation;
+	private String keyStorePassword;
 
 	/**
-	 * Creates a new Client server and starts its operation
+	 * Creates a new ClientServer and starts its operation.
 	 * 
 	 * @param portNumber
 	 *           The port that the server should listen for connections on.
-	 * @throws IOException
-	 *            If there is an error reading from the approvedClients.txt file.
+	 * @param keyStoreLocation
+	 *           The location, on the local disk, of the keystore.
+	 * @param keyStorePassword
+	 *           The master password to unlock the keystore.
 	 */
-	public ClientServer(int portNumber) {
+	public ClientServer(int portNumber, String keyStoreLocation, String keyStorePassword) {
 		serverPort = portNumber;
 		clients = new HashSet<ClientThread>();
 		run = true;
+		this.keyStoreLocation = keyStoreLocation;
+		this.keyStorePassword = keyStorePassword;
 
 		approvedClients = new HashMap<String, String>();
 		addFromApprovedList();
@@ -109,7 +115,7 @@ public class ClientServer extends Thread {
 	public void run() {
 		try {
 			KeyStore ks = KeyStore.getInstance("JKS");
-			ks.load(new FileInputStream("/home/akunduru/Desktop/keystore.jks"), "password".toCharArray()); // TODO keystorefile and it's password should be passed at server start-up.
+			ks.load(new FileInputStream(keyStoreLocation), keyStorePassword.toCharArray());
 
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
 			kmf.init(ks, "password".toCharArray());

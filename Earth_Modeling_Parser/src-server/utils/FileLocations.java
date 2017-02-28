@@ -21,6 +21,8 @@ package utils;
 
 public class FileLocations {
 
+	public static final String KEYSTORE_FILE_LOCATION = "asdlfasdfasdfsadfdsf";
+
 	public static final String ASCII_INPUT_DIRECTORY_LOCATION = "Original_ASCII_files\\";
 	public static final String CSV_OUTPUT_DIRECTORY_LOCATION = "Parsed_CSV_files\\";
 	public static final String TEMP_WORKING_DIRECTORY_LOCATION = "Temp_Working_Files\\";
