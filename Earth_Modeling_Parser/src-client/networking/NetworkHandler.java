@@ -130,23 +130,24 @@ public class NetworkHandler {
 	}
 
 	/**
-	 * Writes an AsciiFileMessage to the buffer (socket stream).
+	 * Writes an Object to the buffer (socket stream). Should be of a message type listed in src-shared.networking.
 	 * 
-	 * @param afm
-	 *           The AsciiFileMessage that you wish to send through the buffer.
+	 * @param o
+	 *           The Object that you wish to send through the buffer.
 	 * @return true if the message was successfully sent; false if something failed.
 	 */
-	public boolean bufferAsciiFileMessage(AsciiFileMessage afm) {
+	public boolean bufferObject(Object o) {
 		if (!socket.isConnected()) {
 			close();
 			return false;
 		}
 
 		try {
-			output.writeObject(afm);
+			output.writeObject(o);
 		} catch (IOException ioe) {
 			System.out.println("I/O error while attempting to write to the buffer.");
 			ioe.printStackTrace();
+			return false;
 		}
 
 		return true;

@@ -27,6 +27,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import singleton.MainModel;
 import view.MainController;
 
 public class AbstractNetworkedScreenController implements IControlledScreen {
@@ -164,6 +165,21 @@ public class AbstractNetworkedScreenController implements IControlledScreen {
 				fc.getExtensionFilters().add(f);
 
 		return fc.showOpenMultipleDialog(node.getScene().getWindow());
+	}
+	
+	/**
+	 * Buffer a message object to the server.
+	 * @param o The message object (defined in src-shared.networking) that you wish to send to the server.
+	 * @return true if the message was successfully sent; false if it wasn't. If the message isn't sent, the user will get an error alert informing them of a communication error.
+	 */
+	protected boolean sendMessageToServer(Object o)
+	{
+		boolean ret = MainModel.getModel().getNetworkData().getHandler().bufferObject(o);
+		
+		if (!ret)
+			MainModel.getModel().getControllerData().getCurrentController().errorAlert("Networking Error", "Communication error.", "There was an issue sending the message to the server. Please ensure the server is reachable and try again.");
+		
+		return ret;
 	}
 
 	/**

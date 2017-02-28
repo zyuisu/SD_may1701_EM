@@ -37,9 +37,10 @@
          </children>
       </VBox>
       <TextArea fx:id="selectedFilesTextArea" layoutX="423.0" layoutY="23.0" prefHeight="450.0" prefWidth="722.0" />
-      <Button fx:id="selectFilesBtn" layoutX="251.0" layoutY="527.0" mnemonicParsing="false" text="Select File(s) To Upload" />
+      <Button fx:id="selectFilesBtn" layoutX="251.0" layoutY="527.0" mnemonicParsing="false" text="Select File To Upload" />
       <Button fx:id="sendToServerBtn" layoutX="1030.0" layoutY="561.0" mnemonicParsing="false" text="Send to Server" />
-      <CheckBox fx:id="overwriteCheckBox" layoutX="21.0" layoutY="518.0" mnemonicParsing="false" text="Overwrite Existing Map(s)?" />
+      <CheckBox fx:id="overwriteCheckBox" layoutX="21.0" layoutY="518.0" mnemonicParsing="false" text="Overwrite Existing Map?" />
       <CheckBox fx:id="yearlyMapCheckBox" layoutX="321.0" layoutY="123.0" mnemonicParsing="false" selected="true" text="Yearly Map (no month)" />
+      <CheckBox fx:id="deleteMapCheckbox" layoutX="321.0" layoutY="157.0" mnemonicParsing="false" text="Delete An Existing Map" />
 	</children>
 </AnchorPane>

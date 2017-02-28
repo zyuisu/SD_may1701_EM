@@ -16,6 +16,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser.ExtensionFilter;
 import networking.AsciiFileMessage;
+import networking.DeleteMapMessage;
 import singleton.MainModel;
 import utils.MapCompoundType;
 import utils.MapProperties;
@@ -43,8 +44,10 @@ public class UploadAsciiScreenController extends AbstractNetworkedScreenControll
 	private CheckBox overwriteCheckBox;
 	@FXML
 	private CheckBox yearlyMapCheckBox;
+	@FXML
+	private CheckBox deleteMapCheckBox;
 
-	private ArrayList<File> selectedFiles;
+	private File selectedFile;
 
 	/**
 	 * Initializes the controller class. Automatically called after the FXML file has been loaded.
@@ -74,42 +77,75 @@ public class UploadAsciiScreenController extends AbstractNetworkedScreenControll
 
 		selectFilesBtn.setOnAction(event -> {
 			ExtensionFilter[] filter = { new ExtensionFilter("ASCII Text Document", "*.txt") };
-			List<File> asciiFiles = promptUserForMultipleFiles("Select KeyStore", selectFilesBtn, filter);
+			File asciiFile = promptUserForFile("Select KeyStore", selectFilesBtn, filter);
 
-			if (asciiFiles != null) {
-				Iterator<File> iter = asciiFiles.iterator();
-				selectedFiles = new ArrayList<File>();
-				while (iter.hasNext()) {
-					File f = iter.next();
-					selectedFilesTextArea.appendText(f.getName() + "\n");
-					selectedFiles.add(f);
-				}
+			if (asciiFile != null) {
+				selectedFilesTextArea.appendText(asciiFile.getName() + "\n");
+				selectedFile = asciiFile;
 			}
 		});
 
 		sendToServerBtn.setOnAction(event -> {
-			if (regionCB.getSelectionModel().isEmpty() || compoundCB.getSelectionModel().isEmpty())
-				errorAlert("Unselected Fields", "All fields must be selected.", "Please fill out all the map properties and try again.");
+			try {
+				MapProperties mp = parseMapProperties();
 
-			if (selectedFiles == null)
-				errorAlert("Unselected ASCII", "You must select an ASCII file.", "Please select at least one ASCII file to upload, and try again.");
+				if (mp != null) {
+					if (deleteMapCheckBox.isSelected()) {
+						DeleteMapMessage dmm = new DeleteMapMessage(mp);
 
-			for (File f : selectedFiles)
-				try {
-					MapRegion mr = regionCB.getSelectionModel().getSelectedItem();
-					MapCompoundType mc = compoundCB.getSelectionModel().getSelectedItem();
-					int year = Integer.parseInt(yearTextField.getText());
-					int month = yearlyMapCheckBox.isSelected() ? -1 : Integer.parseInt(monthTextField.getText());
-					MapProperties mp = new MapProperties(mr, mc, year, month);
+						sendMessageToServer(dmm);
+					} else if (selectedFile != null) {
+						byte[] fileAsBytes = Files.readAllBytes(selectedFile.toPath());
+						AsciiFileMessage afm = new AsciiFileMessage(mp, fileAsBytes, overwriteCheckBox.isSelected());
 
-					byte[] fileAsBytes = Files.readAllBytes(f.toPath());
-					AsciiFileMessage afm = new AsciiFileMessage(mp, fileAsBytes, overwriteCheckBox.isSelected());
+						sendMessageToServer(afm);
+					} else //Delete map option unselected && selectedFile == null.
+						errorAlert("Unselected ASCII", "You must select an ASCII file.", "Please select an ASCII file to upload, and try again.");
 
-					MainModel.getModel().getNetworkData().getHandler().bufferAsciiFileMessage(afm);
-				} catch (Exception e) {
-					errorAlert("Cannot Construct Server Message", "Something is wrong with your selection:", e.getMessage());
 				}
+			} catch (Exception e) {
+				errorAlert("Cannot Construct Server Message", "Something is wrong with your selection:", e.getMessage());
+			}
 		});
+
+		deleteMapCheckBox.setOnAction(event -> {
+			setVisibilityOnDeleteCheckBox(!deleteMapCheckBox.isSelected());
+		});
+	}
+
+	/**
+	 * Helper method to flip visibility of selectFilesBtn, overwriteCheckBox, and selectedFilesTextArea.
+	 * 
+	 * @param isVisible
+	 *           true to make Nodes visible; false to hide them.
+	 */
+	private void setVisibilityOnDeleteCheckBox(boolean isVisible) {
+		selectFilesBtn.setVisible(isVisible);
+		overwriteCheckBox.setVisible(isVisible);
+		selectedFilesTextArea.setVisible(isVisible);
+	}
+
+	/**
+	 * Helper to parse map properties from user selectable fields.
+	 * 
+	 * @return A map properties, if all fields are valid, null if an Exception is thrown. In the event an Exception is thrown, the user will receive an error alert.
+	 */
+	private MapProperties parseMapProperties() {
+		if (regionCB.getSelectionModel().isEmpty() || compoundCB.getSelectionModel().isEmpty())
+			errorAlert("Unselected Fields", "All fields must be selected.", "Please fill out all the map properties and try again.");
+
+		MapProperties mp = null;
+		try {
+			MapRegion mr = regionCB.getSelectionModel().getSelectedItem();
+			MapCompoundType mc = compoundCB.getSelectionModel().getSelectedItem();
+			int year = Integer.parseInt(yearTextField.getText());
+			int month = yearlyMapCheckBox.isSelected() ? -1 : Integer.parseInt(monthTextField.getText());
+			mp = new MapProperties(mr, mc, year, month);
+		} catch (Exception e) {
+			errorAlert("Cannot Construct Map Properties", "Something is wrong with your inputted information:", e.getMessage());
+		}
+
+		return mp;
 	}
 
 	/**

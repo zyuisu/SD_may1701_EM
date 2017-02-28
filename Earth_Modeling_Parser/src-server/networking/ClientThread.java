@@ -123,7 +123,11 @@ public class ClientThread extends Thread {
 
 					if (cm.getMessageType() == ConnectionMessage.Type.DISCONNECT)
 						run = false;
-				} else
+				}
+				else if (obj instanceof DeleteMapMessage){
+					server.parseDeleteMapMessage((DeleteMapMessage) obj, this);
+				}
+				else
 					bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "Message sending error.", "The input object passed is not a value message class defined in src-shared.networking. Try again."));
 			} catch (IOException ioe) {
 				Logger.error("Exception parsing I/O stream: {}", ioe);

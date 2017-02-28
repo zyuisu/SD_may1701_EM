@@ -264,8 +264,18 @@ public class EarthModellingDaemon {
 
 		return f;
 	}
+	
+	public static synchronized boolean removeMapFromServer(MapProperties properties)
+	{
+		if(!removeLocalMapFiles(properties))
+			return false;
+		
+		//TODO
+		//Run commandline arg to delete a map from the server.
+		return false;
+	}
 
-	public static synchronized boolean removeExistingMap(MapProperties properties) {
+	public static synchronized boolean removeLocalMapFiles(MapProperties properties) {
 		// TODO
 		// If exists in convertedSet, stop map, remove from GIS server.
 		// Remove from convertedSet.

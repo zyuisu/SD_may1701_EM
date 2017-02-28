@@ -196,18 +196,37 @@ public class ClientServer extends Thread {
 	public synchronized void parseAsciiFileMessage(AsciiFileMessage afm, ClientThread client) {
 		try {
 			if (afm.getOverwriteExisting())
-				if (!EarthModellingDaemon.removeExistingMap(afm.getMapProperties()))
+				if (!EarthModellingDaemon.removeLocalMapFiles(afm.getMapProperties()))
 					client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue removing the existing map.", "Check the server logs for more information."));
 
 			try {
 				if (!EarthModellingDaemon.createMap(afm.getFile(), afm.getMapProperties()))
 					client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue creating the new map.", " Is it possible that the map you wish to create already exists? If not, check the server logs for more information."));
 				else
-					client.bufferMessage(new StringMessage(StringMessage.Type.INFORMATION_MESSAGE, "Success!", "The map " + afm.getMapProperties().toString() + " was sucessfully created"));
+					client.bufferMessage(new StringMessage(StringMessage.Type.INFORMATION_MESSAGE, "Success!", "The map " + afm.getMapProperties().toString() + " was sucessfully created."));
 			} catch (Exception e) {
 				client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "One of the map generation methods failed.", "Try again, utilizing the overwrite setting. If there is still an issue, check the server logs for more information."));
 			}
 		} catch (IllegalAccessException iae) {
+			Logger.error("StringMessage message was defined with incorrect parameters: {}", iae);
+		} catch (Exception e) {
+			Logger.error(e);
+		}
+	}
+	
+	/**
+	 * Deletes a map by calling the appropriate daemon method.
+	 * @param dmm The DeleteMapMessage that represents the map to be deleted.
+	 * @param client A reference to the ClientThread that is making the call (to return error or success messages).
+	 */
+	public synchronized void parseDeleteMapMessage(DeleteMapMessage dmm, ClientThread client)
+	{
+		try{
+			if (EarthModellingDaemon.removeMapFromServer(dmm.getMapProperties()))
+				client.bufferMessage(new StringMessage(StringMessage.Type.INFORMATION_MESSAGE, "Success!", "The map " + dmm.getMapProperties().toString() + " was sucessfully deleted."));
+			else
+				client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue removing the existing map.", "Check if the given map exists in the server manager and try again."));
+		}catch (IllegalAccessException iae) {
 			Logger.error("StringMessage message was defined with incorrect parameters: {}", iae);
 		} catch (Exception e) {
 			Logger.error(e);
