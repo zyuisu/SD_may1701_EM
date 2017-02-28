@@ -28,7 +28,7 @@ public class FileLocations {
 	public static final String TEMP_WORKING_DIRECTORY_LOCATION = "Temp_Working_Files\\";
 
 	public static final String HTML_FILE_LOCATION = "asdfasfdasdf.html";
-	public static final String CONVERTED_FILE_LOCATION = "resources\\converted.ser";
+	public static final String CONVERTED_FILE_LOCATION = "/home/akunduru/Desktop/converted.ser"; // "resources\\converted.ser";
 	public static final String APPROVED_CLIENTS_FILE_LOCATION = "/home/akunduru/Desktop/approvedClients.txt"; // "resources\\approvedClients.txt";
 
 	public static final String CURRENT_WORKING_DIRECTORY_LOCATION = "C:\\EarthModelingDaemon\\";

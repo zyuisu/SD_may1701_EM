@@ -45,7 +45,7 @@ public class EarthModellingDaemon {
 	public static AsciiToCsv asciiParser;
 	private static ConvertedSet convertedSet;
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, IllegalAccessException {
 		File asciiInputDir = new File(FileLocations.ASCII_INPUT_DIRECTORY_LOCATION);
 		convertedSet = new ConvertedSet();
 		asciiParser = new AsciiToCsv();
@@ -59,15 +59,37 @@ public class EarthModellingDaemon {
 		tempOutputDir.mkdir();
 
 		while (true) {
-			while (asciiInputDir.list().length > 0) {
-				String firstAsciiFileName = asciiInputDir.list()[0];
-				String firstAsciiFileLocation = asciiInputDir.getAbsolutePath() + "\\" + firstAsciiFileName;
-				try {
-					createMap(new File(firstAsciiFileLocation), parseMapProperties(firstAsciiFileName));
-				} catch (Exception e) {
-					Logger.error("Error parsing {} in default directory: {}", firstAsciiFileName, e);
-				}
-			}
+
+			// DEBUG
+			// To test the generator, input some values into convertedSet.
+			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CH4, 2000, 3));
+			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CH4, 2000, 4));
+			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CH4, 2000, 5));
+			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CH4, 2001, 3));
+			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CH4, 2001, 1));
+			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CH4, 2000, 3));
+			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CH4, 2000, 4));
+			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CH4, 2000, 5));
+			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CH4, 2001, 3));
+			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CH4, 2001, 1));
+			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2000));
+			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2000));
+			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2000));
+			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2001));
+			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2001));
+			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2000));
+			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2000));
+			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2000));
+			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2001));
+			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2001));
+
+			generateNewHTML();
+			/////////////////////////////////
+
+			/*
+			 * while (asciiInputDir.list().length > 0) { String firstAsciiFileName = asciiInputDir.list()[0]; String firstAsciiFileLocation = asciiInputDir.getAbsolutePath() + "\\" + firstAsciiFileName; try { createMap(new File(firstAsciiFileLocation), parseMapProperties(firstAsciiFileName)); } catch (Exception e) {
+			 * Logger.error("Error parsing {} in default directory: {}", firstAsciiFileName, e); } }
+			 */
 
 			try {
 				Thread.sleep(TIME_TO_SLEEP);
@@ -349,18 +371,105 @@ public class EarthModellingDaemon {
 		File temp = new File(FileLocations.TEMP_WORKING_DIRECTORY_LOCATION + "temp.html");
 		PrintWriter output = new PrintWriter(new BufferedWriter(new FileWriter(temp)));
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder strBuff = new StringBuilder();
 
-		// LOGIC HERE.
-		for (MapRegion mr : MapRegion.values())
-			// populate JS arrays...
-			// use convertedSet.getPossibleMapCompounds(), getPossibleYears, getPossibleMonths...
-			strBuff.append("buffer them shits");
+		// Get dropdown elements from DOM.
+		strBuff.append("var regionList = document.getElementById('region'); var compoundList = document.getElementById('compound'); var yearList = document.getElementById('year'); var monthList = document.getElementById('month'); ");
 
+		// Generate event listeners.
+		allocateRegionList(strBuff);
+		generateRegionEventListener(strBuff);
+
+		// Output finalized JS.
 		output.write(strBuff.toString());
 		output.flush();
 		output.close();
 		Files.copy(temp.toPath(), new File(FileLocations.HTML_FILE_LOCATION).toPath(), StandardCopyOption.REPLACE_EXISTING);
 		deleteFile(temp);
+	}
+
+	/**
+	 * Helper to allocate values in the regionList.
+	 * 
+	 * @param strBuff
+	 *           The StringBuilder upon which the region values should be appended to.
+	 */
+	private static void allocateRegionList(StringBuilder strBuff) {
+		for (MapRegion mr : MapRegion.values()) {
+			strBuff.append("regionList[regionList.length] = new Option(");
+			strBuff.append("'");
+			strBuff.append(mr.name());
+			strBuff.append("',' ");
+			strBuff.append(mr.name());
+			strBuff.append("'); ");
+		}
+	}
+
+	/**
+	 * Helper to generate the region event listener and allocate values in compoundList.
+	 * 
+	 * @param strBuff
+	 *           The StringBuilder upon which the event listener should be appended to.
+	 */
+	private static void generateRegionEventListener(StringBuilder strBuff) {
+		strBuff.append("regionList.addEventListener('click', function() {");
+		ArrayList<String> regionArrays = generateRegionArrays(strBuff);
+
+		// Clear array for reallocation.
+		strBuff.append("for (var i = compoundList.length-1; i > 0; i--){ compoundList[i] = null; }");
+
+		// To dynamically allocate values in compoundList.
+		strBuff.append("var region = regionList.options[regionList.selectedIndex].text; switch(region){ default: break; ");
+		int index = 0;
+		for (MapRegion mr : MapRegion.values()) {
+			strBuff.append("case '");
+			strBuff.append(mr.name());
+			strBuff.append("': for (var i = 0; i < ");
+			strBuff.append(regionArrays.get(index));
+			strBuff.append(".length; ++i){");
+			strBuff.append("compoundList[i+1] = new Option(");
+			strBuff.append(regionArrays.get(index));
+			strBuff.append("[i], ");
+			strBuff.append(regionArrays.get(index));
+			strBuff.append("[i]); ");
+			strBuff.append("} break; ");
+
+			index++;
+		}
+		strBuff.append(" }");
+		strBuff.append("}); ");
+	}
+
+	/**
+	 * Helper to generate the region arrays.
+	 * 
+	 * @param strBuff
+	 *           The StringBuilder upon which the region arrays should be appended to.
+	 * @return An ArrayList of the name's of the arrays.
+	 */
+	private static ArrayList<String> generateRegionArrays(StringBuilder strBuff) {
+		ArrayList<String> arrayNames = new ArrayList<String>();
+
+		for (MapRegion mr : MapRegion.values()) {
+			String s = mr.name() + "Arr";
+			arrayNames.add(s);
+
+			strBuff.append("var ");
+			strBuff.append(s);
+			strBuff.append(" = [");
+
+			// Allocate valid compounds per MapRegion.
+			MapCompoundType[] compounds = convertedSet.getPossibleMapCompounds(mr);
+			for (MapCompoundType c : compounds) {
+				strBuff.append("'");
+				strBuff.append(c.name());
+				strBuff.append("'");
+				if (c != compounds[compounds.length - 1])
+					strBuff.append(", ");
+			}
+			strBuff.append("]; ");
+		}
+
+		return arrayNames;
 	}
 }

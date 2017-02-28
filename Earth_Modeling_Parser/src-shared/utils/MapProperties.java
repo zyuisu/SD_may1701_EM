@@ -19,7 +19,11 @@
 
 package utils;
 
-public class MapProperties {
+import java.io.Serializable;
+
+public class MapProperties implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private MapCompoundType compound;
 	private MapRegion region;

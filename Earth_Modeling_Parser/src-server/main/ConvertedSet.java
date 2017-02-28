@@ -21,6 +21,7 @@ package main;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -63,16 +64,20 @@ public class ConvertedSet extends HashSet<MapProperties> implements Serializable
 	 *            Can't read from the existing converted.ser file!
 	 */
 	private void addFromConverted() throws IOException {
-		ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FileLocations.CONVERTED_FILE_LOCATION)));
-
 		try {
+			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FileLocations.CONVERTED_FILE_LOCATION)));
+
 			Set<MapProperties> inSet = (Set<MapProperties>) ois.readObject();
 			set = inSet;
+
+			ois.close();
+		} catch (IOException ioe) {
+			if (!(ioe instanceof EOFException))
+				throw ioe;
 		} catch (Exception e) {
 			Logger.error(e);
 		}
 
-		ois.close();
 	}
 
 	/**
