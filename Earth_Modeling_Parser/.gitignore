@@ -18,7 +18,7 @@ local.properties
 *.launch
 *.pydevproject
 .recommenders/
-resources/converted.txt
+resources/converted.ser
 Parsed_CSVs/
 Original_ASCII_files/
 *.log
