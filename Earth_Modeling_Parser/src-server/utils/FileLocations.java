@@ -44,16 +44,15 @@ public class FileLocations {
 	public static final String ARCSERVER_MANAGE_SERVICE_FILE_LOCATION = "C:\\Program Files\\ArcGIS\\Server\\tools\\admin\\manageservice.py";
 	public static final String PUBLISH_MAP_SCRIPT_LOCATION = "Python_Scripts\\publish_map.py";
 	public static final String PUBLISHING_PARAMS_SCRIPT_LOCATION = "Python_Scripts\\publishing_params.py";
-	
+
 	public static final String SERVER_AUTH_FILE_LOCATION = "C:\\EarthModelingDaemon\\resources\\arcgis_server_manager_authentication.txt";
-	
+
 	public static final String ABS_MAPS_PUBLISHING_DIRECTORY_LOCATION = "C:\\EarthModelingDaemon\\Maps_Publishing\\";
 	public static final String ABS_CREATED_LAYERS_DIRECTORY_LOCATION = "C:\\EarthModelingDaemon\\Created_Layers\\";
 	public static final String ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION = "C:\\EarthModelingDaemon\\CSV_Tables\\";
 	public static final String ABS_AUTO_GDBS_OUTPUT_DIRECTORY_LOCATION = "C:\\EarthModelingDaemon\\Auto_GDB\\";
 	public static final String ABS_TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION = "C:\\EarthModelingDaemon\\temp_publishing\\";
-	
-	
+
 	// If the git repo is locally cloned, you can simply do something like this: C:\\EarthModeling\\SD_may1701_EM\\Earth_Modeling_Parser\\src\\Python_Scripts\\CsvToGeodatabase.py
 
 	private FileLocations() {

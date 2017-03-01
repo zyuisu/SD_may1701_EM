@@ -69,7 +69,7 @@ public class AsciiToCsv {
 			scanner = new Scanner(f);
 
 			char count = 0;
-			
+
 			boolean extract_headers = false;
 			while (!extract_headers) {
 				String headers = "";
@@ -101,10 +101,9 @@ public class AsciiToCsv {
 						break;
 				}
 				count++;
-				if (ncols != 0 && nrows != 0 && xllcorner != 0 && yllcorner != 0 && cellsize != 0 && NODATA_value != 0){
+				if (ncols != 0 && nrows != 0 && xllcorner != 0 && yllcorner != 0 && cellsize != 0 && NODATA_value != 0)
 					extract_headers = true;
-				}
-				else if(count > 30){
+				else if (count > 30) {
 					// TODO put in the logger
 					System.out.println("The file header is having trouble being parsed. Please check the input file.");
 					Logger.debug("The file header is having trouble being parsed. Please check the input file.");

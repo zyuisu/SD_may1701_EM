@@ -1,6 +1,6 @@
 /*
  * 
- * Copyright (C) 2017 Anish Kunduru
+ * Copyright (C) 2017 Anish Kunduru and Kellen Johnson
  * 
  * This file is part the Visual Earth Modeling System (VEMS).
  * 
@@ -285,7 +285,7 @@ public class EarthModellingDaemon {
 	 * 
 	 * @param asciiFile
 	 *           The absolute file path of the ascii.txt file on the disk.
-	 * @return A File reference to the newly created CSV file.
+	 * @return A File reference to the newly created CSV file. Null is returned in the event the parser had an issue parsing the file.
 	 * @throws IOException
 	 *            Can't find the file at the specified location!
 	 */
@@ -297,49 +297,57 @@ public class EarthModellingDaemon {
 		return f;
 	}
 
-	public static synchronized boolean removeMapFromServer(MapProperties properties) throws FileNotFoundException {
+	/**
+	 * Removes a map from the ArcGIS server by executing a commandline argument.
+	 * 
+	 * @param properties
+	 *           The MapProperties that represents what needs to be deleted.
+	 * @return true if the map was successfully deleted; false otherwise.
+	 * @throws IOException
+	 *            Means that FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION couldn't be located.
+	 * @throws InterruptedException
+	 *            Probably means there was an issue while running the commandline arguments.
+	 */
+	public static synchronized boolean removeMapFromServer(MapProperties properties) throws IOException, InterruptedException {
 		if (!removeLocalMapFiles(properties))
 			return false;
 
-		// TODO
-		// Run commandline arg to delete a map from the server.
 		String auth[] = validateUser();
-		
+
 		// required arguments for the delete from server command using executable python script
-		String arguments[] = {"-u", auth[0], "-p", auth[1], "-s", "https://proj-se491.iastate.edu:6443", "-n", "EarthModelingTest/" + properties.toString(), "-o", "delete"};
-		try {
-			runExecutable(FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION, arguments);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
+		String arguments[] = { "-u", auth[0], "-p", auth[1], "-s", "https://proj-se491.iastate.edu:6443", "-n", "EarthModelingTest/" + properties.toString(), "-o", "delete" };
+		runExecutable(FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION, arguments);
+
 		// python.exe "C:\Program Files\ArcGIS\Server\tools\admin\manageservice.py" -u username -p password -s https://proj-se491.iastate.edu:6443 -n EarthModelingTest/service_name -o delete
-		return false;
+		return true;
 	}
 
+	/**
+	 * Removes map files stored locally on the server.
+	 * 
+	 * @param properties
+	 *           The MapProperites that represents what needs to be deleted.
+	 * @return true if the files were found and deleted; false otherwise.
+	 */
 	public static synchronized boolean removeLocalMapFiles(MapProperties properties) {
-		// TODO
-		// If exists in convertedSet, stop map, remove from GIS server.
-		// Remove from convertedSet.
-		
-		// Delete corresponding mxd in maps_publishing
-		deleteFile(FileLocations.ABS_MAPS_PUBLISHING_DIRECTORY_LOCATION + properties.toString() + ".mxd");
-		// Delete service definition in temp_publishing
-		deleteFile(FileLocations.ABS_TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION + properties.toString() + ".sd");
-		// Delete table files from tables folder (.dbf, .dbf.xml, .cpg)
-		deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".dbf");
-		deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".dfb.xml");
-		deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".cpg");
-		// Delete .lyr from created_layers
-		deleteFile(FileLocations.ABS_CREATED_LAYERS_DIRECTORY_LOCATION + properties.toString() + ".lyr");
-		// Delete gdb from auto_gdbs
-		deleteFile(FileLocations.ABS_AUTO_GDBS_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".gdb");
-		
+		if (convertedSet.contains(properties)) {
+			// Delete corresponding mxd in maps_publishing
+			deleteFile(FileLocations.ABS_MAPS_PUBLISHING_DIRECTORY_LOCATION + properties.toString() + ".mxd");
+			// Delete service definition in temp_publishing
+			deleteFile(FileLocations.ABS_TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION + properties.toString() + ".sd");
+			// Delete table files from tables folder (.dbf, .dbf.xml, .cpg)
+			deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".dbf");
+			deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".dfb.xml");
+			deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".cpg");
+			// Delete .lyr from created_layers
+			deleteFile(FileLocations.ABS_CREATED_LAYERS_DIRECTORY_LOCATION + properties.toString() + ".lyr");
+			// Delete gdb from auto_gdbs
+			deleteFile(FileLocations.ABS_AUTO_GDBS_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".gdb");
+
+			convertedSet.remove(properties);
+			return true;
+		}
+
 		return false;
 	}
 
@@ -363,6 +371,19 @@ public class EarthModellingDaemon {
 		return createMap(file, properties);
 	}
 
+	/**
+	 * Creates a map by calling the correct parsers and Python script(s).
+	 * 
+	 * @param asciiFile
+	 *           A File (linked to something on the local disk) representing the ASCII file that you wish to generate a map from.
+	 * @param properties
+	 *           The map's properties as defined in MapProperties.
+	 * @return true if the map was successfully created; false if it wasn't.
+	 * @throws IOException
+	 *            There was an error creating or reading from a temporary file/folder.
+	 * @throws InterruptedException
+	 *            Probably means one of the intermediary Python scrips were cut short before they could complete execution.
+	 */
 	private static synchronized boolean createMap(File asciiFile, MapProperties properties) throws IOException, InterruptedException {
 
 		// Check against converted set.
@@ -372,59 +393,58 @@ public class EarthModellingDaemon {
 		}
 
 		File csvFile = convertAsciiToCsv(asciiFile);
-
-		// String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, csvFile.getName(), FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION };
-		// runPythonScript(FileLocations.CSV_TO_GEODATABASE_SCRIPT_LOCATION, arguments);
+		if (csvFile == null)
+			return false;
 
 		String auth[] = validateUser();
-		
 		String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, properties.toString(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, properties.getMapCompoundType().name(),
 				FileLocations.BLANK_MAP_FILE_LOCATION, FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, auth[0], auth[1] };
-		
+
 		// TODO get user authentication from file
-		
+
 		runPythonScript(FileLocations.PUBLISH_MAP_SCRIPT_LOCATION, arguments);
 		// TODO
-		// OTHER PYTHON SCRIPTS.
-		// NOTE: FOR PURPOSES OF DEBUGGING, I THINK WE WANT ERRORS TO BE THROWN. IT WOULD ULTIMATELY BE UP TO CALLING OBJECTS TO HANDLE/LOG ERRORS.
 
-		String[] arguments2 = {
-				properties.toString(), auth[0], auth[1]
-		};
+		String[] arguments2 = { properties.toString(), auth[0], auth[1] };
 		runPythonScript(FileLocations.PUBLISHING_PARAMS_SCRIPT_LOCATION, arguments);
+
 		// Delete files.
 		deleteFile(asciiFile);
 
 		return true;
 	}
 
-	
+	/**
+	 * Gets the username and password required to access the ArcGIS admin portal.
+	 * 
+	 * @return A String representing the username, password to access the server.
+	 * @throws FileNotFoundException
+	 *            If FileLocations.Server_AUTH_FILE_LOCATION isn't found.
+	 */
 	private static String[] validateUser() throws FileNotFoundException {
-		
+
 		// New buffered reader for getting local file
 		BufferedReader buffR;
 		buffR = new BufferedReader(new FileReader(FileLocations.SERVER_AUTH_FILE_LOCATION));
-		
+
 		// scan the file
 		Scanner s = new Scanner(buffR);
 		// Define authentication array for return array
 		String[] auth = new String[2];
 		// line counter
 		int line = 0;
-		
+
 		// fill the array with the first two lines found in the document
-		while(s.hasNext()){
+		while (s.hasNext()) {
 			auth[line] = s.nextLine().trim();
 			line++;
 		}
-		
+
 		s.close();
 		return auth;
-		
+
 	}
-	
-	
-	
+
 	private static void generateNewHTML() throws IOException {
 		File temp = new File(FileLocations.TEMP_WORKING_DIRECTORY_LOCATION + "temp.html");
 		PrintWriter output = new PrintWriter(new BufferedWriter(new FileWriter(temp)));
