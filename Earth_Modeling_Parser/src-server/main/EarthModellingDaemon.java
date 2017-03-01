@@ -75,16 +75,16 @@ public class EarthModellingDaemon {
 			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CH4, 2000, 5));
 			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CH4, 2001, 3));
 			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CH4, 2001, 1));
-			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2000));
-			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2000));
-			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2000));
+			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2002));
+			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2009));
+			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2017));
 			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2001));
-			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2001));
+			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2004));
 			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2000));
-			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2000));
-			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2000));
-			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2001));
-			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2001));
+			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2003));
+			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2004));
+			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2008));
+			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2007));
 
 			generateNewHTML();
 			/////////////////////////////////
@@ -400,10 +400,7 @@ public class EarthModellingDaemon {
 		String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, properties.toString(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, properties.getMapCompoundType().name(),
 				FileLocations.BLANK_MAP_FILE_LOCATION, FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, auth[0], auth[1] };
 
-		// TODO get user authentication from file
-
 		runPythonScript(FileLocations.PUBLISH_MAP_SCRIPT_LOCATION, arguments);
-		// TODO
 
 		String[] arguments2 = { properties.toString(), auth[0], auth[1] };
 		runPythonScript(FileLocations.PUBLISHING_PARAMS_SCRIPT_LOCATION, arguments);
@@ -452,11 +449,13 @@ public class EarthModellingDaemon {
 		StringBuilder strBuff = new StringBuilder();
 
 		// Get dropdown elements from DOM.
-		strBuff.append("var regionList = document.getElementById('region'); var compoundList = document.getElementById('compound'); var yearList = document.getElementById('year'); var monthList = document.getElementById('month'); ");
+		strBuff.append("var regionList = document.getElementById('region'); var compoundList = document.getElementById('compound'); var yearList = document.getElementById('year'); var monthList = document.getElementById('month'); var loadMapBtn = document.getElementById('loadMapBtn'); ");
 
 		// Generate event listeners.
 		allocateRegionList(strBuff);
 		generateRegionEventListener(strBuff);
+		generateCompoundEventListener(strBuff);
+		generateYearEventListener(strBuff);
 
 		// Output finalized JS.
 		output.write(strBuff.toString());
@@ -493,8 +492,13 @@ public class EarthModellingDaemon {
 		strBuff.append("regionList.addEventListener('click', function() {");
 		ArrayList<String> regionArrays = generateRegionArrays(strBuff);
 
-		// Clear array for reallocation.
+		// Clear arrays for reallocation.
 		strBuff.append("for (var i = compoundList.length-1; i > 0; i--){ compoundList[i] = null; }");
+		strBuff.append("for (var i = yearList.length-1; i > 0; i--){ yearList[i] = null; }");
+		strBuff.append("for (var i = monthList.length-1; i > 0; i--){ monthList[i] = null; }");
+
+		// Hide month upon change.
+		strBuff.append("monthList.style.display = 'none'; ");
 
 		// To dynamically allocate values in compoundList.
 		strBuff.append("var region = regionList.options[regionList.selectedIndex].text; switch(region){ default: break; ");
@@ -523,7 +527,7 @@ public class EarthModellingDaemon {
 	 * 
 	 * @param strBuff
 	 *           The StringBuilder upon which the region arrays should be appended to.
-	 * @return An ArrayList of the name's of the arrays.
+	 * @return An ArrayList of the names of the arrays.
 	 */
 	private static ArrayList<String> generateRegionArrays(StringBuilder strBuff) {
 		ArrayList<String> arrayNames = new ArrayList<String>();
@@ -547,6 +551,158 @@ public class EarthModellingDaemon {
 			}
 			strBuff.append("]; ");
 		}
+
+		return arrayNames;
+	}
+
+	/**
+	 * Helper to generate the compound event listener and allocate values in yearList.
+	 * 
+	 * @param strBuff
+	 *           The StringBuilder upon which the event listener should be appended to.
+	 */
+	private static void generateCompoundEventListener(StringBuilder strBuff) {
+		strBuff.append("compoundList.addEventListener('click', function() {");
+		ArrayList<String> compoundArrays = generateCompoundArrays(strBuff);
+
+		// Clear array for reallocation.
+		strBuff.append("for (var i = yearList.length-1; i > 0; i--){ yearList[i] = null; }");
+		strBuff.append("for (var i = monthList.length-1; i > 0; i--){ monthList[i] = null; }");
+
+		// Hide month upon change.
+		strBuff.append("monthList.style.display = 'none'; ");
+
+		// To dynamically allocate values in yearList.
+		strBuff.append("var region = regionList.options[regionList.selectedIndex].text; var compound = compoundList.options[compoundList.selectedIndex].text; var regionCompound = region.concat(compound); switch(regionCompound){ default: break; ");
+		int index = 0;
+		for (String arrName : compoundArrays) {
+			strBuff.append("case '");
+			String caseName = arrName.substring(0, arrName.length() - 3);
+			strBuff.append(caseName);
+			strBuff.append("': for (var i = 0; i < ");
+			strBuff.append(compoundArrays.get(index));
+			strBuff.append(".length; ++i){");
+			strBuff.append("yearList[i+1] = new Option(");
+			strBuff.append(compoundArrays.get(index));
+			strBuff.append("[i], ");
+			strBuff.append(compoundArrays.get(index));
+			strBuff.append("[i]); ");
+			strBuff.append("} break; ");
+
+			index++;
+		}
+		strBuff.append(" }");
+		strBuff.append("}); ");
+	}
+
+	/**
+	 * Helper to generate the region-compound arrays.
+	 * 
+	 * @param strBuff
+	 *           The StringBuilder upon which the region-compound arrays should be appended to.
+	 * @return An ArrayList of the names of the arrays.
+	 */
+	private static ArrayList<String> generateCompoundArrays(StringBuilder strBuff) {
+		ArrayList<String> arrayNames = new ArrayList<String>();
+
+		for (MapRegion mr : MapRegion.values())
+			for (MapCompoundType mc : MapCompoundType.values()) {
+				String s = mr.name() + mc.name() + "Arr";
+				arrayNames.add(s);
+
+				strBuff.append("var ");
+				strBuff.append(s);
+				strBuff.append(" = [");
+
+				// Allocate valid years per MapRegion and MapCompound.
+				int[] years = convertedSet.getPossibleYears(mr, mc);
+				for (int y : years) {
+					strBuff.append("'");
+					strBuff.append(y);
+					strBuff.append("'");
+					if (y != years[years.length - 1])
+						strBuff.append(", ");
+				}
+				strBuff.append("]; ");
+			}
+
+		return arrayNames;
+	}
+
+	/**
+	 * Helper to generate the year event listener and allocate values in monthList.
+	 * 
+	 * @param strBuff
+	 *           The StringBuilder upon which the event listener should be appended to.
+	 */
+	private static void generateYearEventListener(StringBuilder strBuff) {
+		strBuff.append("yearList.addEventListener('click', function() {");
+		ArrayList<String> yearArrays = generateMonthArrays(strBuff);
+
+		// Clear array for reallocation.
+		strBuff.append("for (var i = monthList.length-1; i > 0; i--){ monthList[i] = null; }");
+
+		// Hide month upon change.
+		strBuff.append("monthList.style.display = 'none'; ");
+
+		// To dynamically allocate values in monthList.
+		strBuff.append("var region = regionList.options[regionList.selectedIndex].text; var compound = compoundList.options[compoundList.selectedIndex].text; var year = yearList.options[yearList.selectedIndex].text; var regionCompoundYear = region.concat(compound).concat(year); switch(regionCompoundYear){ default: break; ");
+		int index = 0;
+		for (String arrName : yearArrays) {
+			strBuff.append("case '");
+			String caseName = arrName.substring(0, arrName.length() - 3);
+			strBuff.append(caseName);
+			strBuff.append("': for (var i = 0; i < ");
+			strBuff.append(yearArrays.get(index));
+			strBuff.append(".length; ++i){");
+			strBuff.append("monthList[i+1] = new Option(");
+			strBuff.append(yearArrays.get(index));
+			strBuff.append("[i], ");
+			strBuff.append(yearArrays.get(index));
+			strBuff.append("[i]); ");
+			strBuff.append("} if (");
+			strBuff.append(arrName);
+			strBuff.append(".length > 0){ monthList.style.display = 'inline'; } break; ");
+
+			index++;
+		}
+		strBuff.append(" }");
+		strBuff.append("}); ");
+	}
+
+	/**
+	 * Helper to generate the region-compound-year arrays.
+	 * 
+	 * @param strBuff
+	 *           The StringBuilder upon which the region-compound arrays should be appended to.
+	 * @return An ArrayList of the names of the arrays.
+	 */
+	private static ArrayList<String> generateMonthArrays(StringBuilder strBuff) {
+		ArrayList<String> arrayNames = new ArrayList<String>();
+
+		for (MapRegion mr : MapRegion.values())
+			for (MapCompoundType mc : MapCompoundType.values()) {
+				int[] years = convertedSet.getPossibleYears(mr, mc);
+				for (int y : years) {
+					String s = mr.name() + mc.name() + y + "Arr";
+					arrayNames.add(s);
+
+					strBuff.append("var ");
+					strBuff.append(s);
+					strBuff.append(" = [");
+
+					// Allocate valid months per MapRegion, MapCompound, and year.
+					int[] months = convertedSet.getPossibleMonths(mr, mc, y);
+					for (int m : months) {
+						strBuff.append("'");
+						strBuff.append(m);
+						strBuff.append("'");
+						if (m != months[months.length - 1])
+							strBuff.append(", ");
+					}
+					strBuff.append("]; ");
+				}
+			}
 
 		return arrayNames;
 	}

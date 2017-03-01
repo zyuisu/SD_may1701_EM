@@ -36,7 +36,7 @@
             <TextField fx:id="monthTextField" prefHeight="25.0" prefWidth="147.0" promptText="Enter the month (0-11)." text="Select Month:" />
          </children>
       </VBox>
-      <TextArea fx:id="selectedFilesTextArea" layoutX="423.0" layoutY="23.0" prefHeight="450.0" prefWidth="722.0" />
+      <TextArea fx:id="selectedFilesTextArea" layoutX="444.0" layoutY="23.0" prefHeight="450.0" prefWidth="701.0" />
       <Button fx:id="selectFilesBtn" layoutX="260.0" layoutY="140.0" mnemonicParsing="false" text="Select File To Upload" />
       <Button fx:id="sendToServerBtn" layoutX="1030.0" layoutY="561.0" mnemonicParsing="false" text="Send to Server" />
       <CheckBox fx:id="overwriteCheckBox" layoutX="249.0" layoutY="86.0" mnemonicParsing="false" text="Overwrite Existing Map?" />

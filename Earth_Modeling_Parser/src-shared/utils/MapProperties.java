@@ -74,7 +74,9 @@ public class MapProperties implements Serializable {
 			throw new IllegalArgumentException("Are you sure you set the correct year? It is less than 1500.");
 		else if (year > 2100)
 			throw new IllegalArgumentException("Are you sure you set the correct year? It is greater than 2100.");
+
 		this.year = year;
+		this.month = -1;
 
 	}
 
