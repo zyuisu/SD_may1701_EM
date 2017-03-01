@@ -107,6 +107,7 @@ public class AsciiToCsv {
 				else if(count > 30){
 					// TODO put in the logger
 					System.out.println("The file header is having trouble being parsed. Please check the input file.");
+					Logger.debug("The file header is having trouble being parsed. Please check the input file.");
 					return null;
 				}
 			}
