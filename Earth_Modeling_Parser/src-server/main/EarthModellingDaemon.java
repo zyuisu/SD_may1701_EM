@@ -300,6 +300,7 @@ public class EarthModellingDaemon {
 
 		// TODO
 		// Run commandline arg to delete a map from the server.
+		// python.exe "C:\Program Files\ArcGIS\Server\tools\admin\manageservice.py" -u username -p password -s https://proj-se491.iastate.edu:6443 -n EarthModelingTest/service_name -o delete
 		return false;
 	}
 
@@ -307,11 +308,19 @@ public class EarthModellingDaemon {
 		// TODO
 		// If exists in convertedSet, stop map, remove from GIS server.
 		// Remove from convertedSet.
+		
 		// Delete corresponding mxd in maps_publishing
+		deleteFile(FileLocations.ABS_MAPS_PUBLISHING_DIRECTORY_LOCATION + properties.toString() + ".mxd");
 		// Delete service definition in temp_publishing
+		deleteFile(FileLocations.ABS_TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION + properties.toString() + ".sd");
 		// Delete table files from tables folder (.dbf, .dbf.xml, .cpg)
+		deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".dbf");
+		deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".dfb.xml");
+		deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".cpg");
 		// Delete .lyr from created_layers
+		deleteFile(FileLocations.ABS_CREATED_LAYERS_DIRECTORY_LOCATION + properties.toString() + ".lyr");
 		// Delete gdb from auto_gdbs
+		deleteFile(FileLocations.ABS_AUTO_GDBS_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".gdb");
 		return false;
 	}
 
@@ -348,19 +357,22 @@ public class EarthModellingDaemon {
 		// String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, csvFile.getName(), FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION };
 		// runPythonScript(FileLocations.CSV_TO_GEODATABASE_SCRIPT_LOCATION, arguments);
 
-		// TODO
-		// The name of the map being used as a template (BlobText.mxd....)
-		String tempMapName = properties.getMapCompoundType().name();
-		// The name of the inner layer (fancy unicode Ch4 / ...)
-		String innerLayerName = "";
-
-		String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, properties.getMapCompoundType().name(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, tempMapName,
-				FileLocations.BLANK_MAP_FILE_LOCATION, FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, innerLayerName };
-		runPythonScript(FileLocations.CSV_TO_GEODATABASE_SCRIPT_LOCATION, arguments);
+		String user = "";
+		String pass = "";
+		String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, properties.toString(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, properties.getMapCompoundType().name(),
+				FileLocations.BLANK_MAP_FILE_LOCATION, FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, user, pass };
+		
+		// TODO get user authentication from file
+		
+		runPythonScript(FileLocations.PUBLISH_MAP_SCRIPT_LOCATION, arguments);
 		// TODO
 		// OTHER PYTHON SCRIPTS.
 		// NOTE: FOR PURPOSES OF DEBUGGING, I THINK WE WANT ERRORS TO BE THROWN. IT WOULD ULTIMATELY BE UP TO CALLING OBJECTS TO HANDLE/LOG ERRORS.
 
+		String[] arguments2 = {
+				properties.toString(), user, pass
+		};
+		runPythonScript(FileLocations.PUBLISHING_PARAMS_SCRIPT_LOCATION, arguments);
 		// Delete files.
 		deleteFile(asciiFile);
 

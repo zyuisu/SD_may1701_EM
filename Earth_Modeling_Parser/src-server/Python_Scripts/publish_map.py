@@ -18,9 +18,6 @@ import arcpy
 
 def main(argv):
 
-  # To Enable Debug Mode, set this to 1.
-  debug = 0
-
   
   # The directory were Parsed CSVS are kept
   parsed_csv_dir = ""
@@ -46,34 +43,24 @@ def main(argv):
   created_layers_dir = ""
   # The name of the layer that will show up in the Legend. (Fancy Unicode!)
   changed_layer_name = ""
+  # username for authentication 
+  server_user = ""
+  # password for authentication
+  server_pass = ""
 
-  
-  if debug == 1:
-    parsed_csv_dir = "C:/Users/kj20207/Desktop/Python/tables/"
-    input_csv_file = "ch4y2001m4.csv"
-    arcpy_workspace = "C:/Users/kj20207/Desktop/Python/"
-    map_templates_dir = "C:/Users/kj20207/Desktop/Python/Map_Templates/"
-    map_publishing_dir = "C:/Users/kj20207/Desktop/Python/Maps_Publishing/"
-    temp_publishing_dir = "C:/Users/kj20207/Desktop/Python/temp_publishing/"
-    template_map_name = "CH4TemplateMap.mxd"
-    blank_map = "blank_map.mxd"
-    tables_dir = "C:/Users/kj20207/Desktop/Python/tables/"
-    auto_gdb_dir = "C:/Users/kj20207/Desktop/Python/tables/auto_gdb2/"
-    created_layers_dir = "C:/Users/kj20207/Desktop/Python/Created_Layers/"
-    changed_layer_name = "fancy unicode"
-  else:
-    parsed_csv_dir = argv[0]
-    input_csv_file = argv[1]
-    arcpy_workspace = argv[2]
-    map_templates_dir = argv[3]
-    map_publishing_dir = argv[4]
-    temp_publishing_dir = argv[5]
-    template_map_name = argv[6]
-    blank_map = argv[7]
-    tables_dir = argv[8]
-    auto_gdb_dir = argv[9]
-    created_layers_dir = argv[10]
-    changed_layer_name = argv[11]
+  parsed_csv_dir = argv[0]
+  input_csv_file = argv[1]
+  arcpy_workspace = argv[2]
+  map_templates_dir = argv[3]
+  map_publishing_dir = argv[4]
+  temp_publishing_dir = argv[5]
+  template_map_name = argv[6]
+  blank_map = argv[7]
+  tables_dir = argv[8]
+  auto_gdb_dir = argv[9]
+  created_layers_dir = argv[10]
+  server_user = argv[11]
+  server_pass = argv[12]
 
 
 
@@ -88,7 +75,9 @@ def main(argv):
   # Get the Map File to Use as a Template
   template_mxd = arcpy.mapping.MapDocument(map_templates_dir + template_map_name)
   # Also access the layer to be used as a template
-  template_lyr = arcpy.mapping.ListLayers(template_mxd)[0]  
+  template_lyr = arcpy.mapping.ListLayers(template_mxd)[0]
+  # Access the data frame of the template layer (for reference scale)
+  template_df = arcpy.mapping.ListDataFrames(template_mxd)[0]
   print "Accessed Template Map for Reference: " + template_map_name
 
   # Open an instance of a blank Map
@@ -98,32 +87,32 @@ def main(argv):
   print "Accessed Blank Map for Creating new Map"
 
   # Create Table from Input file for creating Feature Layer
-  arcpy.TableToTable_conversion(parsed_csv_dir + input_csv_file, tables_dir, input_csv_file[0:-4] + ".gdb")
-  print "CSV to table completed. Table created is   " + input_csv_file[0:-4] + ".dbf"
+  arcpy.TableToTable_conversion(parsed_csv_dir + input_csv_file + ".csv", tables_dir, input_csv_file + ".gdb")
+  print "CSV to table completed. Table created is   " + input_csv_file + ".dbf"
 
   # Create the name of the Feature Layer to be created
-  outLayer = input_csv_file[0:-4] + ".lyr"
+  outLayer = input_csv_file + ".lyr"
   # Create an XY Event Layer using the created table and the constant spatial reference
-  arcpy.MakeXYEventLayer_management(tables_dir + input_csv_file[0:-4] + ".dbf", x, y, outLayer, spref, None)
+  arcpy.MakeXYEventLayer_management(tables_dir + input_csv_file + ".dbf", x, y, outLayer, spref, None)
   print "Created XY Event Layer to be placed into gdb: " + outLayer
 
   # Create empty GDB to house Feature Layer Data
-  arcpy.CreateFileGDB_management(auto_gdb_dir, input_csv_file[0:-4] + ".gdb", "10.0")
-  print "Created empty GDB for XY Layer: " + input_csv_file[0:-4] + ".gdb"
+  arcpy.CreateFileGDB_management(auto_gdb_dir, input_csv_file + ".gdb", "10.0")
+  print "Created empty GDB for XY Layer: " + input_csv_file + ".gdb"
 
   # Create Feature Layer Data Source using XY Event Layer data and placing into gdb
-  arcpy.FeatureClassToFeatureClass_conversion(outLayer, auto_gdb_dir + input_csv_file[0:-4] + ".gdb", input_csv_file[0:-4])
+  arcpy.FeatureClassToFeatureClass_conversion(outLayer, auto_gdb_dir + input_csv_file + ".gdb", input_csv_file)
   print "Created Feature Class"
   # Replace Data Source of the template layer
-  template_lyr.replaceDataSource(auto_gdb_dir + input_csv_file[0:-4] + ".gdb", "FILEGDB_WORKSPACE", input_csv_file[0:-4], False)
+  template_lyr.replaceDataSource(auto_gdb_dir + input_csv_file + ".gdb", "FILEGDB_WORKSPACE", input_csv_file, False)
   print "Data Source Successfully Replaced"
   # Save a COPY of the template layer to be imported into the empty data frame of the blank map
-  template_lyr.saveACopy(created_layers_dir + input_csv_file[0:-4] + ".lyr")
+  template_lyr.saveACopy(created_layers_dir + input_csv_file + ".lyr")
   print "Creeated a copy of Layer"
   # Acsses the Copied Layer
-  addLayer = arcpy.mapping.Layer(created_layers_dir + input_csv_file[0:-4] + ".lyr")
+  addLayer = arcpy.mapping.Layer(created_layers_dir + input_csv_file + ".lyr")
   # Change the actual name of the inner layer (can be funky Unicode if you'd like)
-  addLayer.name = changed_layer_name
+  addLayer.name = template_lyr.name
   print "Referenced Layer to be added"
   # Apply symbology from Reference Layer to the Layer to be added
   arcpy.ApplySymbologyFromLayer_management(addLayer, template_lyr)
@@ -132,24 +121,24 @@ def main(argv):
   arcpy.mapping.AddLayer(df_new, addLayer, "BOTTOM")
   print "Successfully Added Layer"
   # Set the reference scale of the data frame (won't pixelate on zoom-in at this level)
-  df_new.referenceScale = "5000000"
+  df_new.referenceScale = template_df.referenceScale
   print "Reference Scale of Data Frame Set"
   # Save a COPY of the map (the map to now be published)
-  mxd_new.saveACopy(map_publishing_dir + input_csv_file[0:-4] + ".mxd")
+  mxd_new.saveACopy(map_publishing_dir + input_csv_file + ".mxd")
   print "Copy of Map Service Saved"
 
   # Define local variables
   # Set the publishing files directory
   wrkspc = temp_publishing_dir
   # Access the map to be published
-  mapDoc = arcpy.mapping.MapDocument(map_publishing_dir + input_csv_file[0:-4] + ".mxd")
+  mapDoc = arcpy.mapping.MapDocument(map_publishing_dir + input_csv_file + ".mxd")
 
   # Provide path to server which hosts map services
   con =  'https://proj-se491.iastate.edu:6443/arcgis/admin'
 
   # Provide other service details
   # The name of the service (how it shows up on the server)
-  service = input_csv_file[0:-4]
+  service = input_csv_file
   # name of sddraft (required for publication)
   sddraft =  wrkspc + service + '.sddraft'
   # name of sd (required for publication)
@@ -160,7 +149,7 @@ def main(argv):
   tags = 'Test'
 
   # Create connection file for Publishing
-  arcpy.mapping.CreateGISServerConnectionFile ('PUBLISH_GIS_SERVICES', wrkspc, 'CONNECTION.ags', con, 'ARCGIS_SERVER', {True}, {None}, 'may1701', 'earthmodeling', {True})
+  arcpy.mapping.CreateGISServerConnectionFile ('PUBLISH_GIS_SERVICES', wrkspc, 'CONNECTION.ags', con, 'ARCGIS_SERVER', {True}, {None}, server_user, server_pass, {True})
 
   # Create service definition draft (sddraft)
   arcpy.mapping.CreateMapSDDraft(mapDoc, sddraft, service, 'FROM_CONNECTION_FILE', wrkspc + '\CONNECTION.ags', True, 'EarthModelingTest', None, None)
