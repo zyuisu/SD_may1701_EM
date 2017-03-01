@@ -14,7 +14,8 @@
 /**
  * @author Anish Kunduru
  * 
- *         Keeps track of all the ASCII files that have been converted by the daemon.
+ *         Keeps track of all the ASCII files that have been converted by the daemon. An object of this class is used in key daemon operations, so it is important to carefully consider implementation changes on this object. Making a change that requires an increase in the serialVersionUID nature of this object will cause inconsistencies and/or failures in
+ *         server operations unless all previously stored values are converted to the new Serializable.
  */
 
 package main;

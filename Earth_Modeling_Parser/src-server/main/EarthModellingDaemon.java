@@ -14,7 +14,7 @@
 /**
  * @author Anish Kunduru
  * 
- *         Main server thread that wakes up to check if any ASCII files have been added.
+ *         Main server thread that handles all generation of maps and related elements.
  */
 
 package main;
@@ -318,6 +318,9 @@ public class EarthModellingDaemon {
 		String arguments[] = { "-u", auth[0], "-p", auth[1], "-s", "https://proj-se491.iastate.edu:6443", "-n", "EarthModelingTest/" + properties.toString(), "-o", "delete" };
 		runExecutable(FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION, arguments);
 
+		convertedSet.remove(properties);
+		generateNewHTML();
+
 		// python.exe "C:\Program Files\ArcGIS\Server\tools\admin\manageservice.py" -u username -p password -s https://proj-se491.iastate.edu:6443 -n EarthModelingTest/service_name -o delete
 		return true;
 	}
@@ -343,8 +346,6 @@ public class EarthModellingDaemon {
 			deleteFile(FileLocations.ABS_CREATED_LAYERS_DIRECTORY_LOCATION + properties.toString() + ".lyr");
 			// Delete gdb from auto_gdbs
 			deleteFile(FileLocations.ABS_AUTO_GDBS_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".gdb");
-
-			convertedSet.remove(properties);
 			return true;
 		}
 
@@ -408,6 +409,8 @@ public class EarthModellingDaemon {
 		// Delete files.
 		deleteFile(asciiFile);
 
+		generateNewHTML();
+
 		return true;
 	}
 
@@ -442,6 +445,12 @@ public class EarthModellingDaemon {
 
 	}
 
+	/**
+	 * Dynamically generates the HTML file based on values saved in ConvertedSet. It is expected that this method will be called upon each map generation/removal. NOTE: This method relies on the accuracy of the values stored in ConvertedSet.
+	 * 
+	 * @throws IOException
+	 *            Had an issue creating the temp file or replacing the existing file with the temp file.
+	 */
 	private static void generateNewHTML() throws IOException {
 		File temp = new File(FileLocations.TEMP_WORKING_DIRECTORY_LOCATION + "temp.html");
 		PrintWriter output = new PrintWriter(new BufferedWriter(new FileWriter(temp)));
@@ -456,6 +465,9 @@ public class EarthModellingDaemon {
 		generateRegionEventListener(strBuff);
 		generateCompoundEventListener(strBuff);
 		generateYearEventListener(strBuff);
+		/*
+		 * Note about above helper methods from Anish: Honestly, the code to generate the JS is just plain bad. However, it runs quickly, works, and will likely never be expanded upon, so I have no incentive to refactor it. My assumption is if the number of maps ever gets sufficiently large, we would switch to querying a database.
+		 */
 
 		// Output finalized JS.
 		output.write(strBuff.toString());
