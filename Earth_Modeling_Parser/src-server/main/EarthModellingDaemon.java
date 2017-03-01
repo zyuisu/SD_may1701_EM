@@ -22,6 +22,8 @@ package main;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,6 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 import org.pmw.tinylog.Logger;
 
@@ -294,12 +297,27 @@ public class EarthModellingDaemon {
 		return f;
 	}
 
-	public static synchronized boolean removeMapFromServer(MapProperties properties) {
+	public static synchronized boolean removeMapFromServer(MapProperties properties) throws FileNotFoundException {
 		if (!removeLocalMapFiles(properties))
 			return false;
 
 		// TODO
 		// Run commandline arg to delete a map from the server.
+		String auth[] = validateUser();
+		
+		// required arguments for the delete from server command using executable python script
+		String arguments[] = {"-u", auth[0], "-p", auth[1], "-s", "https://proj-se491.iastate.edu:6443", "-n", "EarthModelingTest/" + properties.toString(), "-o", "delete"};
+		try {
+			runExecutable(FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION, arguments);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		// python.exe "C:\Program Files\ArcGIS\Server\tools\admin\manageservice.py" -u username -p password -s https://proj-se491.iastate.edu:6443 -n EarthModelingTest/service_name -o delete
 		return false;
 	}
@@ -321,6 +339,7 @@ public class EarthModellingDaemon {
 		deleteFile(FileLocations.ABS_CREATED_LAYERS_DIRECTORY_LOCATION + properties.toString() + ".lyr");
 		// Delete gdb from auto_gdbs
 		deleteFile(FileLocations.ABS_AUTO_GDBS_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".gdb");
+		
 		return false;
 	}
 
@@ -357,10 +376,10 @@ public class EarthModellingDaemon {
 		// String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, csvFile.getName(), FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION };
 		// runPythonScript(FileLocations.CSV_TO_GEODATABASE_SCRIPT_LOCATION, arguments);
 
-		String user = "";
-		String pass = "";
+		String auth[] = validateUser();
+		
 		String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, properties.toString(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, properties.getMapCompoundType().name(),
-				FileLocations.BLANK_MAP_FILE_LOCATION, FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, user, pass };
+				FileLocations.BLANK_MAP_FILE_LOCATION, FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, auth[0], auth[1] };
 		
 		// TODO get user authentication from file
 		
@@ -370,7 +389,7 @@ public class EarthModellingDaemon {
 		// NOTE: FOR PURPOSES OF DEBUGGING, I THINK WE WANT ERRORS TO BE THROWN. IT WOULD ULTIMATELY BE UP TO CALLING OBJECTS TO HANDLE/LOG ERRORS.
 
 		String[] arguments2 = {
-				properties.toString(), user, pass
+				properties.toString(), auth[0], auth[1]
 		};
 		runPythonScript(FileLocations.PUBLISHING_PARAMS_SCRIPT_LOCATION, arguments);
 		// Delete files.
@@ -379,6 +398,33 @@ public class EarthModellingDaemon {
 		return true;
 	}
 
+	
+	private static String[] validateUser() throws FileNotFoundException {
+		
+		// New buffered reader for getting local file
+		BufferedReader buffR;
+		buffR = new BufferedReader(new FileReader(FileLocations.SERVER_AUTH_FILE_LOCATION));
+		
+		// scan the file
+		Scanner s = new Scanner(buffR);
+		// Define authentication array for return array
+		String[] auth = new String[2];
+		// line counter
+		int line = 0;
+		
+		// fill the array with the first two lines found in the document
+		while(s.hasNext()){
+			auth[line] = s.nextLine().trim();
+			line++;
+		}
+		
+		s.close();
+		return auth;
+		
+	}
+	
+	
+	
 	private static void generateNewHTML() throws IOException {
 		File temp = new File(FileLocations.TEMP_WORKING_DIRECTORY_LOCATION + "temp.html");
 		PrintWriter output = new PrintWriter(new BufferedWriter(new FileWriter(temp)));
