@@ -23,24 +23,24 @@
 
 <AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uploadAscii.UploadAsciiScreenController">
 	<children>
-		<Label fx:id="message" alignment="CENTER" prefHeight="21.0" prefWidth="400.0" text="&quot;UPLOAD STUFFS!&quot;" textFill="RED" AnchorPane.leftAnchor="440.0" AnchorPane.topAnchor="540.0">
+		<Label fx:id="message" alignment="CENTER" layoutX="315.0" layoutY="696.0" prefHeight="21.0" prefWidth="400.0" text="Visualization of Earth Modelling Systems v0" textFill="RED" AnchorPane.leftAnchor="315.0" AnchorPane.topAnchor="696.0">
 			<font>
 				<Font size="14.0" />
 			</font>
 		</Label>
-      <VBox prefHeight="484.0" prefWidth="313.0">
+      <VBox layoutX="34.0" layoutY="23.0" prefHeight="191.0" prefWidth="194.0">
          <children>
-            <ComboBox fx:id="regionCB" prefWidth="150.0" promptText="Select Region:" />
-            <ComboBox fx:id="compoundCB" prefWidth="150.0" promptText="Select Compound:" visible="false" />
-            <TextField fx:id="yearTextField" promptText="Enter the year." visible="false" />
-            <TextField fx:id="monthTextField" promptText="Enter the month (0-11)." visible="false" />
+            <ComboBox fx:id="regionCB" pickOnBounds="false" prefWidth="150.0" promptText="Select Region:" />
+            <ComboBox fx:id="compoundCB" prefWidth="150.0" promptText="Select Compound:" />
+            <TextField fx:id="yearTextField" promptText="Enter the year." text="Select Year:" />
+            <TextField fx:id="monthTextField" prefHeight="25.0" prefWidth="147.0" promptText="Enter the month (0-11)." text="Select Month:" />
          </children>
       </VBox>
       <TextArea fx:id="selectedFilesTextArea" layoutX="423.0" layoutY="23.0" prefHeight="450.0" prefWidth="722.0" />
-      <Button fx:id="selectFilesBtn" layoutX="251.0" layoutY="527.0" mnemonicParsing="false" text="Select File To Upload" />
+      <Button fx:id="selectFilesBtn" layoutX="260.0" layoutY="140.0" mnemonicParsing="false" text="Select File To Upload" />
       <Button fx:id="sendToServerBtn" layoutX="1030.0" layoutY="561.0" mnemonicParsing="false" text="Send to Server" />
-      <CheckBox fx:id="overwriteCheckBox" layoutX="21.0" layoutY="518.0" mnemonicParsing="false" text="Overwrite Existing Map?" />
-      <CheckBox fx:id="yearlyMapCheckBox" layoutX="321.0" layoutY="123.0" mnemonicParsing="false" selected="true" text="Yearly Map (no month)" />
-      <CheckBox fx:id="deleteMapCheckBox" layoutX="321.0" layoutY="157.0" mnemonicParsing="false" text="Delete An Existing Map" />
+      <CheckBox fx:id="overwriteCheckBox" layoutX="249.0" layoutY="86.0" mnemonicParsing="false" text="Overwrite Existing Map?" />
+      <CheckBox fx:id="yearlyMapCheckBox" layoutX="251.0" layoutY="23.0" mnemonicParsing="false" selected="true" text="Yearly Map (no month)" />
+      <CheckBox fx:id="deleteMapCheckBox" layoutX="251.0" layoutY="55.0" mnemonicParsing="false" text="Delete An Existing Map" />
 	</children>
 </AnchorPane>
