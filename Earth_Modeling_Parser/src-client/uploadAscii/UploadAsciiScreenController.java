@@ -134,7 +134,7 @@ public class UploadAsciiScreenController extends AbstractNetworkedScreenControll
 			MapCompoundType mc = compoundCB.getSelectionModel().getSelectedItem();
 			int year = Integer.parseInt(yearTextField.getText());
 			int month = yearlyMapCheckBox.isSelected() ? -1 : Integer.parseInt(monthTextField.getText());
-			mp = new MapProperties(mr, mc, year, month);
+			mp = month == -1 ? new MapProperties(mr, mc, year) : new MapProperties(mr, mc, year, month);
 		} catch (Exception e) {
 			errorAlert("Cannot Construct Map Properties", "Something is wrong with your inputted information:", e.getMessage());
 		}
