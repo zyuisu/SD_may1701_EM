@@ -38,7 +38,7 @@ import org.pmw.tinylog.Logger;
 import utils.FileLocations;
 import utils.MapCompoundType;
 import utils.MapProperties;
-import utils.MapRegion;
+import utils.MapRegionType;
 
 public class ConvertedSet extends HashSet<MapProperties> implements Serializable {
 
@@ -133,7 +133,7 @@ public class ConvertedSet extends HashSet<MapProperties> implements Serializable
 	 *           The region that you wish to check for valid compounds.
 	 * @return All sorted array (sorted based on enum values) of all valid MapCompoundTypes that exist given a particular region. An empty array will be passed if no valid MapCompoundTypes exist.
 	 */
-	public MapCompoundType[] getPossibleMapCompounds(MapRegion region) {
+	public MapCompoundType[] getPossibleMapCompounds(MapRegionType region) {
 		Set<MapCompoundType> types = new HashSet<MapCompoundType>();
 
 		for (MapProperties p : set)
@@ -154,7 +154,7 @@ public class ConvertedSet extends HashSet<MapProperties> implements Serializable
 	 *           The compound that you wish to check for valid years.
 	 * @return A sorted array of all valid years that exist given a particular region and compound. An empty array will be passed if no valid years exist.
 	 */
-	public int[] getPossibleYears(MapRegion region, MapCompoundType compound) {
+	public int[] getPossibleYears(MapRegionType region, MapCompoundType compound) {
 		Set<Integer> years = new HashSet<Integer>();
 
 		for (MapProperties p : set)
@@ -181,7 +181,7 @@ public class ConvertedSet extends HashSet<MapProperties> implements Serializable
 	 *           The year that you wish to check for valid months.
 	 * @return A sorted array of all valid months that exist given a particular region and compound. An empty array will be passed if no valid months exist.
 	 */
-	public int[] getPossibleMonths(MapRegion region, MapCompoundType compound, int year) {
+	public int[] getPossibleMonths(MapRegionType region, MapCompoundType compound, int year) {
 		Set<Integer> months = new HashSet<Integer>();
 
 		for (MapProperties p : set)

@@ -32,6 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Scanner;
 
 import org.pmw.tinylog.Logger;
@@ -40,7 +41,7 @@ import parser.AsciiToCsv;
 import utils.FileLocations;
 import utils.MapCompoundType;
 import utils.MapProperties;
-import utils.MapRegion;
+import utils.MapRegionType;
 
 public class EarthModellingDaemon {
 
@@ -61,45 +62,36 @@ public class EarthModellingDaemon {
 		csvOutputDir.mkdir();
 		tempOutputDir.mkdir();
 
-		while (true) {
+		// DEBUG
+		// To test the generator, input some values, if needed, into convertedSet.
+		MapRegionType[] regions = MapRegionType.values();
+		MapCompoundType[] compounds = MapCompoundType.values();
+		int minYear = 1980;
+		int maxYear = 2015;
+		int maxMonth = 11;
+		Random rand = new Random();
 
-			// DEBUG
-			// To test the generator, input some values into convertedSet.
-			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CH4, 2000, 3));
-			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CH4, 2000, 4));
-			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CH4, 2000, 5));
-			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CH4, 2001, 3));
-			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CH4, 2001, 1));
-			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CH4, 2000, 3));
-			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CH4, 2000, 4));
-			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CH4, 2000, 5));
-			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CH4, 2001, 3));
-			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CH4, 2001, 1));
-			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2002));
-			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2009));
-			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2017));
-			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2001));
-			convertedSet.add(new MapProperties(MapRegion.GLOBAL, MapCompoundType.CO2, 2004));
-			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2000));
-			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2003));
-			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2004));
-			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2008));
-			convertedSet.add(new MapProperties(MapRegion.MISSISSIPPI_RIVER_BASIN, MapCompoundType.CO2, 2007));
+		for (int i = 0; i < 100; i++) {
+			MapRegionType r = regions[rand.nextInt(regions.length)];
+			MapCompoundType c = compounds[rand.nextInt(compounds.length)];
+			int y = minYear + rand.nextInt(maxYear - minYear);
+			int m = c == MapCompoundType.CH4 ? rand.nextInt(11) : -1;
 
-			generateNewHTML();
-			/////////////////////////////////
+			if (m == -1)
+				convertedSet.add(new MapProperties(r, c, y));
+			else
+				convertedSet.add(new MapProperties(r, c, y, m));
+		}
 
-			/*
-			 * while (asciiInputDir.list().length > 0) { String firstAsciiFileName = asciiInputDir.list()[0]; String firstAsciiFileLocation = asciiInputDir.getAbsolutePath() + "\\" + firstAsciiFileName; try { createMap(new File(firstAsciiFileLocation), parseMapProperties(firstAsciiFileName)); } catch (Exception e) {
-			 * Logger.error("Error parsing {} in default directory: {}", firstAsciiFileName, e); } }
-			 */
+		generateNewHTML();
+		/////////////////////////////////
 
+		while (true)
 			try {
 				Thread.sleep(TIME_TO_SLEEP);
 			} catch (InterruptedException e) {
 				// Do nothing, because map processing is likely happening right now.
 			}
-		}
 
 	}
 
@@ -120,12 +112,11 @@ public class EarthModellingDaemon {
 		if (s.substring(currentIndex, 3).toLowerCase().equals("ch4")) {
 			compound = MapCompoundType.CH4;
 			currentIndex = 4;
-		} else if (s.substring(currentIndex, 3).toLowerCase().equals("co2")) {
-			compound = MapCompoundType.CO2;
+		} else if (s.substring(currentIndex, 3).toLowerCase().equals("co2"))
+			// compound = MapCompoundType.CO2;
 			currentIndex = 4;
-		}
 
-		MapRegion region = MapRegion.GLOBAL; // Default to global.
+		MapRegionType region = MapRegionType.GLOBAL; // Default to global.
 
 		int year = Integer.parseInt(s.substring(currentIndex, currentIndex + 4));
 		currentIndex += 5;
@@ -315,13 +306,13 @@ public class EarthModellingDaemon {
 		String auth[] = validateUser();
 
 		// required arguments for the delete from server command using executable python script
+		// python.exe "C:\Program Files\ArcGIS\Server\tools\admin\manageservice.py" -u username -p password -s https://proj-se491.iastate.edu:6443 -n EarthModelingTest/service_name -o delete
 		String arguments[] = { "-u", auth[0], "-p", auth[1], "-s", "https://proj-se491.iastate.edu:6443", "-n", "EarthModelingTest/" + properties.toString(), "-o", "delete" };
 		runExecutable(FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION, arguments);
 
 		convertedSet.remove(properties);
 		generateNewHTML();
-
-		// python.exe "C:\Program Files\ArcGIS\Server\tools\admin\manageservice.py" -u username -p password -s https://proj-se491.iastate.edu:6443 -n EarthModelingTest/service_name -o delete
+		
 		return true;
 	}
 
@@ -484,7 +475,7 @@ public class EarthModellingDaemon {
 	 *           The StringBuilder upon which the region values should be appended to.
 	 */
 	private static void allocateRegionList(StringBuilder strBuff) {
-		for (MapRegion mr : MapRegion.values()) {
+		for (MapRegionType mr : MapRegionType.values()) {
 			strBuff.append("regionList[regionList.length] = new Option(");
 			strBuff.append("'");
 			strBuff.append(mr.name());
@@ -515,7 +506,7 @@ public class EarthModellingDaemon {
 		// To dynamically allocate values in compoundList.
 		strBuff.append("var region = regionList.options[regionList.selectedIndex].text; switch(region){ default: break; ");
 		int index = 0;
-		for (MapRegion mr : MapRegion.values()) {
+		for (MapRegionType mr : MapRegionType.values()) {
 			strBuff.append("case '");
 			strBuff.append(mr.name());
 			strBuff.append("': for (var i = 0; i < ");
@@ -544,7 +535,7 @@ public class EarthModellingDaemon {
 	private static ArrayList<String> generateRegionArrays(StringBuilder strBuff) {
 		ArrayList<String> arrayNames = new ArrayList<String>();
 
-		for (MapRegion mr : MapRegion.values()) {
+		for (MapRegionType mr : MapRegionType.values()) {
 			String s = mr.name() + "Arr";
 			arrayNames.add(s);
 
@@ -617,7 +608,7 @@ public class EarthModellingDaemon {
 	private static ArrayList<String> generateCompoundArrays(StringBuilder strBuff) {
 		ArrayList<String> arrayNames = new ArrayList<String>();
 
-		for (MapRegion mr : MapRegion.values())
+		for (MapRegionType mr : MapRegionType.values())
 			for (MapCompoundType mc : MapCompoundType.values()) {
 				String s = mr.name() + mc.name() + "Arr";
 				arrayNames.add(s);
@@ -692,7 +683,7 @@ public class EarthModellingDaemon {
 	private static ArrayList<String> generateMonthArrays(StringBuilder strBuff) {
 		ArrayList<String> arrayNames = new ArrayList<String>();
 
-		for (MapRegion mr : MapRegion.values())
+		for (MapRegionType mr : MapRegionType.values())
 			for (MapCompoundType mc : MapCompoundType.values()) {
 				int[] years = convertedSet.getPossibleYears(mr, mc);
 				for (int y : years) {

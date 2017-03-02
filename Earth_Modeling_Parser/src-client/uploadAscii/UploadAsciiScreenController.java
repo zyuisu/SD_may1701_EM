@@ -16,7 +16,7 @@ import networking.AsciiFileMessage;
 import networking.DeleteMapMessage;
 import utils.MapCompoundType;
 import utils.MapProperties;
-import utils.MapRegion;
+import utils.MapRegionType;
 
 public class UploadAsciiScreenController extends AbstractNetworkedScreenController {
 	// Functional components.
@@ -25,7 +25,7 @@ public class UploadAsciiScreenController extends AbstractNetworkedScreenControll
 	@FXML
 	private TextArea selectedFilesTextArea;
 	@FXML
-	private ComboBox<MapRegion> regionCB;
+	private ComboBox<MapRegionType> regionCB;
 	@FXML
 	private ComboBox<MapCompoundType> compoundCB;
 	@FXML
@@ -130,7 +130,7 @@ public class UploadAsciiScreenController extends AbstractNetworkedScreenControll
 
 		MapProperties mp = null;
 		try {
-			MapRegion mr = regionCB.getSelectionModel().getSelectedItem();
+			MapRegionType mr = regionCB.getSelectionModel().getSelectedItem();
 			MapCompoundType mc = compoundCB.getSelectionModel().getSelectedItem();
 			int year = Integer.parseInt(yearTextField.getText());
 			int month = yearlyMapCheckBox.isSelected() ? -1 : Integer.parseInt(monthTextField.getText());
@@ -146,7 +146,7 @@ public class UploadAsciiScreenController extends AbstractNetworkedScreenControll
 	 * Populates the region and compound combo boxes based on values from src-shared.utils enums.
 	 */
 	private void populateComboBoxes() {
-		for (MapRegion mr : MapRegion.values())
+		for (MapRegionType mr : MapRegionType.values())
 			regionCB.getItems().add(mr);
 
 		for (MapCompoundType mc : MapCompoundType.values())

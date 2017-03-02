@@ -26,7 +26,7 @@ public class MapProperties implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private MapCompoundType compound;
-	private MapRegion region;
+	private MapRegionType region;
 	private int year;
 	private int month;
 
@@ -44,7 +44,7 @@ public class MapProperties implements Serializable {
 	 * @throws IllegalAccessException
 	 *            If MapCompoundType or MapRegion is null.
 	 */
-	public MapProperties(MapRegion region, MapCompoundType compound, int year, int month) throws IllegalAccessException {
+	public MapProperties(MapRegionType region, MapCompoundType compound, int year, int month) throws IllegalAccessException {
 		this(region, compound, year);
 
 		if (month < 0 || month > 11)
@@ -64,7 +64,7 @@ public class MapProperties implements Serializable {
 	 * @throws IllegalAccessException
 	 *            If MapCompoundType or MapRegion is null.
 	 */
-	public MapProperties(MapRegion region, MapCompoundType compound, int year) throws IllegalAccessException {
+	public MapProperties(MapRegionType region, MapCompoundType compound, int year) throws IllegalAccessException {
 		if (region == null || compound == null)
 			throw new IllegalAccessException("Region and compound types must be set.");
 		this.region = region;
@@ -91,7 +91,7 @@ public class MapProperties implements Serializable {
 	/**
 	 * @return The MapRegion that represents the extent of this map.
 	 */
-	public MapRegion getMapRegion() {
+	public MapRegionType getMapRegion() {
 		return region;
 	}
 
