@@ -69,7 +69,7 @@ public class ClientThread extends Thread {
 		try {
 			Object obj = input.readObject();
 
-			if (!(obj instanceof ConnectionMessage))
+			if (!(obj == null || obj instanceof ConnectionMessage))
 				return false;
 
 			ConnectionMessage cm = (ConnectionMessage) obj;

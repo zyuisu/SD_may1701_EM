@@ -61,7 +61,9 @@ public class NetworkListener extends Thread {
 				StringMessage msg = (StringMessage) input.readObject();
 				AbstractNetworkedScreenController controller = MainModel.getModel().getControllerData().getCurrentController();
 
-				if (msg.getMessageType() == Type.ERROR_MESSAGE)
+				if (msg == null)
+					controller.errorAlert("Communication Error", "There was an issue talking to the server.", "The server passed an invalid or incomplete message.");
+				else if (msg.getMessageType() == Type.ERROR_MESSAGE)
 					controller.errorAlert("Server Error", msg.getMsgHeader(), msg.getMsgContent());
 				else if (msg.getMessageType() == Type.WARNING_MESSAGE)
 					controller.warningAlert("Server Warning", msg.getMsgHeader(), msg.getMsgContent());
