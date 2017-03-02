@@ -64,37 +64,24 @@ public class EarthModellingDaemon {
 		csvOutputDir.mkdir();
 		tempOutputDir.mkdir();
 
-		// DEBUG
-		// To test the generator, input some values, if needed, into convertedSet.
-		MapRegionType[] regions = MapRegionType.values();
-		MapCompoundType[] compounds = MapCompoundType.values();
-		int minYear = 1980;
-		int maxYear = 2015;
-		int maxMonth = 11;
-		Random rand = new Random();
-
-		for (int i = 0; i < 100; i++) {
-			MapRegionType r = regions[rand.nextInt(regions.length)];
-			MapCompoundType c = compounds[rand.nextInt(compounds.length)];
-			int y = minYear + rand.nextInt(maxYear - minYear);
-			int m = c == MapCompoundType.CH4 ? rand.nextInt(maxMonth) : -1;
-
-			if (m == -1)
-				convertedSet.add(new MapProperties(r, c, y));
-			else
-				convertedSet.add(new MapProperties(r, c, y, m));
-		}
-
-		generateNewHTML();
+		/*
+		 * // DEBUG // To test the generator, input some values, if needed, into convertedSet. MapRegionType[] regions = MapRegionType.values(); MapCompoundType[] compounds = MapCompoundType.values(); int minYear = 1980; int maxYear = 2015; int maxMonth = 11; Random rand = new Random();
+		 * 
+		 * for (int i = 0; i < 100; i++) { MapRegionType r = regions[rand.nextInt(regions.length)]; MapCompoundType c = compounds[rand.nextInt(compounds.length)]; int y = minYear + rand.nextInt(maxYear - minYear); int m = c == MapCompoundType.CH4 ? rand.nextInt(maxMonth) : -1;
+		 * 
+		 * if (m == -1) convertedSet.add(new MapProperties(r, c, y)); else convertedSet.add(new MapProperties(r, c, y, m)); }
+		 * 
+		 * generateNewJavaScript();
+		 */
 		/////////////////////////////////
-		
+
 		Logger.info("Starting VEMS ClientServer.");
 		ClientServer cs = new ClientServer(ServerInformation.SERVER_PORT, FileLocations.KEYSTORE_FILE_LOCATION, "password");
 		cs.start();
-		
+
 		// To gracefully shut things down:
-		//cs.end();
-		
+		// cs.end();
+
 		while (true)
 			try {
 				Thread.sleep(TIME_TO_SLEEP);
@@ -319,8 +306,8 @@ public class EarthModellingDaemon {
 		runExecutable(FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION, arguments);
 
 		convertedSet.remove(properties);
-		generateNewHTML();
-		
+		generateNewJavaScript();
+
 		return true;
 	}
 
@@ -397,11 +384,11 @@ public class EarthModellingDaemon {
 			return false;
 
 		String auth[] = validateUser();
-		
+
 		String region = "";
 		String compound = "";
-		
-		switch(properties.getMapCompoundType()){
+
+		switch (properties.getMapCompoundType()) {
 			case CH4:
 				region = "CH4";
 				break;
@@ -427,8 +414,8 @@ public class EarthModellingDaemon {
 				region = "SOC";
 				break;
 		}
-		
-		switch(properties.getMapRegion()){
+
+		switch (properties.getMapRegion()) {
 			case GLOBAL:
 				region = "global";
 				break;
@@ -439,11 +426,11 @@ public class EarthModellingDaemon {
 				region = "mrb";
 				break;
 		}
-		
-		String template = region+compound+"_template.mxd";
-		
-		String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, properties.toString(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, template,
-				FileLocations.BLANK_MAP_FILE_LOCATION, FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, auth[0], auth[1] };
+
+		String template = region + compound + "_template.mxd";
+
+		String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, properties.toString(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, template, FileLocations.BLANK_MAP_FILE_LOCATION,
+				FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, auth[0], auth[1] };
 
 		runPythonScript(FileLocations.PUBLISH_MAP_SCRIPT_LOCATION, arguments);
 
@@ -453,7 +440,7 @@ public class EarthModellingDaemon {
 		// Delete files.
 		deleteFile(asciiFile);
 
-		generateNewHTML();
+		generateNewJavaScript();
 
 		return true;
 	}
@@ -495,14 +482,14 @@ public class EarthModellingDaemon {
 	 * @throws IOException
 	 *            Had an issue creating the temp file or replacing the existing file with the temp file.
 	 */
-	private static void generateNewHTML() throws IOException {
+	private static void generateNewJavaScript() throws IOException {
 		File temp = new File(FileLocations.TEMP_WORKING_DIRECTORY_LOCATION + "temp.html");
 		PrintWriter output = new PrintWriter(new BufferedWriter(new FileWriter(temp)));
 
 		StringBuilder strBuff = new StringBuilder();
 
 		// Get dropdown elements from DOM.
-		strBuff.append("var regionList = document.getElementById('region'); var compoundList = document.getElementById('compound'); var yearList = document.getElementById('year'); var monthList = document.getElementById('month'); var loadMapBtn = document.getElementById('loadMapBtn'); ");
+		strBuff.append("function loadList(){ var regionList = document.getElementById('region'); var compoundList = document.getElementById('compound'); var yearList = document.getElementById('year'); var monthList = document.getElementById('month'); var loadMapBtn = document.getElementById('loadMapBtn'); ");
 
 		// Generate event listeners.
 		allocateRegionList(strBuff);
@@ -512,6 +499,10 @@ public class EarthModellingDaemon {
 		/*
 		 * Note about above helper methods from Anish: Honestly, the code to generate the JS is just plain bad. However, it runs quickly, works, and will likely never be expanded upon, so I have no incentive to refactor it. My assumption is if the number of maps ever gets sufficiently large, we would switch to querying a database.
 		 */
+
+		// Add button listener.
+		strBuff.append(
+				"loadMapBtn.addEventListener('click', function(){ require([ 'esri/Map', 'esri/views/SceneView', 'esri/layers/MapImageLayer', 'esri/widgets/Legend', 'dojo/domReady!', 'dojo/on', 'dojo/dom', ], function( Map, SceneView, MapImageLayer, Legend, domReady, on, dom) { var region = dom.byId('region'); var comp = dom.byId('compound'); var year = dom.byId('year'); var month = dom.byId('month'); new_url = 'http://proj-se491.cs.iastate.edu:6080/arcgis/rest/services/EarthModelingTest/' + region.value + compound.value + 'y' + year.value + 'm' + month.value + '/MapServer' var url = new_url; var lyr = new MapImageLayer({ url: url, opacity: 0.75 }); var map = new Map({ basemap: 'oceans', layers: [lyr] }); var view = new SceneView({ container: 'viewDiv', map: map }); view.then(function() { var legend = new Legend({ view: view, layerInfos: [{ layer: lyr, title: month.options[month.selectedIndex].text + '  ' + year.options[year.selectedIndex].text }] }); view.ui.add(legend, 'bottom-right'); }); lyr.then(function() { view.goTo(lyr.fullExtent); }); }); }); }");
 
 		// Output finalized JS.
 		output.write(strBuff.toString());
@@ -710,10 +701,13 @@ public class EarthModellingDaemon {
 			strBuff.append(caseName);
 			strBuff.append("': for (var i = 0; i < ");
 			strBuff.append(yearArrays.get(index));
-			strBuff.append(".length; ++i){");
-			strBuff.append("monthList[i+1] = new Option(");
+			strBuff.append(".length; ++i){ var monthName;");
+			strBuff.append("switch (");
 			strBuff.append(yearArrays.get(index));
-			strBuff.append("[i], ");
+			strBuff.append(
+					"[i]){ default: break; case '0': monthName = 'January'; case '1': monthName = 'February'; case '2': monthName = 'March'; case '3': monthName = 'April'; case '4': monthName = 'May'; case '5': monthName = 'June'; case '6': monthName = 'July'; case '7': monthName = 'August'; case '8': monthName = 'September'; case '9': monthName = 'October'; case '10': monthName = 'November'; case '11': monthName = 'December'; ");
+			strBuff.append("} monthList[i+1] = new Option(");
+			strBuff.append("monthName,");
 			strBuff.append(yearArrays.get(index));
 			strBuff.append("[i]); ");
 			strBuff.append("} if (");
