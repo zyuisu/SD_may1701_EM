@@ -109,7 +109,7 @@ public class ClientThread extends Thread {
 		// Validate user.
 		while (!initializeUser()) {
 			if (validateCount > 5) {
-				Logger.info("{} failed attempted connection too many times", username);
+				Logger.info("{} failed attempted connection too many times.", username);
 				end();
 				break;
 			}
