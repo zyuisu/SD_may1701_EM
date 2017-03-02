@@ -37,6 +37,8 @@ import java.util.Scanner;
 
 import org.pmw.tinylog.Logger;
 
+import networking.ClientServer;
+import networking.ServerInformation;
 import parser.AsciiToCsv;
 import utils.FileLocations;
 import utils.MapCompoundType;
@@ -85,14 +87,20 @@ public class EarthModellingDaemon {
 
 		generateNewHTML();
 		/////////////////////////////////
-
+		
+		Logger.info("Starting VEMS ClientServer.");
+		ClientServer cs = new ClientServer(ServerInformation.SERVER_PORT, FileLocations.KEYSTORE_FILE_LOCATION, "password");
+		cs.start();
+		
+		// To gracefully shut things down:
+		//cs.end();
+		
 		while (true)
 			try {
 				Thread.sleep(TIME_TO_SLEEP);
 			} catch (InterruptedException e) {
 				// Do nothing, because map processing is likely happening right now.
 			}
-
 	}
 
 	/**
