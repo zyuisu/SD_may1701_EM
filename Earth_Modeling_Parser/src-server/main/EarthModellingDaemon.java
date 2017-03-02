@@ -385,10 +385,10 @@ public class EarthModellingDaemon {
 
 		String auth[] = validateUser();
 
-		String region = "";
-		String compound = "";
+		//String region = "";
+		//String compound = "";
 
-		switch (properties.getMapCompoundType()) {
+		/*switch (properties.getMapCompoundType()) {
 			case CH4:
 				region = "CH4";
 				break;
@@ -425,9 +425,9 @@ public class EarthModellingDaemon {
 			case MISSISSIPPI_RIVER_BASIN:
 				region = "mrb";
 				break;
-		}
+		}*/
 
-		String template = region + compound + "_template.mxd";
+		String template = properties.getMapRegion().toString() + properties.getMapCompoundType().toString();
 
 		String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, properties.toString(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, template, FileLocations.BLANK_MAP_FILE_LOCATION,
 				FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, auth[0], auth[1] };

@@ -73,7 +73,7 @@ def main(argv):
   
 
   # Get the Map File to Use as a Template
-  template_mxd = arcpy.mapping.MapDocument(map_templates_dir + template_map_name)
+  template_mxd = arcpy.mapping.MapDocument(map_templates_dir + template_map_name + ".msd")
   # Also access the layer to be used as a template
   template_lyr = arcpy.mapping.ListLayers(template_mxd)[0]
   # Access the data frame of the template layer (for reference scale)
