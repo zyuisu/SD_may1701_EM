@@ -105,8 +105,15 @@ public class ClientThread extends Thread {
 	public void run() {
 		run = true;
 
+		int validateCount = 0;
 		// Validate user.
 		while (!initializeUser()) {
+			if (validateCount > 5) {
+				Logger.info("{} failed attempted connection too many times", username);
+				end();
+				break;
+			}
+			validateCount++;
 		}
 
 		Logger.info("{} sucessfully connected to server", username);
