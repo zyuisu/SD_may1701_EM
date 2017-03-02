@@ -389,7 +389,52 @@ public class EarthModellingDaemon {
 			return false;
 
 		String auth[] = validateUser();
-		String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, properties.toString(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, properties.getMapCompoundType().name(),
+		
+		String region = "";
+		String compound = "";
+		
+		switch(properties.getMapCompoundType()){
+			case CH4:
+				region = "CH4";
+				break;
+			case ET:
+				region = "ET";
+				break;
+			case LEACHNO3:
+				region = "LEACHNO3";
+				break;
+			case N2O:
+				region = "N2O";
+				break;
+			case NPP:
+				region = "NPP";
+				break;
+			case NUPTAKE:
+				region = "Nuptake";
+				break;
+			case RH:
+				region = "RH";
+				break;
+			case SOC:
+				region = "SOC";
+				break;
+		}
+		
+		switch(properties.getMapRegion()){
+			case GLOBAL:
+				region = "global";
+				break;
+			case MIDWESTERN_US:
+				region = "mw";
+				break;
+			case MISSISSIPPI_RIVER_BASIN:
+				region = "mrb";
+				break;
+		}
+		
+		String template = region+compound+"_template.mxd";
+		
+		String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, properties.toString(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, template,
 				FileLocations.BLANK_MAP_FILE_LOCATION, FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, auth[0], auth[1] };
 
 		runPythonScript(FileLocations.PUBLISH_MAP_SCRIPT_LOCATION, arguments);
