@@ -435,7 +435,7 @@ public class EarthModellingDaemon {
 		runPythonScript(FileLocations.PUBLISH_MAP_SCRIPT_LOCATION, arguments);
 
 		String[] arguments2 = { properties.toString(), auth[0], auth[1] };
-		runPythonScript(FileLocations.PUBLISHING_PARAMS_SCRIPT_LOCATION, arguments);
+		runPythonScript(FileLocations.PUBLISHING_PARAMS_SCRIPT_LOCATION, arguments2);
 
 		// Delete files.
 		deleteFile(asciiFile);
