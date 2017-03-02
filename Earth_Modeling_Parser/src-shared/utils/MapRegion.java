@@ -14,7 +14,7 @@
 /**
  * @author Anish Kunduru
  * 
- *         Handy enum to define all the map regions that our server will be able to handle. This will be needed if multiple compounds can be defined in different regions.
+ *         Handy enum to define all the map regions that our server will be able to handle. This will be needed if multiple compounds can be defined in different regions. Should be defined in alphabetical order.
  */
 
 package utils;

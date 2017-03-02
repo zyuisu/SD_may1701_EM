@@ -14,11 +14,11 @@
 /**
  * @author Anish Kunduru
  * 
- *         Handy enum to define all the map compound types that our server will be able to handle.
+ *         Handy enum to define all the map compound types that our server will be able to handle. Should be defined in alphabetical order.
  */
 
 package utils;
 
 public enum MapCompoundType {
-	CH4, CO2;
+	CH4, ET, LEACHNO3, N20, NPP, NUPTAKE, RH, SOC
 }
