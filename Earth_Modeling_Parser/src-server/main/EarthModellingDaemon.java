@@ -75,7 +75,7 @@ public class EarthModellingDaemon {
 			MapRegionType r = regions[rand.nextInt(regions.length)];
 			MapCompoundType c = compounds[rand.nextInt(compounds.length)];
 			int y = minYear + rand.nextInt(maxYear - minYear);
-			int m = c == MapCompoundType.CH4 ? rand.nextInt(11) : -1;
+			int m = c == MapCompoundType.CH4 ? rand.nextInt(maxMonth) : -1;
 
 			if (m == -1)
 				convertedSet.add(new MapProperties(r, c, y));
