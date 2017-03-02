@@ -21,7 +21,7 @@ package networking;
 
 public class ServerInformation {
 
-	public final static String SERVER_ADDRESS = "localhost";
+	public final static String SERVER_ADDRESS = "proj-se491.cs.iastate.edu";
 	public final static int SERVER_PORT = 1443;
 
 	private ServerInformation() {
