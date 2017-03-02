@@ -25,8 +25,8 @@ def main(argv):
     print r"Enter the service name in the format <folder>/<name>.<type>."
     #service = raw_input(r"For example USA/Chicago.MapServer: ")
     service = "EarthModelingTest/" + service_to_change + ".MapServer"
-    minInstances = 0
-    maxInstances = 8
+    minInstancesNum = 0
+    maxInstancesNum = 8
     maxUsageTime = 15
     maxWaitTime = 30
     maxIdleTime = 60
