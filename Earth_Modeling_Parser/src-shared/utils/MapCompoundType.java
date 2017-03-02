@@ -20,5 +20,5 @@
 package utils;
 
 public enum MapCompoundType {
-	CH4, ET, LEACHNO3, N20, NPP, NUPTAKE, RH, SOC
+	CH4, ET, LEACHNO3, N2O, NPP, NUPTAKE, RH, SOC
 }
