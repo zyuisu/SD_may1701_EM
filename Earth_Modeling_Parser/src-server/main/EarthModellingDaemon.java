@@ -373,7 +373,7 @@ public class EarthModellingDaemon {
 			// Delete table files from tables folder (.dbf, .dbf.xml, .cpg)
 			if (!deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".dbf"))
 				return false;
-			if (!deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".dfb.xml"))
+			if (!deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".dbf.xml"))
 				return false;
 			if (!deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".cpg"))
 				return false;
