@@ -40,9 +40,9 @@ import utils.MapCompoundType;
 import utils.MapProperties;
 import utils.MapRegionType;
 
-public class ConvertedSet extends HashSet<MapProperties> implements Serializable {
+public class ConvertedSet implements Serializable {
 
-	private static final long serialVersionUID = 3L;
+	private static final long serialVersionUID = 4L;
 
 	private Set<MapProperties> set;
 
@@ -81,14 +81,13 @@ public class ConvertedSet extends HashSet<MapProperties> implements Serializable
 	}
 
 	/**
-	 * Adds a given map's properties to the set. It is unsafe to use any other method to add a map.
+	 * Adds a given map's properties to the set.
 	 * 
 	 * @param properties
 	 *           The MapProperties of the map that you wish to add.
 	 * @return true if it doesn't exist in the set and was added; false otherwise.
 	 */
-	@Override
-	public boolean add(MapProperties properties) {		
+	public boolean add(MapProperties properties) {
 		if (set.add(properties)) {
 			try {
 				ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(FileLocations.CONVERTED_FILE_LOCATION, false)));
@@ -104,7 +103,7 @@ public class ConvertedSet extends HashSet<MapProperties> implements Serializable
 	}
 
 	/**
-	 * Removes a given map's properties from the set. It is unsafe to use any other method to remove a map.
+	 * Removes a given map's properties from the set.
 	 * 
 	 * @param properties
 	 *           The MapProperties of the map that you wish to remove.
@@ -123,6 +122,18 @@ public class ConvertedSet extends HashSet<MapProperties> implements Serializable
 		}
 
 		return false;
+	}
+
+	/**
+	 * Checks if the underlying set contains the given map.
+	 * 
+	 * @param properties
+	 *           The MapProperties that defines the map you wish to remove.
+	 * @return true if contained within the set; false otherwise.
+	 */
+	public boolean contains(MapProperties properties) {
+		return set.contains(properties);
+
 	}
 
 	/**

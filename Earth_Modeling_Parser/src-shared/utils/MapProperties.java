@@ -130,13 +130,12 @@ public class MapProperties implements Serializable {
 
 		return false;
 	}
-	
+
 	/**
 	 * Generates a consistent and unique hashcode using this.toString().
 	 */
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return this.toString().hashCode();
 	}
 }

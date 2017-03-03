@@ -194,7 +194,7 @@ public class ClientServer extends Thread {
 	 *           A reference to the ClientThread that is making the call (to return error or success messages).
 	 */
 	public synchronized void parseAsciiFileMessage(AsciiFileMessage afm, ClientThread client) {
-		try {			
+		try {
 			if (afm.getOverwriteExisting())
 				if (!EarthModellingDaemon.removeMapFromServer(afm.getMapProperties()))
 					client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue removing the existing map.", "Check the server logs for more information."));

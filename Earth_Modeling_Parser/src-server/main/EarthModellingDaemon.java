@@ -32,7 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.Scanner;
 
 import org.pmw.tinylog.Logger;
@@ -224,9 +223,8 @@ public class EarthModellingDaemon {
 			BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			String line = null;
 			try {
-				while ((line = input.readLine()) != null) {
+				while ((line = input.readLine()) != null)
 					result.add(line);
-				}
 			} catch (Exception e) {
 				Logger.error(e);
 				result.add("EXCEPTION THROWN!");
@@ -319,10 +317,10 @@ public class EarthModellingDaemon {
 	 */
 	public static synchronized boolean removeLocalMapFiles(MapProperties properties) {
 		if (convertedSet.contains(properties)) {
-			
-			String nice = properties.toString().replace("-", "_");
-			
-			
+
+			// For ESRI, since some of their functions don't accept negative values as file arguments.
+			String nice = properties.toString().replace("-1", "_1");
+
 			// Delete corresponding mxd in maps_publishing
 			deleteFile(FileLocations.ABS_MAPS_PUBLISHING_DIRECTORY_LOCATION + nice + ".mxd");
 			// Delete service definition in temp_publishing
