@@ -319,18 +319,22 @@ public class EarthModellingDaemon {
 	 */
 	public static synchronized boolean removeLocalMapFiles(MapProperties properties) {
 		if (convertedSet.contains(properties)) {
+			
+			String nice = properties.toString().replace("-", "_");
+			
+			
 			// Delete corresponding mxd in maps_publishing
-			deleteFile(FileLocations.ABS_MAPS_PUBLISHING_DIRECTORY_LOCATION + properties.toString() + ".mxd");
+			deleteFile(FileLocations.ABS_MAPS_PUBLISHING_DIRECTORY_LOCATION + nice + ".mxd");
 			// Delete service definition in temp_publishing
 			deleteFile(FileLocations.ABS_TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION + properties.toString() + ".sd");
 			// Delete table files from tables folder (.dbf, .dbf.xml, .cpg)
-			deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".dbf");
-			deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".dfb.xml");
-			deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".cpg");
+			deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".dbf");
+			deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".dfb.xml");
+			deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".cpg");
 			// Delete .lyr from created_layers
-			deleteFile(FileLocations.ABS_CREATED_LAYERS_DIRECTORY_LOCATION + properties.toString() + ".lyr");
+			deleteFile(FileLocations.ABS_CREATED_LAYERS_DIRECTORY_LOCATION + nice + ".lyr");
 			// Delete gdb from auto_gdbs
-			deleteFile(FileLocations.ABS_AUTO_GDBS_OUTPUT_DIRECTORY_LOCATION + properties.toString() + ".gdb");
+			deleteFile(FileLocations.ABS_AUTO_GDBS_OUTPUT_DIRECTORY_LOCATION + nice + ".gdb");
 			return true;
 		}
 
