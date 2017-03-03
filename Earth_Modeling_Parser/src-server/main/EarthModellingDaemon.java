@@ -300,8 +300,8 @@ public class EarthModellingDaemon {
 		// required arguments for the delete from server command using executable python script
 		// python.exe "C:\Program Files\ArcGIS\Server\tools\admin\manageservice.py" -u username -p password -s https://proj-se491.iastate.edu:6443 -n EarthModelingTest/service_name -o delete
 		String arguments[] = { "-u", auth[0], "-p", auth[1], "-s", "https://proj-se491.iastate.edu:6443", "-n", "EarthModelingTest/" + properties.toString(), "-o", "delete" };
-		runExecutable(FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION, arguments);
-
+		runPythonScript(FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION, arguments);
+		
 		convertedSet.remove(properties);
 		generateNewJavaScript();
 
