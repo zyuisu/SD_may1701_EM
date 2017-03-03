@@ -31,9 +31,9 @@
       <VBox layoutX="34.0" layoutY="23.0" prefHeight="191.0" prefWidth="194.0">
          <children>
             <ComboBox fx:id="regionCB" pickOnBounds="false" prefWidth="150.0" promptText="Select Region:" />
-            <ComboBox fx:id="compoundCB" prefWidth="150.0" promptText="Select Compound:" />
-            <TextField fx:id="yearTextField" promptText="Enter the year." text="Select Year:" />
-            <TextField fx:id="monthTextField" prefHeight="25.0" prefWidth="147.0" promptText="Enter the month (0-11)." text="Select Month:" />
+            <ComboBox fx:id="compoundCB" prefWidth="150.0" promptText="Select Compound:" visible="false" />
+            <TextField fx:id="yearTextField" promptText="Enter the year." visible="false" />
+            <TextField fx:id="monthTextField" prefHeight="25.0" prefWidth="147.0" promptText="Enter the month (0-11)." visible="false" />
          </children>
       </VBox>
       <TextArea fx:id="selectedFilesTextArea" layoutX="444.0" layoutY="23.0" prefHeight="450.0" prefWidth="701.0" />
