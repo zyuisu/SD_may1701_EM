@@ -31,7 +31,7 @@ public class FileLocations {
 	public static final String CONVERTED_FILE_LOCATION = "resources\\converted.ser";
 	public static final String APPROVED_CLIENTS_FILE_LOCATION = "resources\\approvedClients.txt";
 
-	public static final String CURRENT_WORKING_DIRECTORY_LOCATION = "C:\\EarthModelingDaemon\\";
+	public static final String CURRENT_WORKING_DIRECTORY_LOCATION = "C:\\EarthModellingDaemon\\";
 	public static final String MAP_TEMPLATES_DIRECTORY_LOCATION = "Map_Templates\\";
 	public static final String MAPS_PUBLISHING_DIRECTORY_LOCATION = "Maps_Publishing\\";
 	public static final String TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION = "temp_publishing\\";
@@ -45,13 +45,13 @@ public class FileLocations {
 	public static final String PUBLISH_MAP_SCRIPT_LOCATION = "Python_Scripts\\publish_map.py";
 	public static final String PUBLISHING_PARAMS_SCRIPT_LOCATION = "Python_Scripts\\publishing_params.py";
 
-	public static final String SERVER_AUTH_FILE_LOCATION = "C:\\EarthModelingDaemon\\resources\\arcgis_server_manager_authentication.txt";
+	public static final String SERVER_AUTH_FILE_LOCATION = "C:\\EarthModellingDaemon\\resources\\arcgis_server_manager_authentication.txt";
 
-	public static final String ABS_MAPS_PUBLISHING_DIRECTORY_LOCATION = "C:\\EarthModelingDaemon\\Maps_Publishing\\";
-	public static final String ABS_CREATED_LAYERS_DIRECTORY_LOCATION = "C:\\EarthModelingDaemon\\Created_Layers\\";
-	public static final String ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION = "C:\\EarthModelingDaemon\\CSV_Tables\\";
-	public static final String ABS_AUTO_GDBS_OUTPUT_DIRECTORY_LOCATION = "C:\\EarthModelingDaemon\\Auto_GDB\\";
-	public static final String ABS_TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION = "C:\\EarthModelingDaemon\\temp_publishing\\";
+	public static final String ABS_MAPS_PUBLISHING_DIRECTORY_LOCATION = "C:\\EarthModellingDaemon\\Maps_Publishing\\";
+	public static final String ABS_CREATED_LAYERS_DIRECTORY_LOCATION = "C:\\EarthModellingDaemon\\Created_Layers\\";
+	public static final String ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION = "C:\\EarthModellingDaemon\\CSV_Tables\\";
+	public static final String ABS_AUTO_GDBS_OUTPUT_DIRECTORY_LOCATION = "C:\\EarthModellingDaemon\\Auto_GDB\\";
+	public static final String ABS_TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION = "C:\\EarthModellingDaemon\\temp_publishing\\";
 
 	private FileLocations() {
 	};
