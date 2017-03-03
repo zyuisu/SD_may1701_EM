@@ -1,6 +1,6 @@
 /*
  * 
- * Copyright (C) 2017 Anish Kunduru
+ * Copyright (C) 2017 Anish Kunduru and Kellen Johnson
  * 
  * This file is part the Visual Earth Modeling System (VEMS).
  * 

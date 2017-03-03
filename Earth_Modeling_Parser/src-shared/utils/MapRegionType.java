@@ -19,7 +19,7 @@
 
 package utils;
 
-// REMINDER: Define in alphabetical order.
+// REMINDER: DEFINE IN ALPHABETICAL ORDER.
 public enum MapRegionType {
 	GLOBAL, MIDWESTERN_US, MISSISSIPPI_RIVER_BASIN;
 }
