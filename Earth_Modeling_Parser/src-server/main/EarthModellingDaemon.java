@@ -414,7 +414,7 @@ public class EarthModellingDaemon {
 
 		for (String s : al) {
 			String temp = s.toLowerCase();
-			if (!(temp.contains("-error-") && temp.contains("-errors-")) && (temp.contains("error") || temp.contains("exception") || temp.contains("errno")))
+			if (!(temp.contains("-error-") || temp.contains("-errors-")) && (temp.contains("error") || temp.contains("exception") || temp.contains("errno")))
 				foundError = true;
 
 			if (foundError)
