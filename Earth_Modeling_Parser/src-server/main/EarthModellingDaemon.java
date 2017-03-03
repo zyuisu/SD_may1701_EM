@@ -155,7 +155,7 @@ public class EarthModellingDaemon {
 		for (int i = 0; i < arguments.length; i++)
 			strArr[i + 1] = arguments[i];
 
-		return runExecutable(FileLocations.PYTHON_EXECUTABLE_BINARY_LOCATION, arguments);
+		return runExecutable(FileLocations.PYTHON_EXECUTABLE_BINARY_LOCATION, strArr);
 	}
 
 	/**
