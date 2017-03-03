@@ -74,8 +74,11 @@ public class NetworkListener extends Thread {
 					Platform.runLater(() -> {
 						controller.warningAlert("Server Warning", msg.getMsgHeader(), msg.getMsgContent());
 					});
-				} else
-					controller.informationAlert("Server Message", msg.getMsgHeader(), msg.getMsgContent());
+				} else {
+					Platform.runLater(() -> {
+						controller.informationAlert("Server Message", msg.getMsgHeader(), msg.getMsgContent());
+					});
+				}
 			} catch (IOException ioe) {
 				System.out.println("The connection to the server has been terminated.");
 				ioe.printStackTrace();
