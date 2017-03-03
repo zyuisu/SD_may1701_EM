@@ -1,6 +1,6 @@
 /*
  * 
- * Copyright (C) 2017 Anish Kunduru and Kellen Johnson
+ * Copyright (C) 2017 Anish Kunduru, Kellen Johnson, and Eli Devine
  * 
  * This file is part the Visual Earth Modeling System (VEMS).
  * 
@@ -244,22 +244,63 @@ public class EarthModellingDaemon {
 	 * 
 	 * @param fileLocation
 	 *           The absolute file path of the file on the disk.
+	 * @return true if the file was successfully deleted; false otherwise.
 	 */
-	private static void deleteFile(String fileLocation) {
-		deleteFile(new File(fileLocation));
+	private static boolean deleteFile(String fileLocation) {
+		return deleteFile(new File(fileLocation));
 	}
 
 	/**
 	 * Deletes the specified file.
 	 * 
-	 * @param file
+	 * @param f
 	 *           The file that you wish to delete.
+	 * @return true if the file was successfully deleted; false otherwise.
 	 */
-	private static void deleteFile(File f) {
-		if (f.delete())
+	private static boolean deleteFile(File f) {
+		if (f == null || f.isDirectory())
+			return false;
+
+		if (f.delete()) {
 			Logger.info("File {} is deleted!", f.getName());
-		else
+			return true;
+		} else
 			Logger.error("Delete operation on {} failed!", f.getName()); // SEVERE, shouldn't happen.
+		return false;
+	}
+
+	/**
+	 * Deletes a folder and all its internal files and folders.
+	 * 
+	 * @param fileLocation
+	 *           The absolute file path of the folder on the disk.
+	 * @return true if the folder was successfully deleted; false otherwise.
+	 */
+	private static boolean deleteFolder(String fileLocation) {
+		return deleteFolder(new File(fileLocation));
+	}
+
+	/**
+	 * Deletes a filer and all its internal files and folders.
+	 * 
+	 * @param f
+	 *           The folder that you wish to delete.
+	 * @return true if the folder was successfully deleted; false otherwise.
+	 */
+	private static boolean deleteFolder(File f) {
+		if (f == null || !f.isDirectory())
+			return false;
+
+		for (File file : f.listFiles()) {
+			if (file.isDirectory())
+				if (!deleteFolder(file))
+					return false;
+
+			if (!deleteFile(file))
+				return false;
+		}
+
+		return f.delete();
 	}
 
 	/**
@@ -301,7 +342,7 @@ public class EarthModellingDaemon {
 		// python.exe "C:\Program Files\ArcGIS\Server\tools\admin\manageservice.py" -u username -p password -s https://proj-se491.iastate.edu:6443 -n EarthModelingTest/service_name -o delete
 		String arguments[] = { "-u", auth[0], "-p", auth[1], "-s", "https://proj-se491.iastate.edu:6443", "-n", "EarthModelingTest/" + properties.toString(), "-o", "delete" };
 		runPythonScript(FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION, arguments);
-		
+
 		convertedSet.remove(properties);
 		generateNewJavaScript();
 
@@ -322,17 +363,29 @@ public class EarthModellingDaemon {
 			String nice = properties.toString().replace("-1", "_1");
 
 			// Delete corresponding mxd in maps_publishing
-			deleteFile(FileLocations.ABS_MAPS_PUBLISHING_DIRECTORY_LOCATION + nice + ".mxd");
+			if (!deleteFile(FileLocations.ABS_MAPS_PUBLISHING_DIRECTORY_LOCATION + nice + ".mxd"))
+				return false;
+
 			// Delete service definition in temp_publishing
-			deleteFile(FileLocations.ABS_TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION + properties.toString() + ".sd");
+			if (!deleteFile(FileLocations.ABS_TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION + properties.toString() + ".sd"))
+				return false;
+
 			// Delete table files from tables folder (.dbf, .dbf.xml, .cpg)
-			deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".dbf");
-			deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".dfb.xml");
-			deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".cpg");
+			if (!deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".dbf"))
+				return false;
+			if (!deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".dfb.xml"))
+				return false;
+			if (!deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".cpg"))
+				return false;
+
 			// Delete .lyr from created_layers
-			deleteFile(FileLocations.ABS_CREATED_LAYERS_DIRECTORY_LOCATION + nice + ".lyr");
+			if (!deleteFile(FileLocations.ABS_CREATED_LAYERS_DIRECTORY_LOCATION + nice + ".lyr"))
+				return false;
+
 			// Delete gdb from auto_gdbs
-			deleteFile(FileLocations.ABS_AUTO_GDBS_OUTPUT_DIRECTORY_LOCATION + nice + ".gdb");
+			if (!deleteFolder(FileLocations.ABS_AUTO_GDBS_OUTPUT_DIRECTORY_LOCATION + nice + ".gdb"))
+				return false;
+
 			return true;
 		}
 
