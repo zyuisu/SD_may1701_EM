@@ -228,9 +228,9 @@ public class EarthModellingDaemon {
 					Logger.info(line);
 					result.add(line);
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
 				Logger.error(e);
-				result.add("IOEXCEPTION THROWN!");
+				result.add("EXCEPTION THROWN!");
 			}
 		};
 
@@ -415,7 +415,7 @@ public class EarthModellingDaemon {
 
 		for (String s : al) {
 			String temp = s.toLowerCase();
-			if (temp.contains("error") || temp.contains("exception"))
+			if (temp.contains("error") || temp.contains("exception") || temp.contains("errno"))
 				foundError = true;
 
 			if (foundError)
