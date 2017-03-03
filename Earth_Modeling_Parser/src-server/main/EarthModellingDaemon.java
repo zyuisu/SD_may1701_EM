@@ -380,52 +380,12 @@ public class EarthModellingDaemon {
 		}
 
 		File csvFile = convertAsciiToCsv(asciiFile);
-		if (csvFile == null)
+		if (csvFile == null) {
+			Logger.error("File generated became null");
 			return false;
-
-		String auth[] = validateUser();
-
-		//String region = "";
-		//String compound = "";
-
-		/*switch (properties.getMapCompoundType()) {
-			case CH4:
-				region = "CH4";
-				break;
-			case ET:
-				region = "ET";
-				break;
-			case LEACHNO3:
-				region = "LEACHNO3";
-				break;
-			case N2O:
-				region = "N2O";
-				break;
-			case NPP:
-				region = "NPP";
-				break;
-			case NUPTAKE:
-				region = "Nuptake";
-				break;
-			case RH:
-				region = "RH";
-				break;
-			case SOC:
-				region = "SOC";
-				break;
 		}
 
-		switch (properties.getMapRegion()) {
-			case GLOBAL:
-				region = "global";
-				break;
-			case MIDWESTERN_US:
-				region = "mw";
-				break;
-			case MISSISSIPPI_RIVER_BASIN:
-				region = "mrb";
-				break;
-		}*/
+		String auth[] = validateUser();
 
 		String template = properties.getMapRegion().toString() + properties.getMapCompoundType().toString();
 
@@ -473,7 +433,6 @@ public class EarthModellingDaemon {
 
 		s.close();
 		return auth;
-
 	}
 
 	/**
