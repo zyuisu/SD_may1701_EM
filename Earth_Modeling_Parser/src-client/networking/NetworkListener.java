@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import framework.AbstractNetworkedScreenController;
+import javafx.application.Platform;
 import networking.StringMessage.Type;
 import singleton.MainModel;
 
@@ -60,18 +61,20 @@ public class NetworkListener extends Thread {
 			try {
 				StringMessage msg = (StringMessage) input.readObject();
 				AbstractNetworkedScreenController controller = MainModel.getModel().getControllerData().getCurrentController();
-				
-				//DEBUG
-				System.out.println(msg.getMsgHeader());
-				System.out.println(msg.getMsgContent());
-				
-				if (msg == null)
-					controller.errorAlert("Communication Error", "There was an issue talking to the server.", "The server passed an invalid or incomplete message.");
-				else if (msg.getMessageType() == Type.ERROR_MESSAGE)
-					controller.errorAlert("Server Error", msg.getMsgHeader(), msg.getMsgContent());
-				else if (msg.getMessageType() == Type.WARNING_MESSAGE)
-					controller.warningAlert("Server Warning", msg.getMsgHeader(), msg.getMsgContent());
-				else
+
+				if (msg == null) {
+					Platform.runLater(() -> {
+						controller.errorAlert("Communication Error", "There was an issue talking to the server.", "The server passed an invalid or incomplete message.");
+					});
+				} else if (msg.getMessageType() == Type.ERROR_MESSAGE) {
+					Platform.runLater(() -> {
+						controller.errorAlert("Server Error", msg.getMsgHeader(), msg.getMsgContent());
+					});
+				} else if (msg.getMessageType() == Type.WARNING_MESSAGE) {
+					Platform.runLater(() -> {
+						controller.warningAlert("Server Warning", msg.getMsgHeader(), msg.getMsgContent());
+					});
+				} else
 					controller.informationAlert("Server Message", msg.getMsgHeader(), msg.getMsgContent());
 			} catch (IOException ioe) {
 				System.out.println("The connection to the server has been terminated.");
