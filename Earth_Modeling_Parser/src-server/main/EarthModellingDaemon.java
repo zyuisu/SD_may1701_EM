@@ -225,7 +225,6 @@ public class EarthModellingDaemon {
 			String line = null;
 			try {
 				while ((line = input.readLine()) != null) {
-					Logger.info(line);
 					result.add(line);
 				}
 			} catch (Exception e) {
