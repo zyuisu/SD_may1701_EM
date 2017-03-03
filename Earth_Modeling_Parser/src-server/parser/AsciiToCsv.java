@@ -54,6 +54,10 @@ public class AsciiToCsv {
 	public File parseToCsv(File ftp) throws IOException {
 
 		String fileName = ftp.getName();
+		// Because ESRI garbage throws an exception if a '-' character is in the file name. No one, including ESRI knows why this is.
+		if (fileName.contains("-"))
+			fileName = fileName.replace("-", "_");
+		
 		fileName = fileName.substring(0, fileName.length() - 4);
 		File outFile = new File(FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION + fileName + ".csv");
 
