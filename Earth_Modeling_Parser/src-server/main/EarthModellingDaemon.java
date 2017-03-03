@@ -500,7 +500,7 @@ public class EarthModellingDaemon {
 			strBuff.append("regionList[regionList.length] = new Option(");
 			strBuff.append("'");
 			strBuff.append(mr.name());
-			strBuff.append("',' ");
+			strBuff.append("','");
 			strBuff.append(mr.name());
 			strBuff.append("'); ");
 		}
