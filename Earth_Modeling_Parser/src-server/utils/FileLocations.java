@@ -36,7 +36,7 @@ public class FileLocations {
 	public static final String MAPS_PUBLISHING_DIRECTORY_LOCATION = "Maps_Publishing\\";
 	public static final String TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION = "temp_publishing\\";
 	public static final String CREATED_LAYERS_DIRECTORY_LOCATION = "Created_Layers\\";
-	public static final String BLANK_MAP_FILE_LOCATION = "Maps_Publishing\\blank_map.mxd";
+	public static final String BLANK_MAP_FILE_LOCATION = MAP_TEMPLATES_DIRECTORY_LOCATION + "blank_map.mxd";
 	public static final String CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION = "Auto_GDB\\";
 	public static final String CSV_TABLES_OUTPUT_DIRECTORY_LOCATION = "CSV_Tables\\";
 
