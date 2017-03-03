@@ -19,9 +19,13 @@
 
 package networking;
 
+import java.io.Serializable;
+
 import utils.MapProperties;
 
-public class DeleteMapMessage {
+public class DeleteMapMessage implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private MapProperties properties;
 
