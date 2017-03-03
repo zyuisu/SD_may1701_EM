@@ -206,6 +206,7 @@ public class ClientServer extends Thread {
 					client.bufferMessage(new StringMessage(StringMessage.Type.INFORMATION_MESSAGE, "Success!", "The map " + afm.getMapProperties().toString() + " was sucessfully created."));
 			} catch (Exception e) {
 				client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "One of the map generation methods failed.", "Try again, utilizing the overwrite setting. If there is still an issue, check the server logs for more information."));
+				throw e;
 			}
 		} catch (IllegalAccessException iae) {
 			Logger.error("StringMessage message was defined with incorrect parameters: {}", iae);
