@@ -327,7 +327,7 @@ public class EarthModellingDaemon {
 			deleteFile(FileLocations.ABS_TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION + properties.toString() + ".sd");
 			// Delete table files from tables folder (.dbf, .dbf.xml, .cpg)
 			deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".dbf");
-			deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".dfb.xml");
+			deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".dbf.xml");
 			deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".cpg");
 			// Delete .lyr from created_layers
 			deleteFile(FileLocations.ABS_CREATED_LAYERS_DIRECTORY_LOCATION + nice + ".lyr");
