@@ -32,13 +32,14 @@ public class FileLocations {
 	public static final String APPROVED_CLIENTS_FILE_LOCATION = "resources\\approvedClients.txt";
 
 	public static final String CURRENT_WORKING_DIRECTORY_LOCATION = "C:\\EarthModellingDaemon\\";
-	public static final String MAP_TEMPLATES_DIRECTORY_LOCATION = "Map_Templates\\";
-	public static final String MAPS_PUBLISHING_DIRECTORY_LOCATION = "Maps_Publishing\\";
-	public static final String TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION = "temp_publishing\\";
-	public static final String CREATED_LAYERS_DIRECTORY_LOCATION = "Created_Layers\\";
-	public static final String BLANK_MAP_FILE_LOCATION = MAP_TEMPLATES_DIRECTORY_LOCATION + "blank_map.mxd";
-	public static final String CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION = "Auto_GDB\\";
-	public static final String CSV_TABLES_OUTPUT_DIRECTORY_LOCATION = "CSV_Tables\\";
+	public static final String ABS_CSV_OUTPUT_DIRECTORY_LOCATION = CURRENT_WORKING_DIRECTORY_LOCATION + "Parsed_CSV_files\\";
+	public static final String MAP_TEMPLATES_DIRECTORY_LOCATION = CURRENT_WORKING_DIRECTORY_LOCATION + "Map_Templates\\";
+	public static final String MAPS_PUBLISHING_DIRECTORY_LOCATION = CURRENT_WORKING_DIRECTORY_LOCATION + "Maps_Publishing\\";
+	public static final String TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION = CURRENT_WORKING_DIRECTORY_LOCATION + "temp_publishing\\";
+	public static final String CREATED_LAYERS_DIRECTORY_LOCATION = CURRENT_WORKING_DIRECTORY_LOCATION + "Created_Layers\\";
+	public static final String BLANK_MAP_FILE_LOCATION = CURRENT_WORKING_DIRECTORY_LOCATION + MAP_TEMPLATES_DIRECTORY_LOCATION + "blank_map.mxd";
+	public static final String CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION = CURRENT_WORKING_DIRECTORY_LOCATION + "Auto_GDB\\";
+	public static final String CSV_TABLES_OUTPUT_DIRECTORY_LOCATION = CURRENT_WORKING_DIRECTORY_LOCATION + "CSV_Tables\\";
 
 	public static final String PYTHON_EXECUTABLE_BINARY_LOCATION = "C:\\Python27\\ArcGISx6410.4\\python.exe";
 	public static final String ARCSERVER_MANAGE_SERVICE_FILE_LOCATION = "C:\\Program Files\\ArcGIS\\Server\\tools\\admin\\manageservice.py";
