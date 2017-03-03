@@ -89,6 +89,8 @@ public class ConvertedSet extends HashSet<MapProperties> implements Serializable
 	 */
 	@Override
 	public boolean add(MapProperties properties) {
+		Logger.warn("COMPUTING HASH: {}", properties.hashCode());
+		
 		if (set.add(properties)) {
 			try {
 				ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(FileLocations.CONVERTED_FILE_LOCATION, false)));
