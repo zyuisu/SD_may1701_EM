@@ -23,7 +23,7 @@ import java.io.Serializable;
 
 public class MapProperties implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private MapCompoundType compound;
 	private MapRegionType region;
@@ -129,5 +129,14 @@ public class MapProperties implements Serializable {
 			return true;
 
 		return false;
+	}
+	
+	/**
+	 * Generates a consistent and unique hashcode using this.toString().
+	 */
+	@Override
+	public int hashCode()
+	{
+		return this.toString().hashCode();
 	}
 }
