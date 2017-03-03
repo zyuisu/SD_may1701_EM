@@ -386,23 +386,41 @@ public class EarthModellingDaemon {
 		}
 
 		String auth[] = validateUser();
-
 		String template = properties.getMapRegion().toString() + properties.getMapCompoundType().toString();
-
 		String[] arguments = { FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION, properties.toString(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, template, FileLocations.BLANK_MAP_FILE_LOCATION,
 				FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, auth[0], auth[1] };
 
-		runPythonScript(FileLocations.PUBLISH_MAP_SCRIPT_LOCATION, arguments);
+		ArrayList<String> al = runPythonScript(FileLocations.PUBLISH_MAP_SCRIPT_LOCATION, arguments);
+		logExceptions(al);
 
 		String[] arguments2 = { properties.toString(), auth[0], auth[1] };
-		runPythonScript(FileLocations.PUBLISHING_PARAMS_SCRIPT_LOCATION, arguments2);
+		al = runPythonScript(FileLocations.PUBLISHING_PARAMS_SCRIPT_LOCATION, arguments2);
+		logExceptions(al);
 
-		// Delete files.
 		deleteFile(asciiFile);
 
 		generateNewJavaScript();
 
 		return true;
+	}
+
+	/**
+	 * Search a list for any exception or error and log it and everything that comes after it.
+	 * 
+	 * @param al
+	 *           An ArrayList that contains the output piped from an executable.
+	 */
+	private static void logExceptions(ArrayList<String> al) {
+		boolean foundError = false;
+
+		for (String s : al) {
+			String temp = s.toLowerCase();
+			if (temp.contains("error") || temp.contains("exception"))
+				foundError = true;
+
+			if (foundError)
+				Logger.error(s);
+		}
 	}
 
 	/**
