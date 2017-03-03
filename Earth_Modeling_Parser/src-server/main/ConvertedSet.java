@@ -78,7 +78,6 @@ public class ConvertedSet extends HashSet<MapProperties> implements Serializable
 		} catch (Exception e) {
 			Logger.error(e);
 		}
-
 	}
 
 	/**
