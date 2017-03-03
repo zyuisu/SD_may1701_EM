@@ -19,6 +19,7 @@
 
 package utils;
 
+// REMINDER: DEFINE IN ALPHABETICAL ORDER.
 public enum MapCompoundType {
 	CH4, ET, LEACHNO3, N2O, NPP, NUPTAKE, RH, SOC
 }
