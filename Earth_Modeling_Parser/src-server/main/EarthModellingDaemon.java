@@ -58,6 +58,7 @@ public class EarthModellingDaemon {
 	 *           args[0] = start to start; stop to stop. Additional params if required by the start() and stop() methods.
 	 */
 	public static void main(String[] args) {
+		// NOTE: Since start() and stop() are not synchronized, but are called by procrun in different threads, this code has the potential for race condiditons. This shouldn't be important for the context of how this operates, but will explain exceptions in the final log moments.
 		if ("start".equals(args[0]))
 			start(args);
 		else if ("stop".equals(args[0]))
