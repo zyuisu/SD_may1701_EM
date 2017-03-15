@@ -36,19 +36,37 @@ import utils.FileLocations;
 
 public class AsciiToCsv {
 
+	/*
+	 * Values explicitly given in the Input ASCII File
+	 */
+	// The number of columns
 	private double ncols;
+	// The number of rows
 	private double nrows;
+	// X (longitude) coordinate of Lower Left corner of Map
 	private double xllcorner;
+	// Y (Latitude) coordinate of Lower Left Corner of Map
 	private double yllcorner;
+	// Size of step from one point to another
 	private double cellSize;
+	// Value which indicates no output to be read
 	private double NODATA_value;
+	
+	
+	/*
+	 * Parsing Values
+	 */
+	// The number of lines found in the Header (should not exceed 30)
 	private int linesInHeader;
+	// Whether or not the header has been successfully parsed
 	private boolean headerParsed;
+	// The max value which shows up in the Ascii Table
 	private double maxValue;
+	// The min value which shows up in the Ascii Table
 	private double minValue;
-	// Longitude of the Upper Left Corner of the Map to be printed
+	// Longitude of the Upper Left Corner of the Map to be printed (the starting point when reading the table)
 	private double longitude;
-	// Latitude of the Upper Left Corner of the map to be printed
+	// Latitude of the Upper Left Corner of the map to be printed (the starting point when reading the table)
 	private double latitude;
 
 
@@ -68,6 +86,7 @@ public class AsciiToCsv {
 		this.minValue = Double.MAX_VALUE;
 	}
 
+	
 	public double getMaxValue(){
 		return maxValue;
 	}
