@@ -36,10 +36,176 @@ import utils.FileLocations;
 
 public class AsciiToCsv {
 
+	private double ncols;
+	private double nrows;
+	private double xllcorner;
+	private double yllcorner;
+	private double cellSize;
+	private double NODATA_value;
+	private int linesInHeader;
+	private boolean headerParsed;
+	private double maxValue;
+	private double minValue;
+	// Longitude of the Upper Left Corner of the Map to be printed
+	private double longitude;
+	// Latitude of the Upper Left Corner of the map to be printed
+	private double latitude;
+
+
 	/**
-	 * Empty constructor.
+	 * Default constructor
 	 */
 	public AsciiToCsv() {
+		this.ncols = 0;
+		this.nrows = 0;
+		this.xllcorner = 0;
+		this.yllcorner = 0;
+		this.cellSize = 0;
+		this.NODATA_value = 0;
+		this.linesInHeader = 0;
+		this.headerParsed = false;
+		this.maxValue = Double.MAX_VALUE;
+		this.minValue = Double.MAX_VALUE;
+	}
+
+	public double getMaxValue(){
+		return maxValue;
+	}
+	public double getMinValue(){
+		return minValue;
+	}
+	public double getLongitude(){
+		return longitude;
+	}
+	public double getLatitude(){
+		return latitude;
+	}
+
+	public double getNcols(){
+		return this.ncols;
+	}
+
+	public double getNrows(){
+		return this.nrows;
+	}
+
+	public double getXllCorner(){
+		return this.xllcorner;
+	}
+
+	public double getYllCorner(){
+		return this.yllcorner;
+	}
+
+	public double getCellSize(){
+		return this.cellSize;
+	}
+
+	public double getNODATA(){
+		return this.NODATA_value;
+	}
+
+	public int getLinesInHeader(){
+		return this.linesInHeader;
+	}
+
+	public boolean getHeaderParsed(){
+		return this.headerParsed;
+	}
+
+
+	public boolean parseHeaders(File ftp) throws IOException{
+
+		// Open the file to Scan headers from
+		BufferedReader f = new BufferedReader(new FileReader(ftp));
+		// Open the scanner which will read line by line from ASCII file
+		Scanner scanner = new Scanner(f);
+		// The number of lines that have been scanned
+		char count = 0;
+
+		// Repeat until header is completely parsed or the function returns false
+		while (!this.getHeaderParsed()) {
+
+			// Skip lines for reading until a line with values other than whitespace is found
+			String headers = "";
+			while (headers.replace(" ", "").equals("")){
+				headers = scanner.nextLine();
+				count++;
+
+				// Avoids infinite loop by limiting lines in header to 30
+				if(count > 30){
+					Logger.debug("Over 30 lines found in header. Check input file and try again.");
+					return false;
+				}
+			}
+
+			// Decide which value is given in this line, set the corresponding value 
+			this.setHeaderValue(headers);
+
+			// Set linesInHeader to corresponding count
+			this.linesInHeader = count;
+
+			// If all values have been set to something other than default constructor values, header has been successfully parsed
+			if (this.ncols != 0 && this.nrows != 0 && this.xllcorner != 0 && this.yllcorner != 0 && this.cellSize != 0 && this.NODATA_value != 0){	
+				this.headerParsed = true;
+			}
+			// Avoids infinite loop by limiting lines in header to 30
+			else if (count > 30) {
+				System.out.println("The file header is having trouble being parsed. Please check the input file.");
+				Logger.debug("The file header is having trouble being parsed. Please check the input file.");
+				// Close scanners to avoid resource leak
+				scanner.close();
+				return false;
+			}
+		}
+		// Close scanner to avoid resource leak
+		scanner.close();
+
+		return true;
+	}
+
+
+	public boolean setHeaderValue(String line){
+		// Open scanner for reading line
+		Scanner scanheaders = new Scanner(line);
+		// Read first value in the line
+		String head = scanheaders.next();
+
+		// Decide which value is given in this line, set the corresponding value 
+		switch (head) {
+			case "":
+				// empty line, do nothing, shouldn't happen
+				scanheaders.close();
+				return false;
+			case "ncols":
+				this.ncols = scanheaders.nextDouble();
+				break;
+			case "nrows":
+				this.nrows = scanheaders.nextDouble();
+				break;
+			case "xllcorner":
+				this.xllcorner = scanheaders.nextDouble();
+				break;
+			case "yllcorner":
+				this.yllcorner = scanheaders.nextDouble();
+				break;
+			case "cellsize":
+				this.cellSize = scanheaders.nextDouble();
+				break;
+			case "NODATA_value":
+				this.NODATA_value = scanheaders.nextDouble();
+				break;
+		}
+
+		// Compute Longitude of Upper Left Corner
+		this.longitude = this.getXllCorner();
+		// Compute Latitude of Upper Left Corner
+		this.latitude = this.getYllCorner() + (this.getCellSize() * (this.getNrows() - 1));
+
+		// avoid resource leak
+		scanheaders.close();
+		return true;
+
 	}
 
 	/**
@@ -53,126 +219,151 @@ public class AsciiToCsv {
 	 */
 	public File parseToCsv(File ftp) throws IOException {
 
-		String fileName = ftp.getName();
-		// Because ESRI garbage throws an exception if a '-' character is in the file name. No one, including ESRI knows why this is.
-		if (fileName.contains("-"))
-			fileName = fileName.replace("-", "_");
+		if(parseHeaders(ftp)){
+			ArrayList<String> printing = parseBody(ftp);
+			if (printing == null){
+				return null;
+			}
+			else{
 
-		fileName = fileName.substring(0, fileName.length() - 4);
-		File outFile = new File(FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION + fileName + ".csv");
+				String fileName = ftp.getName();
+				// Avoid ESRI filename error in output file by changing dashes to underscores. Unknown reasoning.
+				if (fileName.contains("-"))
+					fileName = fileName.replace("-", "_");
 
-		ArrayList<String> lines = new ArrayList<String>();
+				// Remove extension from file name
+				fileName = fileName.substring(0, fileName.length() - 4);
+				// Create the output file
+				File outFile = new File(FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION + fileName + ".csv");
 
-		BufferedReader f = new BufferedReader(new FileReader(ftp));
-		Scanner scanner;
-		double ncols = 0, nrows = 0, xllcorner = 0, yllcorner = 0, cellsize = 0, NODATA_value = 0;
-		String scanning = "";
-		try {
-			PrintWriter output = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
-			output.println("latitude,longitude,value");
+				// PrintWriter for Writing to Output file
+				PrintWriter output = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
+				// Write header to output CSV file
+				output.println("latitude,longitude,value");
+
+				while(!printing.isEmpty()){
+					// Print lines to output, with the first two lines being the min and max values
+					output.println(printing.remove(0));
+				}
+				// Avoid resource leak
+				output.close();
+				return outFile;
+			}
+		}
+		else 
+			return null;
+	}
+
+	public ArrayList<String> parseBody(File ftp) throws IOException{
+
+		// Should never happen
+		if(!this.getHeaderParsed()){
+			Logger.debug("Header was not successfully parsed. Check the input file. Failing in ParseBody method of AsciiToCsv.");
+			return null;
+		}
+		else{
+
+			// Create Buffered Reader for Reading lines from input file
+			BufferedReader f = new BufferedReader(new FileReader(ftp));
+			// Create ArrayList to hold Strings for output
+			ArrayList<String> lines = new ArrayList<String>();
+
+			// Scanner for reading lines
+			Scanner scanner;
+			// Current line
+			String scanning = "";
+
+			// Set the Scanner to the input file
 			scanner = new Scanner(f);
 
-			char count = 0;
-
-			boolean extract_headers = false;
-			while (!extract_headers) {
-				String headers = "";
-				while (headers.replace(" ", "").equals(""))
-					headers = scanner.nextLine();
-				Scanner scanheaders = new Scanner(headers);
-				String head = scanheaders.next();
-				switch (head) {
-					case "":
-						// empty line, do nothing
-						break;
-					case "ncols":
-						ncols = scanheaders.nextDouble();
-						break;
-					case "nrows":
-						nrows = scanheaders.nextDouble();
-						break;
-					case "xllcorner":
-						xllcorner = scanheaders.nextDouble();
-						break;
-					case "yllcorner":
-						yllcorner = scanheaders.nextDouble();
-						break;
-					case "cellsize":
-						cellsize = scanheaders.nextDouble();
-						break;
-					case "NODATA_value":
-						NODATA_value = scanheaders.nextDouble();
-						break;
-				}
-				count++;
-				if (ncols != 0 && nrows != 0 && xllcorner != 0 && yllcorner != 0 && cellsize != 0 && NODATA_value != 0){	
-					extract_headers = true;
-				}
-				else if (count > 30) {
-					// TODO put in the logger
-					System.out.println("The file header is having trouble being parsed. Please check the input file.");
-					Logger.debug("The file header is having trouble being parsed. Please check the input file.");
-					scanheaders.close();
-					return null;
-				}
-				scanheaders.close();
+			// Skip all lines in header to access table. 
+			char skip = 0;
+			while(skip != this.getLinesInHeader()){
+				scanner.nextLine();
+				skip++;
 			}
 
-			int counter = 0;
-			double longitude = xllcorner;
-			double latitude = yllcorner + (cellsize * (nrows - 1));
+			// The current row
 			int rows = 0;
+			// The current column
 			int columns = 0;
-			double max = 2017;
-			double min = 2017;
 
+			// While there are lines in the input document
 			while (scanner.hasNextLine()) {
+				// Read until line has something besides whitespace
 				scanning = "";
 				while (scanning.replace(" ", "").equals(""))
 					scanning = scanner.nextLine();
+
+				// Scanner for the current line
 				Scanner linescan = new Scanner(scanning);
+
+				// While we continue to find doubles in the line
 				while (linescan.hasNextDouble()) {
+					// Get the next value in the line
 					double value = linescan.nextDouble();
-					if (value != NODATA_value)
-						if (max == 2017 && min == 2017) {
-							max = value;
-							min = value;
-							lines.add((latitude - rows * cellsize) + "," + (longitude + columns * cellsize) + "," + value);
-						} else if (value > max) {
-							max = value;
-							lines.add(1, (latitude - rows * cellsize) + "," + (longitude + columns * cellsize) + "," + value);
-						} else if (value < min) {
-							min = value;
-							lines.add(0, (latitude - rows * cellsize) + "," + (longitude + columns * cellsize) + "," + value);
-							if (lines.size() > 2) {
-								String temp = lines.remove(2);
-								lines.add(1, temp);
-							}
-						} else
-							lines.add((latitude - rows * cellsize) + "," + (longitude + columns * cellsize) + "," + value);
+					// If we want to print the value
+					if (value != NODATA_value){
+						// add to array list
+						this.addValueToList(value, lines, rows, columns);
+					}
 					columns++;
-					if (columns % ncols == 0) {
-						if (rows < nrows - 1)
+					// If the current number of columns equals NCols, go to next row
+					if (columns % this.getNcols() == 0) {
+						// Only reset columns if we are still within the valid table
+						if (rows < this.getNrows() - 1){
 							columns = 0;
+						}
 						rows++;
 					}
-					counter++;
 				}
+				// Avoid resource leak
 				linescan.close();
 			}
 
-			while (!lines.isEmpty())
-				output.println(lines.remove(0));
-
 			// Print out Max and Min (TESTING PURPOSES)
-			Logger.debug("Max: {}, Min: {}", max, min);
+			Logger.debug("Max: {}, Min: {}", this.getMaxValue(), this.getMinValue());
 
-			output.close();
+			// Avoid resource leak
 			scanner.close();
-		} catch (FileNotFoundException e) {
-			Logger.error(e);
+			// Return the arrayList containing all of the read lines
+			return lines;
 		}
+	}
 
-		return outFile;
+	/**
+	 * Helper method for adding values to the ArrayList to be printed
+	 * Format's strings for output and places in the appropriate spot in ArrayList
+	 * Index 0 should always be min and Index 1 should always be Max
+	 * @param value
+	 * @param lines
+	 * @param rows
+	 * @param columns
+	 */
+	public void addValueToList(Double value, ArrayList<String> lines, int rows, int columns){
+		// No values have been added to array list
+		// Set min and max. Set to value 0
+		if (this.getMaxValue() == Double.MAX_VALUE && this.getMinValue() == Double.MAX_VALUE) {
+			this.maxValue = value;
+			this.minValue = value;
+			lines.add((latitude - rows * this.getCellSize()) + "," + (longitude + columns * this.getCellSize()) + "," + value);
+		} else if (value > this.getMaxValue()) {
+			// Set the new max value, add at the 1 index
+			this.maxValue = value;
+			lines.add(1, (latitude - rows * this.getCellSize()) + "," + (longitude + columns * this.getCellSize()) + "," + value);
+		} else if (value < this.getMinValue()) {
+			// Set the new min value, add at the 0 index
+			this.minValue = value;
+			lines.add(0, (latitude - rows * this.getCellSize()) + "," + (longitude + columns * this.getCellSize()) + "," + value);
+			// If there are more than two items, the current max has been pushed to the two index as a result of the push to 0 by min
+			// Remove index at 2 and add at index 1
+			if (lines.size() > 2) {
+				String temp = lines.remove(2);
+				lines.add(1, temp);
+			}
+		} else{
+			// Not Min or Max, add at end of list.
+			lines.add((latitude - rows * this.getCellSize()) + "," + (longitude + columns * this.getCellSize()) + "," + value);
+		}
 	}
 }
