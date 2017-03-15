@@ -17,7 +17,9 @@ def main(argv):
     server_user = argv[1]
     # the server password
     server_pass = argv[2]
-    
+
+	successful = "VEMS SUCCESS: "
+	
     # Ask for server name
     serverName = 'proj-se491.iastate.edu'
     serverPort = 6443
@@ -38,7 +40,8 @@ def main(argv):
         print "Could not generate a token with the username and password provided."    
         return
     
-    serviceURL = "/arcgis/admin/services/" + service
+    print successful + "Received Token From Server"
+	serviceURL = "/arcgis/admin/services/" + service
     
     # This request only needs the token and the response formatting parameter 
     params = urllib.urlencode({'token': token, 'f': 'json'})

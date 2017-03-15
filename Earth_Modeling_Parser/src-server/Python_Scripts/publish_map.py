@@ -65,6 +65,7 @@ def main(argv):
   server_pass = argv[12]
   scale = int(argv[13])
 
+  successful = "VEMS SUCCESS: "
 
   flag = 0
   if input_csv_file[-2] == "-":
@@ -85,55 +86,55 @@ def main(argv):
   template_lyr = arcpy.mapping.ListLayers(template_mxd)[0]
   # Access the data frame of the template layer (for reference scale)
   template_df = arcpy.mapping.ListDataFrames(template_mxd)[0]
-  print "Accessed Template Map for Reference: " + template_map_name
+  print successful + "Accessed Template Map for Reference: " + template_map_name
 
   # Open an instance of a blank Map
   mxd_new = arcpy.mapping.MapDocument(blank_map)
   # Access the empty data frame inside of the map
   df_new = arcpy.mapping.ListDataFrames(mxd_new)[0]
-  print "Accessed Blank Map for Creating new Map"
+  print successful + "Accessed Blank Map for Creating new Map"
 
   # Create Table from Input file for creating Feature Layer
   arcpy.TableToTable_conversion(parsed_csv_dir + input_csv_file + ".csv", tables_dir, input_csv_file + ".gdb")
-  print "CSV to table completed. Table created is   " + input_csv_file + ".dbf"
+  print successful + "CSV to table completed. Table created is   " + input_csv_file + ".dbf"
 
   # Create the name of the Feature Layer to be created
   outLayer = input_csv_file + ".lyr"
   # Create an XY Event Layer using the created table and the constant spatial reference
   arcpy.MakeXYEventLayer_management(tables_dir + input_csv_file + ".dbf", x, y, outLayer, spref, None)
-  print "Created XY Event Layer to be placed into gdb: " + outLayer
+  print successful + "Created XY Event Layer to be placed into gdb: " + outLayer
 
   # Create empty GDB to house Feature Layer Data
   arcpy.CreateFileGDB_management(auto_gdb_dir, input_csv_file + ".gdb", "10.0")
-  print "Created empty GDB for XY Layer: " + input_csv_file + ".gdb"
+  print successful + "Created empty GDB for XY Layer: " + input_csv_file + ".gdb"
 
   # Create Feature Layer Data Source using XY Event Layer data and placing into gdb
   arcpy.FeatureClassToFeatureClass_conversion(outLayer, auto_gdb_dir + input_csv_file + ".gdb", input_csv_file)
-  print "Created Feature Class"
+  print successful + "Created Feature Class"
   # Replace Data Source of the template layer
   template_lyr.replaceDataSource(auto_gdb_dir + input_csv_file + ".gdb", "FILEGDB_WORKSPACE", input_csv_file, False)
-  print "Data Source Successfully Replaced"
+  print successful + "Data Source Successfully Replaced"
   # Save a COPY of the template layer to be imported into the empty data frame of the blank map
   template_lyr.saveACopy(created_layers_dir + input_csv_file + ".lyr")
-  print "Creeated a copy of Layer"
+  print successful + "Creeated a copy of Layer"
   # Acsses the Copied Layer
   addLayer = arcpy.mapping.Layer(created_layers_dir + input_csv_file + ".lyr")
   # Change the actual name of the inner layer (can be funky Unicode if you'd like)
   addLayer.name = template_lyr.name
-  print "Referenced Layer to be added"
+  print successful + "Referenced Layer to be added"
   # Apply symbology from Reference Layer to the Layer to be added
   arcpy.ApplySymbologyFromLayer_management(addLayer, template_lyr)
-  print "Applied Symbology"
+  print successful + "Applied Symbology"
   # Add the copied layer to the empty map document into the empty Data frame
   arcpy.mapping.AddLayer(df_new, addLayer, "BOTTOM")
-  print "Successfully Added Layer"
+  print successful + "Successfully Added Layer"
   # Set the reference scale of the data frame (won't pixelate on zoom-in at this level)
   #df_new.referenceScale = template_df.referenceScale
   df_new.referenceScale = scale
-  print "Reference Scale of Data Frame Set"
+  print successful + "Reference Scale of Data Frame Set"
   # Save a COPY of the map (the map to now be published)
   mxd_new.saveACopy(map_publishing_dir + input_csv_file + ".mxd")
-  print "Copy of Map Service Saved"
+  print successful + "Copy of Map Service Saved"
 
   # Define local variables
   # Set the publishing files directory
@@ -183,7 +184,7 @@ def main(argv):
 
       # Execute UploadServiceDefinition. This uploads the service definition and publishes the service.
       arcpy.UploadServiceDefinition_server(sd, wrkspc + '\CONNECTION.ags')
-      print "Service successfully published"
+      print successful + "Service successfully published"
   else: 
       print "Service could not be published because errors were found during analysis."
 
