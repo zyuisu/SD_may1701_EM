@@ -11,12 +11,12 @@ import getpass
 # Defines the entry point into the script
 def main(argv):
 
-	# the name of the service to have parameters changed
+    # the name of the service to have parameters changed
     service_to_change = argv[0]
-	# the server user name
-	server_user = argv[1]
-	# the server password
-	server_pass = argv[2]
+    # the server user name
+    server_user = argv[1]
+    # the server password
+    server_pass = argv[2]
     
     # Ask for server name
     serverName = 'proj-se491.iastate.edu'

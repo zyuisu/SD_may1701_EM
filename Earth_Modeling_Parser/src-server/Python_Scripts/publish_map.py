@@ -47,6 +47,8 @@ def main(argv):
   server_user = ""
   # password for authentication
   server_pass = ""
+  # the reference scale to be passed to the published map
+  scale = 0
 
   parsed_csv_dir = argv[0]
   input_csv_file = argv[1]
@@ -61,8 +63,13 @@ def main(argv):
   created_layers_dir = argv[10]
   server_user = argv[11]
   server_pass = argv[12]
+  scale = int(argv[13])
 
 
+  flag = 0
+  if input_csv_file[-2] == "-":
+      input_csv_file = input_csv_file[0:-2] + "_" + input_csv_file[-1]
+      flag = 1
 
   #Define Constants
   arcpy.env.workspace = arcpy_workspace
@@ -81,7 +88,7 @@ def main(argv):
   print "Accessed Template Map for Reference: " + template_map_name
 
   # Open an instance of a blank Map
-  mxd_new = arcpy.mapping.MapDocument(map_templates_dir + blank_map)
+  mxd_new = arcpy.mapping.MapDocument(blank_map)
   # Access the empty data frame inside of the map
   df_new = arcpy.mapping.ListDataFrames(mxd_new)[0]
   print "Accessed Blank Map for Creating new Map"
@@ -121,7 +128,8 @@ def main(argv):
   arcpy.mapping.AddLayer(df_new, addLayer, "BOTTOM")
   print "Successfully Added Layer"
   # Set the reference scale of the data frame (won't pixelate on zoom-in at this level)
-  df_new.referenceScale = template_df.referenceScale
+  #df_new.referenceScale = template_df.referenceScale
+  df_new.referenceScale = scale
   print "Reference Scale of Data Frame Set"
   # Save a COPY of the map (the map to now be published)
   mxd_new.saveACopy(map_publishing_dir + input_csv_file + ".mxd")
@@ -136,6 +144,8 @@ def main(argv):
   # Provide path to server which hosts map services
   con =  'https://proj-se491.iastate.edu:6443/arcgis/admin'
 
+  if flag == 1:
+      input_csv_file = input_csv_file[0:-2] + "-" + input_csv_file[-1]
   # Provide other service details
   # The name of the service (how it shows up on the server)
   service = input_csv_file
