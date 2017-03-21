@@ -33,6 +33,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.pmw.tinylog.Logger;
 
@@ -47,7 +49,8 @@ import utils.ReferenceScales;
 
 public class EarthModellingDaemon {
 
-	public static final Long TIME_TO_SLEEP = 60000L; // 1 minute before this daemon wakes up again.
+	public static final long TIME_TO_SLEEP = 60000L; // 1 minute before this daemon wakes up again.
+	public static final long MAX_EXECUTABLE_RUNTIME = 10L; // Represented in minutes.
 	private static ConvertedSet convertedSet;
 	private static boolean run = false;
 	private static ClientServer clientServer;
@@ -152,8 +155,10 @@ public class EarthModellingDaemon {
 	 *            Can't find the script at the specified location!
 	 * @throws InterruptedException
 	 *            Interrupt was encountered before the process could finish executing!
+	 * @throws TimeoutException
+	 *            The process was terminated because it took too long to finish executing!
 	 */
-	private static ArrayList<String> runPythonScript(String scriptLocation) throws IOException, InterruptedException {
+	private static ArrayList<String> runPythonScript(String scriptLocation) throws IOException, InterruptedException, TimeoutException {
 		return runPythonScript(scriptLocation, null);
 	}
 
@@ -169,8 +174,10 @@ public class EarthModellingDaemon {
 	 *            Can't find the script at the specified location!
 	 * @throws InterruptedException
 	 *            Interrupt was encountered before the process could finish executing!
+	 * @throws TimeoutException
+	 *            The process was terminated because it took too long to finish executing!
 	 */
-	private static ArrayList<String> runPythonScript(String scriptLocation, String[] arguments) throws IOException, InterruptedException {
+	private static ArrayList<String> runPythonScript(String scriptLocation, String[] arguments) throws IOException, InterruptedException, TimeoutException {
 		String[] strArr = new String[arguments.length + 1];
 		strArr[0] = scriptLocation;
 		for (int i = 0; i < arguments.length; i++)
@@ -189,8 +196,10 @@ public class EarthModellingDaemon {
 	 *            Can't find the script at the specified location!
 	 * @throws InterruptedException
 	 *            Interrupt was encountered before the process could finish executing!
+	 * @throws TimeoutException
+	 *            The process was terminated because it took too long to finish executing!
 	 */
-	private static ArrayList<String> runExecutable(String exeLocation) throws IOException, InterruptedException {
+	private static ArrayList<String> runExecutable(String exeLocation) throws IOException, InterruptedException, TimeoutException {
 		return runExecutable(exeLocation, null);
 	}
 
@@ -206,8 +215,10 @@ public class EarthModellingDaemon {
 	 *            Can't find the script at the specified location!
 	 * @throws InterruptedException
 	 *            Interrupt was encountered before the process could finish executing!
+	 * @throws TimeoutException
+	 *            The process was terminated because it took too long to finish executing!
 	 */
-	private static ArrayList<String> runExecutable(String exeLocation, String[] arguments) throws IOException, InterruptedException {
+	private static ArrayList<String> runExecutable(String exeLocation, String[] arguments) throws IOException, InterruptedException, TimeoutException {
 		if (arguments == null)
 			Logger.info("Running executable: {} ", exeLocation);
 		else
@@ -225,7 +236,7 @@ public class EarthModellingDaemon {
 		builder.redirectErrorStream(true);
 
 		final Process process = builder.start();
-		return waitForProcess(process);
+		return waitForProcess(process, MAX_EXECUTABLE_RUNTIME, TimeUnit.MINUTES);
 	}
 
 	/**
@@ -233,11 +244,17 @@ public class EarthModellingDaemon {
 	 * 
 	 * @param process
 	 *           The process that you wish to execute.
+	 * @param waitTime
+	 *           How long we should wait for a process to finish executing before terminating the process.
+	 * @param waitTimeUnit
+	 *           The units of the long passed as waitTime.
 	 * @return An ArrayList of the standard output of the process.
 	 * @throws InterruptedException
 	 *            Interrupt was encountered before the process could finish executing!
+	 * @throws TimeoutException
+	 *            The process took longer than the value given in waitTime to finish executing!
 	 */
-	private static ArrayList<String> waitForProcess(final Process process) throws InterruptedException {
+	private static ArrayList<String> waitForProcess(final Process process, long waitTime, TimeUnit waitTimeUnit) throws InterruptedException, TimeoutException {
 		ArrayList<String> result = new ArrayList<String>();
 
 		// Don't crash this thread if everything fails miserably.
@@ -254,9 +271,12 @@ public class EarthModellingDaemon {
 		};
 
 		new Thread(run).start();
-		process.waitFor();
-
-		Logger.info("Done running script.");
+		if (process.waitFor(waitTime, waitTimeUnit))
+			Logger.info("Done running script.");
+		else {
+			Logger.info("Process terminated before script completion.");
+			throw new TimeoutException();
+		}
 
 		return result;
 	}
@@ -344,7 +364,7 @@ public class EarthModellingDaemon {
 	}
 
 	/**
-	 * Removes a map from the ArcGIS server by executing a commandline argument.
+	 * Removes a map from the ArcGIS server by executing a command line argument.
 	 * 
 	 * @param properties
 	 *           The MapProperties that represents what needs to be deleted.
@@ -352,13 +372,15 @@ public class EarthModellingDaemon {
 	 * @throws IOException
 	 *            Means that FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION couldn't be located.
 	 * @throws InterruptedException
-	 *            Probably means there was an issue while running the commandline arguments.
+	 *            Probably means there was an issue while running the command line arguments.
+	 * @throws TimeoutException
+	 *            Means that the the service manager Python script was terminated before completion (took too long).
 	 */
-	public static synchronized boolean removeMapFromServer(MapProperties properties) throws IOException, InterruptedException {
+	public static synchronized boolean removeMapFromServer(MapProperties properties) throws IOException, InterruptedException, TimeoutException {
 		if (!removeLocalMapFiles(properties))
 			return false;
 
-		String auth[] = validateUser();
+		String auth[] = validateUser(); // TODO, pass as arguments upon daemon start-up.
 
 		// required arguments for the delete from server command using executable python script
 		// python.exe "C:\Program Files\ArcGIS\Server\tools\admin\manageservice.py" -u username -p password -s https://proj-se491.iastate.edu:6443 -n EarthModelingTest/service_name -o delete
@@ -426,8 +448,10 @@ public class EarthModellingDaemon {
 	 *            There was an error creating or reading from a temporary file/folder.
 	 * @throws InterruptedException
 	 *            Probably means one of the intermediary Python scipts were cut short before they could complete execution.
+	 * @throws TimeoutException
+	 *            Means an intermediary Python script was cut short because it took too long to process.
 	 */
-	public static synchronized boolean createMap(byte[] asciiFile, MapProperties properties) throws IOException, InterruptedException {
+	public static synchronized boolean createMap(byte[] asciiFile, MapProperties properties) throws IOException, InterruptedException, TimeoutException {
 		File file = new File(FileLocations.TEMP_WORKING_DIRECTORY_LOCATION + properties.toString() + ".txt");
 		Files.write(file.toPath(), asciiFile);
 
@@ -445,9 +469,11 @@ public class EarthModellingDaemon {
 	 * @throws IOException
 	 *            There was an error creating or reading from a temporary file/folder.
 	 * @throws InterruptedException
-	 *            Probably means one of the intermediary Python scrips were cut short before they could complete execution.
+	 *            Probably means one of the intermediary Python scripts were cut short before they could complete execution.
+	 * @throws TimeoutException
+	 *            Means an intermediary Python script was cut short because it took too long to process.
 	 */
-	private static synchronized boolean createMap(File asciiFile, MapProperties properties) throws IOException, InterruptedException {
+	private static synchronized boolean createMap(File asciiFile, MapProperties properties) throws IOException, InterruptedException, TimeoutException {
 
 		// Check against converted set.
 		if (!convertedSet.add(properties)) {
