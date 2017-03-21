@@ -51,6 +51,7 @@ public class NetworkHandler {
 	private ObjectOutputStream output;
 	private String username;
 	private String password;
+	private boolean login;
 
 	private NetworkListener listener;
 
@@ -103,7 +104,7 @@ public class NetworkHandler {
 		output = new ObjectOutputStream(socket.getOutputStream());
 		input = new ObjectInputStream(socket.getInputStream());
 
-		listener = new NetworkListener(input);
+		listener = new NetworkListener(input, this);
 		listener.start();
 
 		try {
@@ -168,5 +169,24 @@ public class NetworkHandler {
 		}
 
 		close();
+	}
+
+	/**
+	 * Sets the login variable to the passed value. This tells the client if valid login parameters were passed.
+	 * 
+	 * @param login
+	 *           true if login was accepted by the server; false otherwise.
+	 */
+	public void setLogin(boolean login) {
+		this.login = login;
+	}
+
+	/**
+	 * Returns the login variable that tells the client if valid login parameters were passed.
+	 * 
+	 * @return true if the login was accepted by the server; false otherwise.
+	 */
+	public boolean getLogin() {
+		return login;
 	}
 }

@@ -26,7 +26,7 @@ public class ConnectionMessage implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public enum Type {
-		CONNECT, DISCONNECT
+		CONNECT, DISCONNECT, SUCCESSFUL_CONNECTION, UNSUCCESSFUL_CONNECTION;
 	};
 
 	private Type messageType;

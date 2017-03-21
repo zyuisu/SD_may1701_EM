@@ -48,15 +48,38 @@ import utils.ReferenceScales;
 public class EarthModellingDaemon {
 
 	public static final Long TIME_TO_SLEEP = 60000L; // 1 minute before this daemon wakes up again.
-	private static AsciiToCsv asciiParser;
 	private static ConvertedSet convertedSet;
+	private static boolean run = false;
+	private static ClientServer clientServer;
 
-	public static void main(String[] args) throws IOException, IllegalAccessException {
-		File asciiInputDir = new File(FileLocations.ASCII_INPUT_DIRECTORY_LOCATION);
-		convertedSet = new ConvertedSet();
-		asciiParser = new AsciiToCsv();
+	/**
+	 * Select to start or stop the service.
+	 * 
+	 * @param args
+	 *           args[0] = start to start; stop to stop. Additional params if required by the start() and stop() methods.
+	 */
+	public static void main(String[] args) {
+		// NOTE: Since start() and stop() are not synchronized, but are called by procrun in different threads, this code has the potential for race condiditons. This shouldn't be important for the context of how this operates, but will explain exceptions in the final log moments.
+		if ("start".equals(args[0]))
+			start(args);
+		else if ("stop".equals(args[0]))
+			stop(args);
+	}
 
+	/**
+	 * Startup the service.
+	 * 
+	 * @param args
+	 *           String with any additional startup params that might be needed.
+	 */
+	public static void start(String[] args) {
 		Logger.info("Server daemon is starting up...");
+
+		try {
+			convertedSet = new ConvertedSet();
+		} catch (IOException e) {
+			Logger.error(e);
+		}
 
 		// Create required temp directories if they don't exist.
 		File csvOutputDir = new File(FileLocations.CSV_OUTPUT_DIRECTORY_LOCATION);
@@ -64,30 +87,28 @@ public class EarthModellingDaemon {
 		csvOutputDir.mkdir();
 		tempOutputDir.mkdir();
 
-		/*
-		 * // DEBUG // To test the generator, input some values, if needed, into convertedSet. MapRegionType[] regions = MapRegionType.values(); MapCompoundType[] compounds = MapCompoundType.values(); int minYear = 1980; int maxYear = 2015; int maxMonth = 11; Random rand = new Random();
-		 * 
-		 * for (int i = 0; i < 100; i++) { MapRegionType r = regions[rand.nextInt(regions.length)]; MapCompoundType c = compounds[rand.nextInt(compounds.length)]; int y = minYear + rand.nextInt(maxYear - minYear); int m = c == MapCompoundType.CH4 ? rand.nextInt(maxMonth) : -1;
-		 * 
-		 * if (m == -1) convertedSet.add(new MapProperties(r, c, y)); else convertedSet.add(new MapProperties(r, c, y, m)); }
-		 * 
-		 * generateNewJavaScript();
-		 */
-		/////////////////////////////////
-
 		Logger.info("Starting VEMS ClientServer.");
-		ClientServer cs = new ClientServer(ServerInformation.SERVER_PORT, FileLocations.KEYSTORE_FILE_LOCATION, "password");
-		cs.start();
+		clientServer = new ClientServer(ServerInformation.SERVER_PORT, FileLocations.KEYSTORE_FILE_LOCATION, "password");
+		clientServer.start();
 
-		// To gracefully shut things down:
-		// cs.end();
-
-		while (true)
+		while (run)
 			try {
 				Thread.sleep(TIME_TO_SLEEP);
 			} catch (InterruptedException e) {
 				// Do nothing, because map processing is likely happening right now.
 			}
+	}
+
+	/**
+	 * Gracefully shut down the program.
+	 * 
+	 * @param args
+	 *           String with any additional shutdown params that might be needed.
+	 */
+	public static void stop(String[] args) {
+		Logger.info("Shutting down server.");
+		clientServer.end();
+		run = true;
 	}
 
 	/**
@@ -316,7 +337,7 @@ public class EarthModellingDaemon {
 	 */
 	private static File convertAsciiToCsv(File asciiFile) throws IOException {
 		Logger.info("Converting file: {} to CSV", asciiFile);
-		File f = asciiParser.parseToCsv(asciiFile);
+		File f = new AsciiToCsv().parseToCsv(asciiFile); // Init new obj to save memory.
 		Logger.info("File converted to CSV!");
 
 		return f;
@@ -443,15 +464,14 @@ public class EarthModellingDaemon {
 		String auth[] = validateUser();
 		String template = properties.getMapRegion().toString() + properties.getMapCompoundType().toString();
 		String referenceScale;
-		try{
-		ReferenceScales rs = new ReferenceScales();
-		referenceScale = rs.getReferenceScale(properties.getMapRegion());
-		}
-		catch(Exception e){
+		try {
+			ReferenceScales rs = new ReferenceScales();
+			referenceScale = "" + rs.getReferenceScale(properties.getMapRegion());
+		} catch (Exception e) {
 			Logger.error("Error when getting Reference Scale. Check ReferenceScale Class.");
 			return false;
 		}
-		
+
 		String[] arguments = { FileLocations.ABS_CSV_OUTPUT_DIRECTORY_LOCATION, properties.toString(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, template, FileLocations.BLANK_MAP_FILE_LOCATION,
 				FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, auth[0], auth[1], referenceScale };
 

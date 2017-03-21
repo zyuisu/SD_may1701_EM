@@ -28,9 +28,9 @@ public final class ReferenceScales {
 
 	// REMINDER: SHOULD BE DEFINED WITH EXACT NAMES IN MapRegionType. Like following:
 	// private static final int MapRegionType.name()
-	private static final int GLOBAL = 75000000;
-	private static final int MIDWESTERN_US = 50000000; // As in 1:50000000
-	private static final int MISSISSIPPI_RIVER_BASIN = 50000000;
+	private static final int GLOBAL = 50000000;
+	private static final int MIDWESTERN_US = 5000000; // As in 1:5000000
+	private static final int MISSISSIPPI_RIVER_BASIN = 5000000;
 	// private static final int NEW_ENUMERATION_NAME = 100000000;
 
 	// --------------------------------------------------------------------------------------------------
@@ -67,8 +67,7 @@ public final class ReferenceScales {
 	 * @throws IllegalAccessException
 	 *            The underlying field is inaccessable (check access control modifier).
 	 */
-	public String getReferenceScale(MapRegionType mr) throws IllegalArgumentException, IllegalAccessException {
-		//return fields.get(mr.name()).getInt(this);
-		return fields.get(mr.name()).toString();
+	public int getReferenceScale(MapRegionType mr) throws IllegalArgumentException, IllegalAccessException {
+		return fields.get(mr.name()).getInt(this);
 	}
 }

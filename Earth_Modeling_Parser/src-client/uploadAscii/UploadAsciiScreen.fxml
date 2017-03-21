@@ -39,7 +39,7 @@
       <TextArea fx:id="selectedFilesTextArea" layoutX="444.0" layoutY="23.0" prefHeight="450.0" prefWidth="701.0" />
       <Button fx:id="selectFilesBtn" layoutX="260.0" layoutY="140.0" mnemonicParsing="false" text="Select File To Upload" />
       <Button fx:id="sendToServerBtn" layoutX="1030.0" layoutY="561.0" mnemonicParsing="false" text="Send to Server" />
-      <CheckBox fx:id="overwriteCheckBox" layoutX="249.0" layoutY="86.0" mnemonicParsing="false" text="Overwrite Existing Map?" />
+      <CheckBox fx:id="overwriteCheckBox" layoutX="251.0" layoutY="87.0" mnemonicParsing="false" text="Overwrite Existing Map?" />
       <CheckBox fx:id="yearlyMapCheckBox" layoutX="251.0" layoutY="23.0" mnemonicParsing="false" selected="true" text="Yearly Map (no month)" />
       <CheckBox fx:id="deleteMapCheckBox" layoutX="251.0" layoutY="55.0" mnemonicParsing="false" text="Delete An Existing Map" />
 	</children>

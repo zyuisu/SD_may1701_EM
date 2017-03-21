@@ -118,7 +118,7 @@ public class ClientServer extends Thread {
 			ks.load(new FileInputStream(keyStoreLocation), keyStorePassword.toCharArray());
 
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-			kmf.init(ks, "password".toCharArray());
+			kmf.init(ks, keyStorePassword.toCharArray());
 
 			TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
 			tmf.init(ks);
