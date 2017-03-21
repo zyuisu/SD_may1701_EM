@@ -49,16 +49,7 @@ public class NetworkListener extends Thread {
 	 */
 	@Override
 	public void run() {
-		run = true;
-
-		// Give NetworkHandler enough time to initalize stuff.
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			System.out.println("There was an issue putting the listener thread to sleep.");
-			e.printStackTrace();
-		}
-
+		run = false;
 		// Check if login was successful.
 		try {
 			ConnectionMessage cm = (ConnectionMessage) input.readObject();
@@ -69,9 +60,10 @@ public class NetworkListener extends Thread {
 				handler.setLogin(true);
 
 		} catch (ClassNotFoundException | IOException e) {
-			System.out.println("Login failure.");
+			System.out.println("Initial login failure.");
 			e.printStackTrace();
 		}
+		run = true;
 
 		while (run)
 			try {
@@ -108,5 +100,14 @@ public class NetworkListener extends Thread {
 	 */
 	public void end() {
 		run = false;
+	}
+
+	/**
+	 * Let's the caller know if the NetworkListener has successfully authenticated with the server and is running.
+	 * 
+	 * @return true if listener is waiting for incoming messages; false if it still initializing or if the run flag was manually tripped by calling end().
+	 */
+	public boolean isRunning() {
+		return run;
 	}
 }

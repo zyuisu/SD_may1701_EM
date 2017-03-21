@@ -187,6 +187,15 @@ public class NetworkHandler {
 	 * @return true if the login was accepted by the server; false otherwise.
 	 */
 	public boolean getLogin() {
+		// Wait for the listener to initalize login information with the server.
+		while (!listener.isRunning())
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				System.out.println("Error while initalizing listener thread with server.");
+				e.printStackTrace();
+			}
+
 		return login;
 	}
 }
