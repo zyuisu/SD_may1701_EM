@@ -25,12 +25,13 @@ import java.util.List;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import singleton.MainModel;
 import view.MainController;
 
-public class AbstractNetworkedScreenController implements IControlledScreen {
+public abstract class AbstractNetworkedScreenController implements IControlledScreen {
 	// So we can set the screen's parent later on.
 	protected MainController parentController;
 
@@ -93,6 +94,7 @@ public class AbstractNetworkedScreenController implements IControlledScreen {
 		alert.setTitle(title);
 		alert.setHeaderText(header);
 		alert.setContentText(content);
+		alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 		alert.showAndWait();
 	}
 
