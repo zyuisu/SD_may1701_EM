@@ -91,13 +91,12 @@ public class EarthModellingDaemon {
 		clientServer = new ClientServer(ServerInformation.SERVER_PORT, FileLocations.KEYSTORE_FILE_LOCATION, "password");
 		clientServer.start();
 
-		while (run) {
+		while (run)
 			try {
 				Thread.sleep(TIME_TO_SLEEP);
 			} catch (InterruptedException e) {
 				// Do nothing, because map processing is likely happening right now.
 			}
-		}
 	}
 
 	/**
@@ -467,7 +466,7 @@ public class EarthModellingDaemon {
 		String referenceScale;
 		try {
 			ReferenceScales rs = new ReferenceScales();
-			referenceScale = rs.getReferenceScale(properties.getMapRegion());
+			referenceScale = "" + rs.getReferenceScale(properties.getMapRegion());
 		} catch (Exception e) {
 			Logger.error("Error when getting Reference Scale. Check ReferenceScale Class.");
 			return false;
