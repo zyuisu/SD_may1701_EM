@@ -31,6 +31,7 @@ public class NetworkListener extends Thread {
 
 	private boolean run;
 	private ObjectInputStream input;
+	private NetworkHandler handler;
 
 	/**
 	 * Constructor that creates a listener thread to wait for input from the server.
@@ -38,8 +39,9 @@ public class NetworkListener extends Thread {
 	 * @param input
 	 *           The input stream of the socket that the server is connected to.
 	 */
-	public NetworkListener(ObjectInputStream input) {
+	public NetworkListener(ObjectInputStream input, NetworkHandler handler) {
 		this.input = input;
+		this.handler = handler;
 	}
 
 	/**
@@ -54,6 +56,20 @@ public class NetworkListener extends Thread {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			System.out.println("There was an issue putting the listener thread to sleep.");
+			e.printStackTrace();
+		}
+
+		// Check if login was successful.
+		try {
+			ConnectionMessage cm = (ConnectionMessage) input.readObject();
+
+			if (cm.getMessageType() == ConnectionMessage.Type.UNSUCCESSFUL_CONNECTION)
+				handler.setLogin(false);
+			else if (cm.getMessageType() == ConnectionMessage.Type.SUCCESSFUL_CONNECTION)
+				handler.setLogin(true);
+
+		} catch (ClassNotFoundException | IOException e) {
+			System.out.println("Login failure.");
 			e.printStackTrace();
 		}
 

@@ -78,11 +78,12 @@ public class ClientThread extends Thread {
 				return false;
 
 			if (!server.validateUser(cm.getUsername(), cm.getPassword(), socket)) {
-				bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "Invalid username or password!", "Please re-enter your username and password and try again."));
+				bufferMessage(new ConnectionMessage(ConnectionMessage.Type.UNSUCCESSFUL_CONNECTION, cm.getUsername(), cm.getPassword()));
 				return false;
 			}
 
 			username = cm.getUsername();
+			bufferMessage(new ConnectionMessage(ConnectionMessage.Type.SUCCESSFUL_CONNECTION, cm.getUsername(), cm.getPassword()));
 			return true;
 
 		} catch (IOException ioe) {
@@ -173,18 +174,18 @@ public class ClientThread extends Thread {
 	/**
 	 * Writes a message to the output socket.
 	 * 
-	 * @param sm
-	 *           The message formatted as a src-shared.networking.StringMessage object.
+	 * @param message
+	 *           The message formatted as a src-shared.networking.
 	 * @return true if the message was successfully set, false if an error occurred and the client was somehow disconnected.
 	 */
-	public boolean bufferMessage(StringMessage sm) {
+	public boolean bufferMessage(Object message) {
 		if (!socket.isConnected()) {
 			end();
 			return false;
 		}
 
 		try {
-			output.writeObject(sm);
+			output.writeObject(message);
 		} catch (IOException ioe) {
 			Logger.error("{} had an error when attempting to write to the output stream: {}", username, ioe);
 		} catch (Exception e) {

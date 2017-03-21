@@ -68,7 +68,7 @@ public final class ReferenceScales {
 	 *            The underlying field is inaccessable (check access control modifier).
 	 */
 	public String getReferenceScale(MapRegionType mr) throws IllegalArgumentException, IllegalAccessException {
-		//return fields.get(mr.name()).getInt(this);
+		// return fields.get(mr.name()).getInt(this);
 		return fields.get(mr.name()).toString();
 	}
 }
