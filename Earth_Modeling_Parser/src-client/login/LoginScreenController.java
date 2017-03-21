@@ -67,7 +67,11 @@ public class LoginScreenController extends AbstractNetworkedScreenController {
 					try {
 						NetworkHandler handler = new NetworkHandler(username, password, keyStoreFile, password); // keystore master password == user password for now.
 						MainModel.getModel().getNetworkData().setNewHandler(handler);
-						parentController.goToUploadAsciiScreen();
+
+						if (handler.getLogin())
+							parentController.goToUploadAsciiScreen();
+						else
+							errorAlert("Invalid Credentials", "The server rejected your username or password!", "Please re-enter your username and password and try again.");
 					} catch (Exception e) {
 						errorAlert("Error Connecting to VEMS", e.getMessage(), "Please correct the issue and try again.");
 					}
