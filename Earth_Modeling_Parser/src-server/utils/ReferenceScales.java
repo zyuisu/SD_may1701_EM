@@ -28,9 +28,9 @@ public final class ReferenceScales {
 
 	// REMINDER: SHOULD BE DEFINED WITH EXACT NAMES IN MapRegionType. Like following:
 	// private static final int MapRegionType.name()
-	private static final int GLOBAL = 50000000;
-	private static final int MIDWESTERN_US = 5000000; // As in 1:5000000
-	private static final int MISSISSIPPI_RIVER_BASIN = 5000000;
+	public static final int GLOBAL = 50000000;
+	public static final int MIDWESTERN_US = 5000000; // As in 1:5000000
+	public static final int MISSISSIPPI_RIVER_BASIN = 5000000;
 	// private static final int NEW_ENUMERATION_NAME = 100000000;
 
 	// --------------------------------------------------------------------------------------------------
@@ -43,11 +43,11 @@ public final class ReferenceScales {
 	 * given MapRegionType.
 	 */
 	public ReferenceScales() {
-		fields = new HashMap();
+		fields = new HashMap<String, Field>();
 
 		for (Field f : ReferenceScales.class.getFields()) {
 			int mod = f.getModifiers();
-			if (Modifier.isFinal(mod) && Modifier.isStatic(mod) && Modifier.isPrivate(mod) && f.getType().equals(int.class))
+			if (Modifier.isFinal(mod) && Modifier.isStatic(mod) && Modifier.isPublic(mod) && f.getType().equals(int.class))
 				fields.put(f.getName(), f);
 		}
 

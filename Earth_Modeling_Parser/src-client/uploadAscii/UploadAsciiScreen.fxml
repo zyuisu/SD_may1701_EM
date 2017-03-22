@@ -42,5 +42,6 @@
       <CheckBox fx:id="overwriteCheckBox" layoutX="251.0" layoutY="87.0" mnemonicParsing="false" text="Overwrite Existing Map?" />
       <CheckBox fx:id="yearlyMapCheckBox" layoutX="251.0" layoutY="23.0" mnemonicParsing="false" selected="true" text="Yearly Map (no month)" />
       <CheckBox fx:id="deleteMapCheckBox" layoutX="251.0" layoutY="55.0" mnemonicParsing="false" text="Delete An Existing Map" />
+      <Button fx:id="goToMultipleAsciiScreenBtn" layoutX="515.0" layoutY="561.0" mnemonicParsing="false" text="Use Automated ASCII Parser" />
 	</children>
 </AnchorPane>

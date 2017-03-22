@@ -26,6 +26,7 @@ import framework.AbstractNetworkedScreenController;
 import javafx.application.Platform;
 import networking.StringMessage.Type;
 import singleton.MainModel;
+import uploadAscii.UploadMultipleAsciiScreenController;
 
 public class NetworkListener extends Thread {
 
@@ -70,7 +71,21 @@ public class NetworkListener extends Thread {
 				StringMessage msg = (StringMessage) input.readObject();
 				AbstractNetworkedScreenController controller = MainModel.getModel().getControllerData().getCurrentController();
 
-				if (msg == null)
+				if (controller instanceof UploadMultipleAsciiScreenController) {
+					UploadMultipleAsciiScreenController multController = (UploadMultipleAsciiScreenController) controller;
+					if (msg == null)
+						Platform.runLater(() -> {
+							try {
+								multController.outputMessage(new StringMessage(Type.ERROR_MESSAGE, "There was an issue talking to the server.", "The server passed an invalid or incomplete message."));
+							} catch (IllegalAccessException e) {
+								e.printStackTrace();
+							}
+						});
+					else
+						Platform.runLater(() -> {
+							multController.outputMessage(msg);
+						});
+				} else if (msg == null)
 					Platform.runLater(() -> {
 						controller.errorAlert("Communication Error", "There was an issue talking to the server.", "The server passed an invalid or incomplete message.");
 					});

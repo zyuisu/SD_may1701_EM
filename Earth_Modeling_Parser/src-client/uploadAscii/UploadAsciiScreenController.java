@@ -1,3 +1,22 @@
+/*
+ * 
+ * Copyright (C) 2017 Anish Kunduru
+ * 
+ * This file is part the Visual Earth Modeling System (VEMS).
+ * 
+ * VEMS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * 
+ * VEMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with VEMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * @author Anish Kunduru
+ * 
+ *         This program is our handler for UploadAsciiScreen.fxml.
+ */
+
 package uploadAscii;
 
 import java.io.File;
@@ -37,6 +56,8 @@ public class UploadAsciiScreenController extends AbstractNetworkedScreenControll
 	@FXML
 	private Button sendToServerBtn;
 	@FXML
+	private Button goToMultipleAsciiScreenBtn;
+	@FXML
 	private CheckBox deleteMapCheckBox;
 	@FXML
 	private CheckBox overwriteCheckBox;
@@ -73,7 +94,7 @@ public class UploadAsciiScreenController extends AbstractNetworkedScreenControll
 
 		selectFilesBtn.setOnAction(event -> {
 			ExtensionFilter[] filter = { new ExtensionFilter("ASCII Text Document", "*.txt") };
-			File asciiFile = promptUserForFile("Select KeyStore", selectFilesBtn, filter);
+			File asciiFile = promptUserForFile("Select ASCII File", selectFilesBtn, filter);
 
 			if (asciiFile != null) {
 				selectedFilesTextArea.appendText(asciiFile.getName() + "\n");
@@ -104,6 +125,10 @@ public class UploadAsciiScreenController extends AbstractNetworkedScreenControll
 
 		deleteMapCheckBox.setOnAction(event -> {
 			setVisibilityOnDeleteCheckBox(!deleteMapCheckBox.isSelected());
+		});
+
+		goToMultipleAsciiScreenBtn.setOnAction(event -> {
+			parentController.goToUploadMultipleAsciiScreen();
 		});
 	}
 

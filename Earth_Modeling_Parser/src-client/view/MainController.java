@@ -35,9 +35,10 @@ public class MainController extends AbstractMainScreenController {
 	// I assume that anyone that builds upon this application can be well behaved and doesn't need enums.
 	public static final String LOGIN_SCREEN_FXML = "/login/LoginScreen.fxml";
 	public static final String UPLOAD_ASCII_SCREEN_FXML = "/uploadAscii/UploadAsciiScreen.fxml";
+	public static final String UPLOAD_MULTIPLE_ASCII_SCREEN_FXML = "/uploadAscii/UploadMultipleAsciiScreen.fxml";
 
 	/**
-	 * Method so that we can dynamically access the login screen at runtime.
+	 * Method so that we can dynamically access the login screen at runtime. Sends the user back to the login screen (previously allocated singleton data is not cleared).
 	 */
 	public void goToLoginScreen() {
 		goToScreen(LOGIN_SCREEN_FXML);
@@ -48,6 +49,13 @@ public class MainController extends AbstractMainScreenController {
 	 */
 	public void goToUploadAsciiScreen() {
 		goToScreen(UPLOAD_ASCII_SCREEN_FXML);
+	}
+
+	/**
+	 * Sends the user to the multiple upload ascii screen.
+	 */
+	public void goToUploadMultipleAsciiScreen() {
+		goToScreen(UPLOAD_MULTIPLE_ASCII_SCREEN_FXML);
 	}
 
 	/**

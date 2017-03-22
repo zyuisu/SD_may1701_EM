@@ -484,7 +484,7 @@ public class EarthModellingDaemon {
 			ReferenceScales rs = new ReferenceScales();
 			referenceScale = "" + rs.getReferenceScale(properties.getMapRegion());
 		} catch (Exception e) {
-			Logger.error("Error when getting Reference Scale. Check ReferenceScale Class.");
+			Logger.error("Error when getting Reference Scale. Check ReferenceScale Class.", e);
 			return false;
 		}
 
