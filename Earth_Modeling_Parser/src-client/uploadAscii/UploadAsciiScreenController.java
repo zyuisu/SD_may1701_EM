@@ -38,7 +38,6 @@ import utils.MapProperties;
 import utils.MapRegionType;
 
 public class UploadAsciiScreenController extends AbstractNetworkedScreenController {
-	// Functional components.
 	@FXML
 	private Label message;
 	@FXML

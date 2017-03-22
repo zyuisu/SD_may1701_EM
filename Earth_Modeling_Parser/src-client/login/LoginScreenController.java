@@ -31,11 +31,6 @@ import networking.NetworkHandler;
 import singleton.MainModel;
 
 public class LoginScreenController extends AbstractNetworkedScreenController {
-	// PUBLIC CONSTANTS THAT WILL NEED TO BE UPDATED WHEN SERVER FIELDS CHANGE.
-	public final String SERVER_ADDRESS = "localhost";
-	// public final String SERVER_ADDRESS = "proj-se491.cs.iastate.edu";
-
-	// Functional components.
 	@FXML
 	private Button loginButton;
 	@FXML

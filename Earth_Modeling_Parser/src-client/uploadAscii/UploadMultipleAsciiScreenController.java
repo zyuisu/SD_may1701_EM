@@ -34,7 +34,6 @@ import utils.MapProperties;
 import utils.MapRegionType;
 
 public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreenController {
-
 	@FXML
 	private TextArea messageTextArea;
 	@FXML
