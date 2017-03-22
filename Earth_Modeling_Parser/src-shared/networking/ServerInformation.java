@@ -21,8 +21,10 @@ package networking;
 
 public class ServerInformation {
 
-	public final static String SERVER_ADDRESS = "proj-se491.cs.iastate.edu";
+	public final static String DAEMON_SERVER_ADDRESS = "proj-se491.cs.iastate.edu";
 	public final static int SERVER_PORT = 1443;
+
+	public final static String WEB_SERVER_ADDRESS = "may1701.sd.ece.iastate.edu";
 
 	private ServerInformation() {
 	};

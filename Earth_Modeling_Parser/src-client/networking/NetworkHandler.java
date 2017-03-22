@@ -43,7 +43,7 @@ import networking.ConnectionMessage.Type;
 public class NetworkHandler {
 
 	// THESE CONSTANTS WILL NEED TO BE UPDATED WHEN THE SERVER FIELDS CHANGE.
-	public final String SERVER_ADDRESS = ServerInformation.SERVER_ADDRESS;
+	public final String SERVER_ADDRESS = ServerInformation.DAEMON_SERVER_ADDRESS;
 	public final int SERVER_PORT = ServerInformation.SERVER_PORT;
 
 	private SSLSocket socket;

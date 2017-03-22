@@ -22,8 +22,6 @@ package main;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,7 +30,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -55,27 +52,34 @@ public class EarthModellingDaemon {
 	private static boolean run = false;
 	private static ClientServer clientServer;
 
+	private static String keystorePassword;
+	private static String arcgisServerUsername;
+	private static String arcgisServerPassword;
+	private static String webServerPassword;
+	private static String webServerUsername;
+
 	/**
 	 * Select to start or stop the service.
 	 * 
 	 * @param args
-	 *           args[0] = start to start; stop to stop. Additional params if required by the start() and stop() methods.
+	 *           args[0] = start to start; stop to stop. args[1] = keystore password. args[2] = arcgis server username. args[3] = arcgis server password. args[4] = html server username. args[5] = html server password.
 	 */
 	public static void main(String[] args) {
 		// NOTE: Since start() and stop() are not synchronized, but are called by procrun in different threads, this code has the potential for race condiditons. This shouldn't be important for the context of how this operates, but will explain exceptions in the final log moments.
-		if ("start".equals(args[0]))
-			start(args);
-		else if ("stop".equals(args[0]))
-			stop(args);
+		if ("start".equals(args[0])) {
+			keystorePassword = args[1];
+			arcgisServerUsername = args[2];
+			arcgisServerPassword = args[3];
+			webServerPassword = args[4];
+			webServerUsername = args[5];
+		} else if ("stop".equals(args[0]))
+			stop();
 	}
 
 	/**
 	 * Startup the service.
-	 * 
-	 * @param args
-	 *           String with any additional startup params that might be needed.
 	 */
-	public static void start(String[] args) {
+	public static void start() {
 		Logger.info("Server daemon is starting up...");
 
 		try {
@@ -91,7 +95,7 @@ public class EarthModellingDaemon {
 		tempOutputDir.mkdir();
 
 		Logger.info("Starting VEMS ClientServer.");
-		clientServer = new ClientServer(ServerInformation.SERVER_PORT, FileLocations.KEYSTORE_FILE_LOCATION, "password");
+		clientServer = new ClientServer(ServerInformation.SERVER_PORT, FileLocations.KEYSTORE_FILE_LOCATION, keystorePassword);
 		clientServer.start();
 
 		while (run)
@@ -104,11 +108,8 @@ public class EarthModellingDaemon {
 
 	/**
 	 * Gracefully shut down the program.
-	 * 
-	 * @param args
-	 *           String with any additional shutdown params that might be needed.
 	 */
-	public static void stop(String[] args) {
+	public static void stop() {
 		Logger.info("Shutting down server.");
 		clientServer.end();
 		run = true;
@@ -219,6 +220,29 @@ public class EarthModellingDaemon {
 	 *            The process was terminated because it took too long to finish executing!
 	 */
 	private static ArrayList<String> runExecutable(String exeLocation, String[] arguments) throws IOException, InterruptedException, TimeoutException {
+		return runExecutable(exeLocation, arguments, MAX_EXECUTABLE_RUNTIME, TimeUnit.MINUTES);
+	}
+
+	/**
+	 * /** Runs a an executable file with the given arguments.
+	 * 
+	 * @param exeLocation
+	 *           The absolute file location of the runnable on the disk.
+	 * @param arguments
+	 *           A tokenized array of arguments, if the program has any.
+	 * @param timeoutValue
+	 *           How long to wait before breaking off the program being executed.
+	 * @param timeoutValueUnits
+	 *           The units of the timeoutValue long.
+	 * @return An ArrayList of the standard output of the script.
+	 * @throws IOException
+	 *            Can't find the script at the specified location!
+	 * @throws InterruptedException
+	 *            Interrupt was encountered before the process could finish executing!
+	 * @throws TimeoutException
+	 *            The process was terminated because it took too long to finish executing!
+	 */
+	private static ArrayList<String> runExecutable(String exeLocation, String[] arguments, Long timeoutValue, TimeUnit timeoutValueUnits) throws IOException, InterruptedException, TimeoutException {
 		if (arguments == null)
 			Logger.info("Running executable: {} ", exeLocation);
 		else
@@ -236,7 +260,7 @@ public class EarthModellingDaemon {
 		builder.redirectErrorStream(true);
 
 		final Process process = builder.start();
-		return waitForProcess(process, MAX_EXECUTABLE_RUNTIME, TimeUnit.MINUTES);
+		return waitForProcess(process, timeoutValue, timeoutValueUnits);
 	}
 
 	/**
@@ -380,11 +404,9 @@ public class EarthModellingDaemon {
 		if (!removeLocalMapFiles(properties))
 			return false;
 
-		String auth[] = validateUser(); // TODO, pass as arguments upon daemon start-up.
-
 		// required arguments for the delete from server command using executable python script
 		// python.exe "C:\Program Files\ArcGIS\Server\tools\admin\manageservice.py" -u username -p password -s https://proj-se491.iastate.edu:6443 -n EarthModelingTest/service_name -o delete
-		String arguments[] = { "-u", auth[0], "-p", auth[1], "-s", "https://proj-se491.iastate.edu:6443", "-n", "EarthModelingTest/" + properties.toString(), "-o", "delete" };
+		String arguments[] = { "-u", arcgisServerUsername, "-p", arcgisServerPassword, "-s", "https://proj-se491.iastate.edu:6443", "-n", "EarthModelingTest/" + properties.toString(), "-o", "delete" };
 		runPythonScript(FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION, arguments);
 
 		convertedSet.remove(properties);
@@ -487,7 +509,6 @@ public class EarthModellingDaemon {
 			return false;
 		}
 
-		String auth[] = validateUser();
 		String template = properties.getMapRegion().toString() + properties.getMapCompoundType().toString();
 		String referenceScale;
 		try {
@@ -499,12 +520,12 @@ public class EarthModellingDaemon {
 		}
 
 		String[] arguments = { FileLocations.ABS_CSV_OUTPUT_DIRECTORY_LOCATION, properties.toString(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, template, FileLocations.BLANK_MAP_FILE_LOCATION,
-				FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, auth[0], auth[1], referenceScale };
+				FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, arcgisServerUsername, arcgisServerPassword, referenceScale };
 
 		ArrayList<String> al = runPythonScript(FileLocations.PUBLISH_MAP_SCRIPT_LOCATION, arguments);
 		logExceptions(al);
 
-		String[] arguments2 = { properties.toString(), auth[0], auth[1] };
+		String[] arguments2 = { properties.toString(), arcgisServerUsername, arcgisServerPassword };
 		al = runPythonScript(FileLocations.PUBLISHING_PARAMS_SCRIPT_LOCATION, arguments2);
 		logExceptions(al);
 
@@ -532,36 +553,6 @@ public class EarthModellingDaemon {
 			if (foundError)
 				Logger.error(s);
 		}
-	}
-
-	/**
-	 * Gets the username and password required to access the ArcGIS admin portal.
-	 * 
-	 * @return A String representing the username, password to access the server.
-	 * @throws FileNotFoundException
-	 *            If FileLocations.Server_AUTH_FILE_LOCATION isn't found.
-	 */
-	private static String[] validateUser() throws FileNotFoundException {
-
-		// New buffered reader for getting local file
-		BufferedReader buffR;
-		buffR = new BufferedReader(new FileReader(FileLocations.SERVER_AUTH_FILE_LOCATION));
-
-		// scan the file
-		Scanner s = new Scanner(buffR);
-		// Define authentication array for return array
-		String[] auth = new String[2];
-		// line counter
-		int line = 0;
-
-		// fill the array with the first two lines found in the document
-		while (s.hasNext()) {
-			auth[line] = s.nextLine().trim();
-			line++;
-		}
-
-		s.close();
-		return auth;
 	}
 
 	/**
@@ -596,8 +587,34 @@ public class EarthModellingDaemon {
 		output.write(strBuff.toString());
 		output.flush();
 		output.close();
-		Files.copy(temp.toPath(), new File(FileLocations.HTML_FILE_LOCATION).toPath(), StandardCopyOption.REPLACE_EXISTING);
+		Files.copy(temp.toPath(), new File(FileLocations.JAVASCRIPT_FILE_LOCATION).toPath(), StandardCopyOption.REPLACE_EXISTING);
 		deleteFile(temp);
+
+		transferJStoWebServer(FileLocations.JAVASCRIPT_FILE_LOCATION, "/www/autoGeneratedJavaScript.js");
+	}
+
+	/**
+	 * Transfers the generated JS file to the web server using WINSCP.
+	 * 
+	 * @param pathOfFileToTransfer
+	 *           The path of the file to transfer (on the local disk).
+	 * @param pathOnDestinationServer
+	 *           The path of the file to transfer (on the destination server).
+	 * @return
+	 */
+	private static boolean transferJStoWebServer(String pathOfFileToTransfer, String pathOnDestinationServer) {
+		String address = webServerUsername + ":" + webServerPassword + "@" + ServerInformation.WEB_SERVER_ADDRESS;
+		String command = "\"put " + pathOfFileToTransfer + " " + pathOnDestinationServer + "\"";
+		String[] arguments = { address, "/command ", command };
+
+		try {
+			runExecutable(FileLocations.WINSCP_EXECUTABLE_LOCATION, arguments, 1L, TimeUnit.MINUTES);
+		} catch (IOException | InterruptedException | TimeoutException e) {
+			Logger.error("Failed to transfer the file.", e);
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
