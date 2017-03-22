@@ -1,11 +1,11 @@
-# Copyright (C) Kellen Johnson
+# Copyright (C) 2017 Kellen Johnson
 # This file is part the Visual Earth Modeling System (VEMS).
 # VEMS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 # VEMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License along with VEMS. If not, see <http://www.gnu.org/licenses/>.
 #
 # author Kellen Johnson
-#
+
 # attributions from http://pro.arcgis.com/en/pro-app/tool-reference/conversion/excel-to-table.htm for Excel to Table
 # attributions from http://pro.arcgis.com/en/pro-app/tool-reference/conversion/table-to-geodatabase.htm for Table to GDB
 # attributions from http://gis.stackexchange.com/questions/155923/create-featuredataset-in-geodatabase-with-arcpy-from-a-table for creating empty GDB
@@ -13,11 +13,7 @@
 
 import arcpy
 
-
-
-
 def main(argv):
-
   
   # The directory were Parsed CSVS are kept
   parsed_csv_dir = ""
