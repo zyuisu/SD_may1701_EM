@@ -51,6 +51,7 @@ public class EarthModellingDaemon {
 	private static ConvertedSet convertedSet;
 	private static boolean run = false;
 	private static ClientServer clientServer;
+	private static ReferenceScales referenceScales;
 
 	private static String keystorePassword;
 	private static String arcgisServerUsername;
@@ -84,6 +85,7 @@ public class EarthModellingDaemon {
 
 		try {
 			convertedSet = new ConvertedSet();
+			referenceScales = new ReferenceScales();
 		} catch (IOException e) {
 			Logger.error(e);
 		}
@@ -481,10 +483,9 @@ public class EarthModellingDaemon {
 		String template = properties.getMapRegion().toString() + properties.getMapCompoundType().toString();
 		String referenceScale;
 		try {
-			ReferenceScales rs = new ReferenceScales();
-			referenceScale = "" + rs.getReferenceScale(properties.getMapRegion());
+			referenceScale = "" + referenceScales.getReferenceScale(properties.getMapRegion());
 		} catch (Exception e) {
-			Logger.error("Error when getting Reference Scale. Check ReferenceScale Class.", e);
+			Logger.error("Error when calling getReferenceScale. Check ReferenceScale Class.", e);
 			return false;
 		}
 
