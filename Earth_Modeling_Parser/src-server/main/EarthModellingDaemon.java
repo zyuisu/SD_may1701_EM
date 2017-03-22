@@ -116,37 +116,6 @@ public class EarthModellingDaemon {
 	}
 
 	/**
-	 * Helper to parse map properties based on file naming convention Dr. Lu uses. Only intended to be used for testing, as generated MapProperties are not correct and are dependent on file name formatting.
-	 * 
-	 * @param s
-	 *           The string that represents the filename. If this string is not formatted, this method will throw some kind of exception.
-	 * @return A MapProperties object that represents this map's properties.
-	 * @throws IllegalAccessException
-	 *            Probably means that we were not able to find a match for MapCompoundType.
-	 */
-	@Deprecated
-	private static MapProperties parseMapProperties(String s) throws IllegalAccessException {
-		int currentIndex = 0;
-
-		MapCompoundType compound = null;
-		if (s.substring(currentIndex, 3).toLowerCase().equals("ch4")) {
-			compound = MapCompoundType.CH4;
-			currentIndex = 4;
-		} else if (s.substring(currentIndex, 3).toLowerCase().equals("co2"))
-			// compound = MapCompoundType.CO2;
-			currentIndex = 4;
-
-		MapRegionType region = MapRegionType.GLOBAL; // Default to global.
-
-		int year = Integer.parseInt(s.substring(currentIndex, currentIndex + 4));
-		currentIndex += 5;
-
-		int month = Integer.parseInt(s.substring(currentIndex).replace(".txt", ""));
-
-		return new MapProperties(region, compound, year, month);
-	}
-
-	/**
 	 * Overloaded helper if you wish to call a script with no arguments.
 	 * 
 	 * @param scriptLocation
