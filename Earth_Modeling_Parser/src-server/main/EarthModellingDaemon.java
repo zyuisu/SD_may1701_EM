@@ -532,8 +532,7 @@ public class EarthModellingDaemon {
 		deleteFile(asciiFile);
 
 		generateNewJavaScript();
-
-		return true;
+		return transferJSToWebServer(FileLocations.JAVASCRIPT_FILE_LOCATION, ServerInformation.WEB_SERVER_JAVASCRIPT_LOCATION);
 	}
 
 	/**
@@ -589,8 +588,6 @@ public class EarthModellingDaemon {
 		output.close();
 		Files.copy(temp.toPath(), new File(FileLocations.JAVASCRIPT_FILE_LOCATION).toPath(), StandardCopyOption.REPLACE_EXISTING);
 		deleteFile(temp);
-
-		transferJStoWebServer(FileLocations.JAVASCRIPT_FILE_LOCATION, ServerInformation.WEB_SERVER_JAVASCRIPT_LOCATION);
 	}
 
 	/**
@@ -600,9 +597,9 @@ public class EarthModellingDaemon {
 	 *           The path of the file to transfer (on the local disk).
 	 * @param pathOnDestinationServer
 	 *           The path of the file to transfer (on the destination server).
-	 * @return
+	 * @return true if the file was successfully sent to the server; false otherwise.
 	 */
-	private static boolean transferJStoWebServer(String pathOfFileToTransfer, String pathOnDestinationServer) {
+	private static boolean transferJSToWebServer(String pathOfFileToTransfer, String pathOnDestinationServer) {
 		String address = webServerUsername + ":" + webServerPassword + "@" + ServerInformation.WEB_SERVER_ADDRESS;
 		String command = "\"put " + pathOfFileToTransfer + " " + pathOnDestinationServer + "\"";
 		String[] arguments = { address, "/command ", command };
