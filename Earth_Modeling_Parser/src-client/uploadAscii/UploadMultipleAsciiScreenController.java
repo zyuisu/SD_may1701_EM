@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.util.List;
 
 import framework.AbstractNetworkedScreenController;
+import framework.IStringMessageReceivable;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
@@ -34,7 +35,7 @@ import utils.MapCompoundType;
 import utils.MapProperties;
 import utils.MapRegionType;
 
-public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreenController {
+public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreenController implements IStringMessageReceivable {
 	@FXML
 	private TextArea messageTextArea;
 	@FXML
@@ -82,6 +83,7 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 	 * @param sm
 	 *           A StringMessage containing the message you wish to output.
 	 */
+	@Override
 	public void outputMessage(StringMessage sm) {
 		messageTextArea.appendText("\n" + sm.getMessageType().name() + ": " + sm.getMsgHeader() + "\n");
 		messageTextArea.appendText("\tDetailed information: " + sm.getMsgContent() + "\n");
@@ -100,7 +102,7 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 
 			for (File f : selectedFiles) {
 				MapProperties mp = parseMapProperties(f);
-				if (mp != null) {
+				if (mp != null)
 					try {
 						byte[] fileAsBytes = Files.readAllBytes(f.toPath());
 						AsciiFileMessage afm = new AsciiFileMessage(mp, fileAsBytes, false);
@@ -110,7 +112,7 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 					} catch (Exception e) {
 						errorAlert("Cannot Construct Server Message", "Something is wrong with your selection:", e.getMessage());
 					}
-				} else
+				else
 					messageTextArea.appendText("ERROR PROCESSING MAP PROPERTIES for: " + f.getName() + " -----\n");
 			}
 		});

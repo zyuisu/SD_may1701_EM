@@ -23,10 +23,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import framework.AbstractNetworkedScreenController;
+import framework.IStringMessageReceivable;
 import javafx.application.Platform;
 import networking.StringMessage.Type;
 import singleton.MainModel;
-import uploadAscii.UploadMultipleAsciiScreenController;
 
 public class NetworkListener extends Thread {
 
@@ -71,19 +71,19 @@ public class NetworkListener extends Thread {
 				StringMessage msg = (StringMessage) input.readObject();
 				AbstractNetworkedScreenController controller = MainModel.getModel().getControllerData().getCurrentController();
 
-				if (controller instanceof UploadMultipleAsciiScreenController) {
-					UploadMultipleAsciiScreenController multController = (UploadMultipleAsciiScreenController) controller;
+				if (controller instanceof IStringMessageReceivable) {
+					IStringMessageReceivable smController = (IStringMessageReceivable) controller;
 					if (msg == null)
 						Platform.runLater(() -> {
 							try {
-								multController.outputMessage(new StringMessage(Type.ERROR_MESSAGE, "There was an issue talking to the server.", "The server passed an invalid or incomplete message."));
+								smController.outputMessage(new StringMessage(Type.ERROR_MESSAGE, "There was an issue talking to the server.", "The server passed an invalid or incomplete message."));
 							} catch (IllegalAccessException e) {
 								e.printStackTrace();
 							}
 						});
 					else
 						Platform.runLater(() -> {
-							multController.outputMessage(msg);
+							smController.outputMessage(msg);
 						});
 				} else if (msg == null)
 					Platform.runLater(() -> {

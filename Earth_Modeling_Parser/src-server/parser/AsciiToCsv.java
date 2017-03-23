@@ -152,6 +152,7 @@ public class AsciiToCsv {
 				// Avoids infinite loop by limiting lines in header to 30
 				if (count > 30) {
 					Logger.debug("Over 30 lines found in header. Check input file and try again.");
+					scanner.close();
 					return false;
 				}
 			}
