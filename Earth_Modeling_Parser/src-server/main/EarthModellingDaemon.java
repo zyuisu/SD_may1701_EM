@@ -68,6 +68,7 @@ public class EarthModellingDaemon {
 			arcgisServerPassword = args[3];
 			webServerPassword = args[4];
 			webServerUsername = args[5];
+			start();
 		} else if ("stop".equals(args[0]))
 			stop();
 	}
