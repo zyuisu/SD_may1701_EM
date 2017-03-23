@@ -99,7 +99,6 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 	 */
 	private void sendToServer() {
 		Thread thread = new Thread(() -> {
-
 			for (File f : selectedFiles) {
 				MapProperties mp = parseMapProperties(f);
 				if (mp != null)

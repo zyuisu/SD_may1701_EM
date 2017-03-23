@@ -468,12 +468,14 @@ public class EarthModellingDaemon {
 		// Check against converted set.
 		if (!convertedSet.add(properties)) {
 			Logger.warn("The file {} has already been converted!", asciiFile.getName());
+			deleteFile(asciiFile);
 			return false;
 		}
 
 		File csvFile = convertAsciiToCsv(asciiFile);
 		if (csvFile == null) {
 			Logger.error("File generated became null");
+			deleteFile(asciiFile);
 			return false;
 		}
 
@@ -483,6 +485,7 @@ public class EarthModellingDaemon {
 			referenceScale = "" + referenceScales.getReferenceScale(properties.getMapRegion());
 		} catch (Exception e) {
 			Logger.error("Error when calling getReferenceScale. Check ReferenceScale Class.", e);
+			deleteFile(asciiFile);
 			return false;
 		}
 
@@ -554,7 +557,6 @@ public class EarthModellingDaemon {
 			runExecutable(FileLocations.WINSCP_EXECUTABLE_LOCATION, arguments, 1L, TimeUnit.MINUTES);
 		} catch (IOException | InterruptedException | TimeoutException e) {
 			Logger.error("Failed to transfer the file.");
-			Logger.trace(e);
 			return false;
 		}
 
