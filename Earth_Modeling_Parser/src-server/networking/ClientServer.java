@@ -197,15 +197,15 @@ public class ClientServer extends Thread {
 		try {
 			if (afm.getOverwriteExisting())
 				if (!EarthModellingDaemon.removeMapFromServer(afm.getMapProperties()))
-					client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue removing the existing map.", "Check the server logs for more information."));
+					client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue removing map: " + afm.getMapProperties().toString() + ".", "Check the server logs for more information."));
 
 			try {
 				if (!EarthModellingDaemon.createMap(afm.getFile(), afm.getMapProperties()))
-					client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue creating the new map.", " Is it possible that the map you wish to create already exists? If not, check the server logs for more information."));
+					client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue creating map: " + afm.getMapProperties().toString() + ".", "Is it possible that the map you wish to create already exists? If not, check the server logs for more information."));
 				else
 					client.bufferMessage(new StringMessage(StringMessage.Type.INFORMATION_MESSAGE, "Success!", "The map " + afm.getMapProperties().toString() + " was sucessfully created."));
 			} catch (Exception e) {
-				client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "One of the map generation methods failed.", "Try again, utilizing the overwrite setting. If there is still an issue, check the server logs for more information."));
+				client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "Map generation for map: " + afm.getMapProperties().toString() + "failed.", "Try again, utilizing the overwrite setting. If there is still an issue, check the server logs for more information."));
 				throw e;
 			}
 		} catch (IllegalAccessException iae) {

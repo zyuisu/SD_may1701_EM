@@ -19,6 +19,7 @@
 package uploadAscii;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -62,24 +63,12 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 		});
 
 		sendToServerBtn.setOnAction(event -> {
-			try {
-				if (selectedFiles != null)
-					for (File f : selectedFiles) {
-						MapProperties mp = parseMapProperties(f);
-						if (mp != null) {
-							byte[] fileAsBytes = Files.readAllBytes(f.toPath());
-							AsciiFileMessage afm = new AsciiFileMessage(mp, fileAsBytes, false);
 
-							messageTextArea.appendText("----- Generating map for: " + f.getName() + " -----\n");
-							sendMessageToServer(afm);
-						} else
-							messageTextArea.appendText("----- ERROR PROCESSING MAP PROPERTIES for: " + f.getName() + " -----\n");
-					}
-				else
-					errorAlert("Unselected ASCII Files", "You must select at least one ASCII file", "Please select the ASCII file(s), and try again.");
-			} catch (Exception e) {
-				errorAlert("Cannot Construct Server Message", "Something is wrong with your selection:", e.getMessage());
-			}
+			if (selectedFiles != null)
+				sendToServer();
+			else
+				errorAlert("Unselected ASCII Files", "You must select at least one ASCII file", "Please select the ASCII file(s), and try again.");
+
 		});
 
 		backBtn.setOnAction(event -> {
@@ -94,9 +83,40 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 	 *           A StringMessage containing the message you wish to output.
 	 */
 	public void outputMessage(StringMessage sm) {
-		messageTextArea.appendText("\n   " + sm.getMessageType().name() + ":\n");
-		messageTextArea.appendText("\t" + sm.getMsgHeader() + "\n");
-		messageTextArea.appendText("Detailed information: " + sm.getMsgContent() + "\n");
+		messageTextArea.appendText("\n" + sm.getMessageType().name() + ": " + sm.getMsgHeader() + "\n");
+		messageTextArea.appendText("\tDetailed information: " + sm.getMsgContent() + "\n");
+	}
+
+	/**
+	 * Helper that sends all the selected files to the server. Intended to be run in its own thread.
+	 * 
+	 * @throws IOException
+	 *            There was an issue reading one of the selected files from the disk.
+	 * @throws IllegalAccessException
+	 *            There was an issue parsing the map properties.
+	 */
+	private void sendToServer() {
+		Thread thread = new Thread(() -> {
+
+			for (File f : selectedFiles) {
+				MapProperties mp = parseMapProperties(f);
+				if (mp != null) {
+					try {
+						byte[] fileAsBytes = Files.readAllBytes(f.toPath());
+						AsciiFileMessage afm = new AsciiFileMessage(mp, fileAsBytes, false);
+						messageTextArea.appendText("\nData file for map : " + mp.toString() + " sent to the server.\n");
+						sendMessageToServer(afm);
+						Thread.sleep(5000L); // Wait for 5 seconds. -- Don't hammer the server.
+					} catch (Exception e) {
+						errorAlert("Cannot Construct Server Message", "Something is wrong with your selection:", e.getMessage());
+					}
+				} else
+					messageTextArea.appendText("ERROR PROCESSING MAP PROPERTIES for: " + f.getName() + " -----\n");
+			}
+		});
+
+		thread.setDaemon(true); // In case it gets stuck and the user terminates the application.
+		thread.start();
 	}
 
 	/**
