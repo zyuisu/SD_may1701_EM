@@ -225,6 +225,8 @@ public class ClientThread extends Thread {
 			// The connection was dropped.
 			end();
 			return false;
+		} catch (Exception e) {
+			Logger.error(e); // unknown error
 		}
 
 		// Must still be connected.
