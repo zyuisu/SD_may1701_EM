@@ -20,5 +20,6 @@
       <TextArea fx:id="messageTextArea" layoutX="53.0" layoutY="23.0" prefHeight="450.0" prefWidth="1189.0" />
       <Button fx:id="selectFilesBtn" layoutX="234.0" layoutY="535.0" mnemonicParsing="false" text="Select File(s) To Upload" />
       <Button fx:id="sendToServerBtn" layoutX="1030.0" layoutY="561.0" mnemonicParsing="false" text="Send to Server" />
+      <Button fx:id="backBtn" layoutX="1030.0" layoutY="633.0" mnemonicParsing="false" text="Back to manual upload page." />
 	</children>
 </AnchorPane>

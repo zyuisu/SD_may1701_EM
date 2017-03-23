@@ -37,6 +37,8 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 	@FXML
 	private TextArea messageTextArea;
 	@FXML
+	private Button backBtn;
+	@FXML
 	private Button selectFilesBtn;
 	@FXML
 	private Button sendToServerBtn;
@@ -78,6 +80,10 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 			} catch (Exception e) {
 				errorAlert("Cannot Construct Server Message", "Something is wrong with your selection:", e.getMessage());
 			}
+		});
+
+		backBtn.setOnAction(event -> {
+			parentController.goToUploadAsciiScreen();
 		});
 	}
 
