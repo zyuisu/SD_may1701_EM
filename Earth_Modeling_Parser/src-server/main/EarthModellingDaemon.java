@@ -66,8 +66,8 @@ public class EarthModellingDaemon {
 			keystorePassword = args[1];
 			arcgisServerUsername = args[2];
 			arcgisServerPassword = args[3];
-			webServerPassword = args[4];
-			webServerUsername = args[5];
+			webServerUsername = args[4];
+			webServerPassword = args[5];
 			start();
 		} else if ("stop".equals(args[0]))
 			stop();
@@ -545,7 +545,7 @@ public class EarthModellingDaemon {
 	private static boolean transferJSToWebServer(String pathOfFileToTransfer, String pathOnDestinationServer) {
 		String address = webServerUsername + ":" + webServerPassword + "@" + ServerInformation.WEB_SERVER_ADDRESS;
 		String command = "\"put " + pathOfFileToTransfer + " " + pathOnDestinationServer + "\"";
-		String[] arguments = { address, "/command ", command };
+		String[] arguments = { address, "/command", command };
 
 		try {
 			runExecutable(FileLocations.WINSCP_EXECUTABLE_LOCATION, arguments, 1L, TimeUnit.MINUTES);
