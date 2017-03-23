@@ -553,7 +553,8 @@ public class EarthModellingDaemon {
 		try {
 			runExecutable(FileLocations.WINSCP_EXECUTABLE_LOCATION, arguments, 1L, TimeUnit.MINUTES);
 		} catch (IOException | InterruptedException | TimeoutException e) {
-			Logger.error("Failed to transfer the file.", e);
+			Logger.error("Failed to transfer the file.");
+			Logger.trace(e);
 			return false;
 		}
 
