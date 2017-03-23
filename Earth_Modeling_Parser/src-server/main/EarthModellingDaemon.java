@@ -41,7 +41,7 @@ import utils.ReferenceScales;
 
 public class EarthModellingDaemon {
 
-	public static final long TIME_TO_SLEEP = 60000L; // 1 minute before this daemon wakes up again.
+	public static final long TIME_TO_SLEEP = 5000L; // 5 seconds before this daemon wakes up again.
 	public static final long MAX_EXECUTABLE_RUNTIME = 10L; // Represented in minutes.
 	private static ConvertedSet convertedSet;
 	private static boolean run = false;
