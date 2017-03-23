@@ -35,7 +35,7 @@ import utils.MapRegionType;
 
 public class JavaScriptGenerator {
 
-	public static ConvertedSet convertedSet;
+	public ConvertedSet convertedSet;
 
 	/**
 	 * Dynamically generates the HTML file based on values saved in ConvertedSet. It is expected that this method will be called upon each map generation/removal. NOTE: This method relies on the accuracy of the values stored in ConvertedSet.
@@ -83,7 +83,7 @@ public class JavaScriptGenerator {
 	 * @param strBuff
 	 *           The StringBuilder upon which the region values should be appended to.
 	 */
-	private static void allocateRegionList(StringBuilder strBuff) {
+	private void allocateRegionList(StringBuilder strBuff) {
 		for (MapRegionType mr : MapRegionType.values()) {
 			strBuff.append("regionList[regionList.length] = new Option(");
 			strBuff.append("'");
@@ -100,7 +100,7 @@ public class JavaScriptGenerator {
 	 * @param strBuff
 	 *           The StringBuilder upon which the event listener should be appended to.
 	 */
-	private static void generateRegionEventListener(StringBuilder strBuff) {
+	private void generateRegionEventListener(StringBuilder strBuff) {
 		strBuff.append("regionList.addEventListener('click', function() {");
 		ArrayList<String> regionArrays = generateRegionArrays(strBuff);
 
@@ -141,7 +141,7 @@ public class JavaScriptGenerator {
 	 *           The StringBuilder upon which the region arrays should be appended to.
 	 * @return An ArrayList of the names of the arrays.
 	 */
-	private static ArrayList<String> generateRegionArrays(StringBuilder strBuff) {
+	private ArrayList<String> generateRegionArrays(StringBuilder strBuff) {
 		ArrayList<String> arrayNames = new ArrayList<String>();
 
 		for (MapRegionType mr : MapRegionType.values()) {
@@ -173,7 +173,7 @@ public class JavaScriptGenerator {
 	 * @param strBuff
 	 *           The StringBuilder upon which the event listener should be appended to.
 	 */
-	private static void generateCompoundEventListener(StringBuilder strBuff) {
+	private void generateCompoundEventListener(StringBuilder strBuff) {
 		strBuff.append("compoundList.addEventListener('click', function() {");
 		ArrayList<String> compoundArrays = generateCompoundArrays(strBuff);
 
@@ -214,7 +214,7 @@ public class JavaScriptGenerator {
 	 *           The StringBuilder upon which the region-compound arrays should be appended to.
 	 * @return An ArrayList of the names of the arrays.
 	 */
-	private static ArrayList<String> generateCompoundArrays(StringBuilder strBuff) {
+	private ArrayList<String> generateCompoundArrays(StringBuilder strBuff) {
 		ArrayList<String> arrayNames = new ArrayList<String>();
 
 		for (MapRegionType mr : MapRegionType.values())
@@ -247,7 +247,7 @@ public class JavaScriptGenerator {
 	 * @param strBuff
 	 *           The StringBuilder upon which the event listener should be appended to.
 	 */
-	private static void generateYearEventListener(StringBuilder strBuff) {
+	private void generateYearEventListener(StringBuilder strBuff) {
 		strBuff.append("yearList.addEventListener('click', function() {");
 		ArrayList<String> yearArrays = generateMonthArrays(strBuff);
 
@@ -292,7 +292,7 @@ public class JavaScriptGenerator {
 	 *           The StringBuilder upon which the region-compound arrays should be appended to.
 	 * @return An ArrayList of the names of the arrays.
 	 */
-	private static ArrayList<String> generateMonthArrays(StringBuilder strBuff) {
+	private ArrayList<String> generateMonthArrays(StringBuilder strBuff) {
 		ArrayList<String> arrayNames = new ArrayList<String>();
 
 		for (MapRegionType mr : MapRegionType.values())

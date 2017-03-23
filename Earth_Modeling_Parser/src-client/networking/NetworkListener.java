@@ -105,7 +105,7 @@ public class NetworkListener extends Thread {
 				System.out.println("The connection to the server has been terminated.");
 				ioe.printStackTrace();
 			} catch (ClassNotFoundException cnfe) {
-				System.out.println("The object sent could not be parsed.");
+				System.out.println("The object sent could not be parsed. This might just be an alive ping from the server.");
 				cnfe.printStackTrace();
 			}
 	}

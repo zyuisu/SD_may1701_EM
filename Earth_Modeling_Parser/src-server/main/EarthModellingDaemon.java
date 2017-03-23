@@ -41,8 +41,8 @@ import utils.ReferenceScales;
 
 public class EarthModellingDaemon {
 
-	public static final long TIME_TO_SLEEP = 5000L; // 5 seconds before this daemon wakes up again.
-	public static final long MAX_EXECUTABLE_RUNTIME = 10L; // Represented in minutes.
+	public static final long TIME_TO_SLEEP = 30000L; // 30 seconds before this daemon wakes up again.
+	public static final long MAX_EXECUTABLE_RUNTIME_IN_MINUTES = 10L; // Represented in minutes.
 	private static ConvertedSet convertedSet;
 	private static boolean run = false;
 	private static ClientServer clientServer;
@@ -51,8 +51,8 @@ public class EarthModellingDaemon {
 	private static String keystorePassword;
 	private static String arcgisServerUsername;
 	private static String arcgisServerPassword;
-	private static String webServerPassword;
 	private static String webServerUsername;
+	private static String webServerPassword;
 
 	/**
 	 * Select to start or stop the service.
@@ -98,6 +98,9 @@ public class EarthModellingDaemon {
 
 		while (run)
 			try {
+				if (!clientServer.isAClientConnected())
+					System.gc();
+
 				Thread.sleep(TIME_TO_SLEEP);
 			} catch (InterruptedException e) {
 				// Do nothing, because map processing is likely happening right now.
@@ -187,7 +190,7 @@ public class EarthModellingDaemon {
 	 *            The process was terminated because it took too long to finish executing!
 	 */
 	private static ArrayList<String> runExecutable(String exeLocation, String[] arguments) throws IOException, InterruptedException, TimeoutException {
-		return runExecutable(exeLocation, arguments, MAX_EXECUTABLE_RUNTIME, TimeUnit.MINUTES);
+		return runExecutable(exeLocation, arguments, MAX_EXECUTABLE_RUNTIME_IN_MINUTES, TimeUnit.MINUTES);
 	}
 
 	/**

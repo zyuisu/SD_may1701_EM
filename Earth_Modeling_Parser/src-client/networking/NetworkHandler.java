@@ -117,7 +117,7 @@ public class NetworkHandler {
 	}
 
 	/**
-	 * Closes out the I/O streams, socket, and sets the NetworkListener run boolean to false by calling its end() method.
+	 * Closes out the socket (and thereby the streams) and sets the NetworkListener run boolean to false by calling its end() method.
 	 */
 	private void close() {
 		try {
@@ -138,7 +138,7 @@ public class NetworkHandler {
 	 * @return true if the message was successfully sent; false if something failed.
 	 */
 	public boolean bufferObject(Object o) {
-		if (!socket.isConnected()) {
+		if (!socket.isConnected() || socket.isClosed() || socket.isOutputShutdown()) {
 			close();
 			return false;
 		}

@@ -149,19 +149,17 @@ public class ClientThread extends Thread {
 				break; // //////////////////// So we don't lock up the thread. ////////////////////////////
 			}
 
-		server.removeClient(this);
 		end();
 	}
 
 	/**
-	 * Helper method to assist in the closing of streams. Unexpected behavior may occur if called outside of this class.
+	 * Helper method to assist in the closing of a socket (and thereby its streams). Unexpected behavior may occur if called outside of this class.
 	 */
 	protected void end() {
 		try {
-			output.close();
-			input.close();
 			socket.close();
 			run = false;
+			server.removeClient(this);
 		} catch (IOException ioe) {
 			Logger.error("There was a issue trying to close the socket or I/O streams: {}", ioe);
 		} catch (Exception e) {
@@ -179,7 +177,7 @@ public class ClientThread extends Thread {
 	 * @return true if the message was successfully set, false if an error occurred and the client was somehow disconnected.
 	 */
 	public boolean bufferMessage(Object message) {
-		if (!socket.isConnected()) {
+		if (!socket.isConnected() || socket.isClosed() || socket.isOutputShutdown()) {
 			end();
 			return false;
 		}
@@ -201,5 +199,35 @@ public class ClientThread extends Thread {
 	 */
 	public String getUsername() {
 		return username;
+	}
+
+	/**
+	 * Checks to see if there is any way that a client could have gotten disconnected and calls end if it is.
+	 * 
+	 * @return true if the client is connected; false otherwise.
+	 */
+	public boolean isClientConnected() {
+		// Check to is socket hasn't been started yet.
+		if (!socket.isConnected())
+			return false;
+
+		// Check to see see if I have closed this socket.
+		if (socket.isClosed()) {
+			end();
+			return false;
+		}
+
+		// Don't know if we disconnected. Test a write.
+		try {
+			output.write(1);
+			output.flush();
+		} catch (IOException ioe) {
+			// The connection was dropped.
+			end();
+			return false;
+		}
+
+		// Must still be connected.
+		return true;
 	}
 }

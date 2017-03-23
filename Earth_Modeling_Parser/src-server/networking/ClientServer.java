@@ -247,6 +247,19 @@ public class ClientServer extends Thread {
 	}
 
 	/**
+	 * Checks if a user client is currently connected to the daemon.
+	 * 
+	 * @return true if a client is connected; false otherwise.
+	 */
+	public synchronized boolean isAClientConnected() {
+		for (ClientThread c : clients)
+			if (c.isClientConnected())
+				return true;
+
+		return false;
+	}
+
+	/**
 	 * Validates a user by checking against the approvedClients HashMap.
 	 * 
 	 * @param username
