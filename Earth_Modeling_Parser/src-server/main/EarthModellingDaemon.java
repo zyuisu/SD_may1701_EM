@@ -493,11 +493,20 @@ public class EarthModellingDaemon {
 				FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, arcgisServerUsername, arcgisServerPassword, referenceScale };
 
 		ArrayList<String> al = runPythonScript(FileLocations.PUBLISH_MAP_SCRIPT_LOCATION, arguments);
-		logExceptions(al);
+		if (logExceptions(al))
+		{
+			deleteFile(asciiFile);
+			return false;
+		}
 
 		String[] arguments2 = { properties.toString(), arcgisServerUsername, arcgisServerPassword };
 		al = runPythonScript(FileLocations.PUBLISHING_PARAMS_SCRIPT_LOCATION, arguments2);
-		logExceptions(al);
+		
+		if (logExceptions(al))
+		{
+			deleteFile(asciiFile);
+			return false;
+		}
 
 		deleteFile(asciiFile);
 
@@ -507,10 +516,11 @@ public class EarthModellingDaemon {
 	/**
 	 * Search a list for any exception or error and log it and everything that comes after it.
 	 * 
+	 * @return true if an exception was logged; false otherwise
 	 * @param al
 	 *           An ArrayList that contains the output piped from an executable.
 	 */
-	private static void logExceptions(ArrayList<String> al) {
+	private static boolean logExceptions(ArrayList<String> al) {
 		boolean foundError = false;
 
 		for (String s : al) {
@@ -521,6 +531,8 @@ public class EarthModellingDaemon {
 			if (foundError)
 				Logger.error(s);
 		}
+		
+		return foundError;
 	}
 
 	/**
