@@ -268,8 +268,8 @@ public class EarthModellingDaemon {
 		if (process.waitFor(waitTime, waitTimeUnit))
 			Logger.info("Done running script.");
 		else {
-			Logger.info("Process terminated before script completion.");
-			throw new TimeoutException();
+			Logger.error("Process terminated before script completion.");
+			return result;
 		}
 
 		return result;
