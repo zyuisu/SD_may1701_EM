@@ -73,5 +73,9 @@ public class LoginScreenController extends AbstractNetworkedScreenController {
 
 			}
 		});
+		
+		passwordField.setOnAction(event -> {
+			loginButton.fire();
+		});
 	}
 }
