@@ -109,7 +109,9 @@ public class UploadAsciiScreenController extends AbstractNetworkedScreenControll
 					if (deleteMapCheckBox.isSelected()) {
 						DeleteMapMessage dmm = new DeleteMapMessage(mp);
 
+						message.setText("Deleting map: " + mp.toString());
 						sendMessageToServer(dmm);
+						message.setText("Map deleted.");
 					} else if (selectedFile != null) {
 						byte[] fileAsBytes = Files.readAllBytes(selectedFile.toPath());
 						AsciiFileMessage afm = new AsciiFileMessage(mp, fileAsBytes, overwriteCheckBox.isSelected());
