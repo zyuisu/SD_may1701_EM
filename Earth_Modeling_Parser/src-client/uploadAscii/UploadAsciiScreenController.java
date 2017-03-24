@@ -116,9 +116,9 @@ public class UploadAsciiScreenController extends AbstractNetworkedScreenControll
 						byte[] fileAsBytes = Files.readAllBytes(selectedFile.toPath());
 						AsciiFileMessage afm = new AsciiFileMessage(mp, fileAsBytes, overwriteCheckBox.isSelected());
 
-						message.setText("Generating map: " + mp.toString());
+						message.setText("Sending map to server: " + mp.toString());
 						sendMessageToServer(afm);
-						message.setText("Done processing map.");
+						message.setText("Waiting for server response...");
 					} else // Delete map option unselected && selectedFile == null.
 						errorAlert("Unselected ASCII", "You must select an ASCII file.", "Please select an ASCII file to upload, and try again.");
 			} catch (Exception e) {
