@@ -27,11 +27,11 @@ import java.util.Map;
 public final class ReferenceScales {
 
 	// REMINDER: SHOULD BE DEFINED WITH EXACT NAMES IN MapRegionType. Like following:
-	// private static final int MapRegionType.name()
+	// public static final int MapRegionType.name()
 	public static final int GLOBAL = 50000000;
 	public static final int MIDWESTERN_US = 5000000; // As in 1:5000000
 	public static final int MISSISSIPPI_RIVER_BASIN = 5000000;
-	// private static final int NEW_ENUMERATION_NAME = 100000000;
+	// public static final int NEW_ENUMERATION_NAME = 100000000;
 
 	// --------------------------------------------------------------------------------------------------
 	// DON'T CHANGE ANYTHING BELOW the above line. Any additional variables should be added above this line.
@@ -53,7 +53,7 @@ public final class ReferenceScales {
 
 		for (MapRegionType mr : MapRegionType.values())
 			if (!fields.containsKey(mr.name()))
-				throw new IllegalArgumentException("You need to define a 'private static final int MapRegionType.name()' reference scale for region " + mr.name() + " in class utils.ReferenceScales.");
+				throw new IllegalArgumentException("You need to define a 'public static final int MapRegionType.name()' reference scale for region " + mr.name() + " in class utils.ReferenceScales.");
 	}
 
 	/**
