@@ -580,7 +580,7 @@ public class EarthModellingDaemon {
 	 */
 	private static boolean transferJSToWebServer(String pathOfFileToTransfer, String pathOnDestinationServer) {
 		String address = webServerUsername + ":" + webServerPassword + "@" + ServerInformation.WEB_SERVER_ADDRESS;
-		String command = "\"put " + pathOfFileToTransfer + " " + pathOnDestinationServer + "\"";
+		String command = "\"put \"" + pathOfFileToTransfer + "\" \"" + pathOnDestinationServer + "\"\"";
 		String[] arguments = { address, "/command", command };
 
 		try {
