@@ -27,6 +27,7 @@ public class FileLocations {
 	public static final String PYTHON_EXECUTABLE_BINARY_LOCATION = "C:\\Python27\\ArcGISx6410.4\\python.exe";
 	public static final String ARCSERVER_MANAGE_SERVICE_FILE_LOCATION = "C:\\Program Files\\ArcGIS\\Server\\tools\\admin\\manageservice.py";
 	public static final String WINSCP_EXECUTABLE_LOCATION = "\"C:\\Program Files (x86)\\WinSCP\\WinSCP.exe\"";
+	public static final String CMD_WINDOWS_LOCATION = "C:\\Windows\\system32\\cmd.exe";
 
 	// --- This should be replaced with a new 0-byte file when testing core daemon map functionality for validity. ---
 	// NOTE: Don't delete the old file on a working server! Simply test new functionality on a blank set, and copy the old one back once bug free.

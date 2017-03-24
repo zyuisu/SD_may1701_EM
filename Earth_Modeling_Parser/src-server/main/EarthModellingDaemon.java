@@ -551,10 +551,10 @@ public class EarthModellingDaemon {
 	private static boolean transferJSToWebServer(String pathOfFileToTransfer, String pathOnDestinationServer) {
 		String address = webServerUsername + ":" + webServerPassword + "@" + ServerInformation.WEB_SERVER_ADDRESS;
 		String command = "\"put " + pathOfFileToTransfer + " " + pathOnDestinationServer + "\"";
-		String[] arguments = { address, "/command", command };
+		String[] arguments = {"/c", FileLocations.WINSCP_EXECUTABLE_LOCATION, address, "/command", command };
 
 		try {
-			runExecutable(FileLocations.WINSCP_EXECUTABLE_LOCATION, arguments, 1L, TimeUnit.MINUTES);
+			runExecutable(FileLocations.CMD_WINDOWS_LOCATION, arguments, 1L, TimeUnit.MINUTES);
 		} catch (IOException | InterruptedException | TimeoutException e) {
 			Logger.error("Failed to transfer the file.");
 			return false;
