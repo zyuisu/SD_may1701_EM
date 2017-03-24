@@ -584,7 +584,7 @@ public class EarthModellingDaemon {
 		String[] arguments = { address, "/command", command };
 
 		try {
-			ArrayList<String> output = runExecutable(FileLocations.WINSCP_EXECUTABLE_LOCATION, arguments, 1L, TimeUnit.MINUTES);
+			ArrayList<String> output = runExecutable(FileLocations.WINSCP_EXECUTABLE_LOCATION, arguments, 10L, TimeUnit.SECONDS);
 			Logger.info(output);
 		} catch (IOException | InterruptedException | TimeoutException e) {
 			Logger.error("Failed to transfer the file.");
