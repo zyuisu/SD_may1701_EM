@@ -441,7 +441,7 @@ public class EarthModellingDaemon {
 	 *           A byte array representing the ASCII file that you wish to generate a map from.
 	 * @param properties
 	 *           The map's properties as defined in MapProperties.
-	 * @return true if the map was successfully created; false if it wasn't.
+	 * @return The error if map wasn't successfully created; null if it was.
 	 * @throws IOException
 	 *            There was an error creating or reading from a temporary file/folder.
 	 * @throws InterruptedException
