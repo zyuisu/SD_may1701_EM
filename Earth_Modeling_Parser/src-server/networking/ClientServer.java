@@ -207,7 +207,7 @@ public class ClientServer extends Thread {
 						return new StringMessage(StringMessage.Type.INFORMATION_MESSAGE, "Success!", "The map " + afm.getMapProperties().toString() + " was sucessfully created.");
 				} catch (Exception e) {
 					Logger.error(e);
-					return new StringMessage(StringMessage.Type.ERROR_MESSAGE, "Map generation for map: " + afm.getMapProperties().toString() + "failed.", "Try again, utilizing the overwrite setting.\n" + e.getMessage());
+					return new StringMessage(StringMessage.Type.ERROR_MESSAGE, "Map generation for map: " + afm.getMapProperties().toString() + " failed.", "Try again, utilizing the overwrite setting.\n" + e.getMessage());
 				}
 		} catch (IllegalAccessException iae) {
 			Logger.error("StringMessage message was defined with incorrect parameters: {}", iae);

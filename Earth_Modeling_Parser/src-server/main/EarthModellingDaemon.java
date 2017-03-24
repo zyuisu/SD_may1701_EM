@@ -382,7 +382,7 @@ public class EarthModellingDaemon {
 		String arguments[] = { "-u", arcgisServerUsername, "-p", arcgisServerPassword, "-s", "https://proj-se491.iastate.edu:6443", "-n", "EarthModelingTest/" + properties.toString(), "-o", "delete" };
 		String exceptions = logExceptions(runPythonScript(FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION, arguments));
 
-		if (exceptions == null)
+		if (exceptions != null)
 			return "Error running the remove Python script for map: " + properties.toString();
 
 		if (!generateAndTransferJavaScript())
@@ -502,7 +502,7 @@ public class EarthModellingDaemon {
 
 		ArrayList<String> al = runPythonScript(FileLocations.PUBLISH_MAP_SCRIPT_LOCATION, arguments);
 		String exceptions = logExceptions(al);
-		if (exceptions == null) {
+		if (exceptions != null) {
 			deleteFile(asciiFile);
 			return "Error running map generation script for " + properties.toString() + ".";
 		}
@@ -511,7 +511,7 @@ public class EarthModellingDaemon {
 		al = runPythonScript(FileLocations.PUBLISHING_PARAMS_SCRIPT_LOCATION, arguments2);
 
 		exceptions = logExceptions(al);
-		if (exceptions == null) {
+		if (exceptions != null) {
 			deleteFile(asciiFile);
 			return "Error running publish parameters script for " + properties.toString() + ".";
 		}
