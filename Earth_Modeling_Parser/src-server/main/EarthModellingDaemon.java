@@ -579,9 +579,11 @@ public class EarthModellingDaemon {
 	 * @return true if the file was successfully sent to the server; false otherwise.
 	 */
 	private static boolean transferJSToWebServer(String pathOfFileToTransfer, String pathOnDestinationServer) {
-		String address = webServerUsername + ":" + webServerPassword + "@" + ServerInformation.WEB_SERVER_ADDRESS;
-		String command = "\"put \"" + pathOfFileToTransfer + "\" \"" + pathOnDestinationServer + "\"\"";
-		String[] arguments = { address, "/command", command };
+		String ssh = ServerInformation.WEB_SERVER_HOSTKEY;
+		String address = "sftp://" + webServerUsername + ":" + webServerPassword + "@" + ServerInformation.WEB_SERVER_ADDRESS + "/www/Testing_ED/";
+		String command = "\"put \"\"" + pathOfFileToTransfer + "\"\"\"";
+		String compounded = "\"open " + address + " -hostkey=\"\"" + ssh + "\"\"\" " + command + " \"exit\"";
+		String[] arguments = { "/command", compounded };
 
 		try {
 			ArrayList<String> output = runExecutable(FileLocations.WINSCP_EXECUTABLE_LOCATION, arguments, 10L, TimeUnit.SECONDS);
