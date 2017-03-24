@@ -362,7 +362,7 @@ public class EarthModellingDaemon {
 	 * 
 	 * @param properties
 	 *           The MapProperties that represents what needs to be deleted.
-	 * @return true if the map was successfully deleted; false otherwise.
+	 * @return The error if the map wasn't successfully deleted; null if it was.
 	 * @throws IOException
 	 *            Means that FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION couldn't be located.
 	 * @throws InterruptedException
@@ -370,17 +370,25 @@ public class EarthModellingDaemon {
 	 * @throws TimeoutException
 	 *            Means that the the service manager Python script was terminated before completion (took too long).
 	 */
-	public static synchronized boolean removeMapFromServer(MapProperties properties) throws IOException, InterruptedException, TimeoutException {
+	public static synchronized String removeMapFromServer(MapProperties properties) throws IOException, InterruptedException, TimeoutException {
+		if (!convertedSet.remove(properties))
+			return "The map " + properties.toString() + " is not in the ConvertedSet.";
+
 		if (!removeLocalMapFiles(properties))
-			return false;
+			return "Error deleting local map files for: " + properties.toString();
 
 		// required arguments for the delete from server command using executable python script
 		// python.exe "C:\Program Files\ArcGIS\Server\tools\admin\manageservice.py" -u username -p password -s https://proj-se491.iastate.edu:6443 -n EarthModelingTest/service_name -o delete
 		String arguments[] = { "-u", arcgisServerUsername, "-p", arcgisServerPassword, "-s", "https://proj-se491.iastate.edu:6443", "-n", "EarthModelingTest/" + properties.toString(), "-o", "delete" };
-		runPythonScript(FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION, arguments);
+		String exceptions = logExceptions(runPythonScript(FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION, arguments));
 
-		convertedSet.remove(properties);
-		return generateAndTransferJavaScript();
+		if (exceptions == null)
+			return "Error running the remove Python script for map: " + properties.toString();
+
+		if (!generateAndTransferJavaScript())
+			return "Error transfering updated JS after removing map: " + properties.toString() + ".";
+
+		return null;
 	}
 
 	/**
@@ -441,7 +449,7 @@ public class EarthModellingDaemon {
 	 * @throws TimeoutException
 	 *            Means an intermediary Python script was cut short because it took too long to process.
 	 */
-	public static synchronized boolean createMap(byte[] asciiFile, MapProperties properties) throws IOException, InterruptedException, TimeoutException {
+	public static synchronized String createMap(byte[] asciiFile, MapProperties properties) throws IOException, InterruptedException, TimeoutException {
 		File file = new File(FileLocations.TEMP_WORKING_DIRECTORY_LOCATION + properties.toString() + ".txt");
 		Files.write(file.toPath(), asciiFile);
 
@@ -455,7 +463,7 @@ public class EarthModellingDaemon {
 	 *           A File (linked to something on the local disk) representing the ASCII file that you wish to generate a map from.
 	 * @param properties
 	 *           The map's properties as defined in MapProperties.
-	 * @return true if the map was successfully created; false if it wasn't.
+	 * @return The error if map wasn't successfully created; null if it was.
 	 * @throws IOException
 	 *            There was an error creating or reading from a temporary file/folder.
 	 * @throws InterruptedException
@@ -463,20 +471,20 @@ public class EarthModellingDaemon {
 	 * @throws TimeoutException
 	 *            Means an intermediary Python script was cut short because it took too long to process.
 	 */
-	private static synchronized boolean createMap(File asciiFile, MapProperties properties) throws IOException, InterruptedException, TimeoutException {
+	private static synchronized String createMap(File asciiFile, MapProperties properties) throws IOException, InterruptedException, TimeoutException {
 
 		// Check against converted set.
 		if (!convertedSet.add(properties)) {
-			Logger.warn("The file {} has already been converted!", asciiFile.getName());
+			Logger.warn("The file {} has already been converted!", properties.toString());
 			deleteFile(asciiFile);
-			return false;
+			return "The file " + properties.toString() + " has been converted.";
 		}
 
 		File csvFile = convertAsciiToCsv(asciiFile);
 		if (csvFile == null) {
 			Logger.error("File generated became null");
 			deleteFile(asciiFile);
-			return false;
+			return "There was an error converting " + properties.toString() + " to a CSV file.";
 		}
 
 		String template = properties.getMapRegion().toString() + properties.getMapCompoundType().toString();
@@ -486,53 +494,55 @@ public class EarthModellingDaemon {
 		} catch (Exception e) {
 			Logger.error("Error when calling getReferenceScale. Check ReferenceScale Class.", e);
 			deleteFile(asciiFile);
-			return false;
+			return "There was an error determining the proper reference scale for " + properties.toString() + ".";
 		}
 
 		String[] arguments = { FileLocations.ABS_CSV_OUTPUT_DIRECTORY_LOCATION, properties.toString(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, template, FileLocations.BLANK_MAP_FILE_LOCATION,
 				FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, arcgisServerUsername, arcgisServerPassword, referenceScale };
 
 		ArrayList<String> al = runPythonScript(FileLocations.PUBLISH_MAP_SCRIPT_LOCATION, arguments);
-		if (logExceptions(al))
-		{
+		String exceptions = logExceptions(al);
+		if (exceptions == null) {
 			deleteFile(asciiFile);
-			return false;
+			return "Error running map generation script for " + properties.toString() + ".";
 		}
 
 		String[] arguments2 = { properties.toString(), arcgisServerUsername, arcgisServerPassword };
 		al = runPythonScript(FileLocations.PUBLISHING_PARAMS_SCRIPT_LOCATION, arguments2);
-		
-		if (logExceptions(al))
-		{
+
+		exceptions = logExceptions(al);
+		if (exceptions == null) {
 			deleteFile(asciiFile);
-			return false;
+			return "Error running publish parameters script for " + properties.toString() + ".";
 		}
 
 		deleteFile(asciiFile);
 
-		return generateAndTransferJavaScript();
+		if (!generateAndTransferJavaScript())
+			return "Error transfering updated JS after creating map: " + properties.toString() + ".";
+
+		return null;
 	}
 
 	/**
 	 * Search a list for any exception or error and log it and everything that comes after it.
 	 * 
-	 * @return true if an exception was logged; false otherwise
+	 * @return null if no error was thrown; or a String describing the error otherwise.
 	 * @param al
 	 *           An ArrayList that contains the output piped from an executable.
 	 */
-	private static boolean logExceptions(ArrayList<String> al) {
-		boolean foundError = false;
+	private static String logExceptions(ArrayList<String> al) {
+		String ret = null;
 
 		for (String s : al) {
 			String temp = s.toLowerCase();
-			if (!(temp.contains("-error-") || temp.contains("-errors-")) && (temp.contains("error") || temp.contains("exception") || temp.contains("errno")))
-				foundError = true;
-
-			if (foundError)
+			if (!(temp.contains("-error-") || temp.contains("-errors-")) && (temp.contains("error") || temp.contains("exception") || temp.contains("errno"))) {
+				ret += s + "\n";
 				Logger.error(s);
+			}
 		}
-		
-		return foundError;
+
+		return ret;
 	}
 
 	/**
@@ -563,7 +573,7 @@ public class EarthModellingDaemon {
 	private static boolean transferJSToWebServer(String pathOfFileToTransfer, String pathOnDestinationServer) {
 		String address = webServerUsername + ":" + webServerPassword + "@" + ServerInformation.WEB_SERVER_ADDRESS;
 		String command = "\"put " + pathOfFileToTransfer + " " + pathOnDestinationServer + "\"";
-		String[] arguments = {"/c", FileLocations.WINSCP_EXECUTABLE_LOCATION, address, "/command", command };
+		String[] arguments = { "/c", FileLocations.WINSCP_EXECUTABLE_LOCATION, address, "/command", command };
 
 		try {
 			runExecutable(FileLocations.CMD_WINDOWS_LOCATION, arguments, 1L, TimeUnit.MINUTES);

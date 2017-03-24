@@ -190,29 +190,32 @@ public class ClientServer extends Thread {
 	 * 
 	 * @param afm
 	 *           The AsciiFileMessage that represents the instructions for this map's creation.
-	 * @param client
-	 *           A reference to the ClientThread that is making the call (to return error or success messages).
+	 * @return A StringMessage letting the user know if the process was successful or not (outputs the error).
 	 */
-	public synchronized void parseAsciiFileMessage(AsciiFileMessage afm, ClientThread client) {
+	public synchronized StringMessage parseAsciiFileMessage(AsciiFileMessage afm) {
 		try {
-			if (afm.getOverwriteExisting())
-				if (!EarthModellingDaemon.removeMapFromServer(afm.getMapProperties()))
-					client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue removing map: " + afm.getMapProperties().toString() + ".", "Check the server logs for more information."));
-
-			try {
-				if (!EarthModellingDaemon.createMap(afm.getFile(), afm.getMapProperties()))
-					client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue creating map: " + afm.getMapProperties().toString() + ".", "Is it possible that the map you wish to create already exists? If not, check the server logs for more information."));
-				else
-					client.bufferMessage(new StringMessage(StringMessage.Type.INFORMATION_MESSAGE, "Success!", "The map " + afm.getMapProperties().toString() + " was sucessfully created."));
-			} catch (Exception e) {
-				client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "Map generation for map: " + afm.getMapProperties().toString() + "failed.", "Try again, utilizing the overwrite setting. If there is still an issue, check the server logs for more information."));
-				throw e;
-			}
+			if (afm.getOverwriteExisting()) {
+				String exceptions = EarthModellingDaemon.removeMapFromServer(afm.getMapProperties());
+				if (exceptions != null)
+					return new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue removing map: " + afm.getMapProperties().toString() + ".", exceptions);
+			} else
+				try {
+					String exceptions = EarthModellingDaemon.createMap(afm.getFile(), afm.getMapProperties());
+					if (exceptions != null)
+						return new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue creating map: " + afm.getMapProperties().toString() + ".", "Is it possible that the map you wish to create already exists?\n" + exceptions);
+					else
+						return new StringMessage(StringMessage.Type.INFORMATION_MESSAGE, "Success!", "The map " + afm.getMapProperties().toString() + " was sucessfully created.");
+				} catch (Exception e) {
+					Logger.error(e);
+					return new StringMessage(StringMessage.Type.ERROR_MESSAGE, "Map generation for map: " + afm.getMapProperties().toString() + "failed.", "Try again, utilizing the overwrite setting.\n" + e.getMessage());
+				}
 		} catch (IllegalAccessException iae) {
 			Logger.error("StringMessage message was defined with incorrect parameters: {}", iae);
 		} catch (Exception e) {
 			Logger.error(e);
 		}
+
+		return null;
 	}
 
 	/**
@@ -221,19 +224,22 @@ public class ClientServer extends Thread {
 	 * @param dmm
 	 *           The DeleteMapMessage that represents the map to be deleted.
 	 * @param client
-	 *           A reference to the ClientThread that is making the call (to return error or success messages).
+	 *           A reference to the ClientThread that is making the call (to return error or success messages). * @return A StringMessage letting the user know if the process was successful or not (outputs the error).
 	 */
-	public synchronized void parseDeleteMapMessage(DeleteMapMessage dmm, ClientThread client) {
+	public synchronized StringMessage parseDeleteMapMessage(DeleteMapMessage dmm) {
 		try {
-			if (EarthModellingDaemon.removeMapFromServer(dmm.getMapProperties()))
-				client.bufferMessage(new StringMessage(StringMessage.Type.INFORMATION_MESSAGE, "Success!", "The map " + dmm.getMapProperties().toString() + " was sucessfully deleted."));
+			String exceptions = EarthModellingDaemon.removeMapFromServer(dmm.getMapProperties());
+			if (exceptions == null)
+				return new StringMessage(StringMessage.Type.INFORMATION_MESSAGE, "Success!", "The map " + dmm.getMapProperties().toString() + " was sucessfully deleted.");
 			else
-				client.bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue removing the existing map.", "Check if the given map exists in the server manager and try again."));
+				return new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue removing the existing map.", "Check if the given map exists in the server manager and try again.\n" + exceptions);
 		} catch (IllegalAccessException iae) {
 			Logger.error("StringMessage message was defined with incorrect parameters: {}", iae);
 		} catch (Exception e) {
 			Logger.error(e);
 		}
+
+		return null;
 	}
 
 	/**
