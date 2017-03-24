@@ -371,7 +371,7 @@ public class EarthModellingDaemon {
 	 *            Means that the the service manager Python script was terminated before completion (took too long).
 	 */
 	public static synchronized String removeMapFromServer(MapProperties properties) throws IOException, InterruptedException, TimeoutException {
-		if (!convertedSet.remove(properties))
+		if (!convertedSet.contains(properties))
 			return "The map " + properties.toString() + " is not in the ConvertedSet.";
 
 		if (!removeLocalMapFiles(properties))
@@ -384,6 +384,8 @@ public class EarthModellingDaemon {
 
 		if (exceptions != null)
 			return "Error running the remove Python script for map: " + properties.toString();
+
+		convertedSet.remove(properties);
 
 		if (!generateAndTransferJavaScript())
 			return "Error transfering updated JS after removing map: " + properties.toString() + ".";
@@ -474,15 +476,17 @@ public class EarthModellingDaemon {
 	private static synchronized String createMap(File asciiFile, MapProperties properties) throws IOException, InterruptedException, TimeoutException {
 
 		// Check against converted set.
-		if (!convertedSet.add(properties)) {
+		if (convertedSet.contains(properties)) {
 			Logger.warn("The file {} has already been converted!", properties.toString());
 			deleteFile(asciiFile);
+			removeLocalMapFiles(properties);
 			return "The file " + properties.toString() + " has been converted.";
 		}
 
 		File csvFile = convertAsciiToCsv(asciiFile);
 		if (csvFile == null) {
 			Logger.error("File generated became null");
+			removeLocalMapFiles(properties);
 			deleteFile(asciiFile);
 			return "There was an error converting " + properties.toString() + " to a CSV file.";
 		}
@@ -493,6 +497,7 @@ public class EarthModellingDaemon {
 			referenceScale = "" + referenceScales.getReferenceScale(properties.getMapRegion());
 		} catch (Exception e) {
 			Logger.error("Error when calling getReferenceScale. Check ReferenceScale Class.", e);
+			removeLocalMapFiles(properties);
 			deleteFile(asciiFile);
 			return "There was an error determining the proper reference scale for " + properties.toString() + ".";
 		}
@@ -503,6 +508,7 @@ public class EarthModellingDaemon {
 		ArrayList<String> al = runPythonScript(FileLocations.PUBLISH_MAP_SCRIPT_LOCATION, arguments);
 		String exceptions = logExceptions(al);
 		if (exceptions != null) {
+			removeLocalMapFiles(properties);
 			deleteFile(asciiFile);
 			return "Error running map generation script for " + properties.toString() + ".";
 		}
@@ -512,10 +518,12 @@ public class EarthModellingDaemon {
 
 		exceptions = logExceptions(al);
 		if (exceptions != null) {
+			removeLocalMapFiles(properties);
 			deleteFile(asciiFile);
 			return "Error running publish parameters script for " + properties.toString() + ".";
 		}
 
+		convertedSet.add(properties);
 		deleteFile(asciiFile);
 
 		if (!generateAndTransferJavaScript())
