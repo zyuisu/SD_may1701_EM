@@ -20,16 +20,19 @@
 package networking;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.file.Files;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -183,6 +186,43 @@ public class ClientServer extends Thread {
 		} catch (Exception e) {
 			Logger.error(e);
 		}
+	}
+
+	/**
+	 * Responds to a log message request from the client.
+	 * 
+	 * @param lm
+	 *           The log message from the client (must return true for logMessage.isRequest()).
+	 * @return A log message response (will return true for logMessage.isReponse()).
+	 */
+	public synchronized LogMessage parseLogMessage(LogMessage lm) {
+		try {
+			if (lm.isListOfLogsRequest()) {
+				File logDir = new File(FileLocations.LOGS_DIRECTORY_LOCATION);
+
+				ArrayList<String> logNames = new ArrayList();
+				for (File f : logDir.listFiles())
+					if (f.getName().contains(".log"))
+						logNames.add(f.getName().replace(".log", "").replace("log.", ""));
+
+				return new LogMessage(LogMessage.Type.LIST_OF_LOGS_RESPONSE, logNames);
+			} else if (lm.isLogRequest()) {
+				File logDir = new File(FileLocations.LOGS_DIRECTORY_LOCATION);
+
+				File logFile = null;
+				for (File f : logDir.listFiles())
+					if (f.getName().contains(lm.getRequestedLogName()))
+						logFile = f;
+
+				if (logFile == null)
+					return null; // Can't be a valid request, as such a file doesn't exist.
+				else
+					return new LogMessage(LogMessage.Type.LOG_RESPONSE, Files.readAllBytes(logFile.toPath()));
+			}
+		} catch (Exception e) {
+			Logger.error(e);
+		}
+		return null;
 	}
 
 	/**

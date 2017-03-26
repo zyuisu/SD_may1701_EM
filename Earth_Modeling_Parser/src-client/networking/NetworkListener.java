@@ -66,7 +66,7 @@ public class NetworkListener extends Thread {
 		}
 		run = true;
 
-		while (run) {
+		while (run)
 			try {
 				Object msg = input.readObject();
 
@@ -111,7 +111,6 @@ public class NetworkListener extends Thread {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
 	}
 
 	/**

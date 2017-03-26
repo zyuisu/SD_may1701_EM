@@ -124,10 +124,12 @@ public class ClientThread extends Thread {
 			try {
 				Object obj = input.readObject();
 
-				if (obj instanceof AsciiFileMessage) {
+				if (obj == null)
+					bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "Communication Error", "A null value was passed to the server."));
+				else if (obj instanceof AsciiFileMessage) {
 					StringMessage sm = server.parseAsciiFileMessage((AsciiFileMessage) obj);
 					if (sm == null)
-						bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "An unknown error occured while parsing the file message.", "This shouldn't happen."));
+						bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "An unknown error occured while parsing the ascii file message.", "This shouldn't happen."));
 					else
 						bufferMessage(sm);
 				} else if (obj instanceof ConnectionMessage) {
@@ -139,9 +141,19 @@ public class ClientThread extends Thread {
 					StringMessage sm = server.parseDeleteMapMessage((DeleteMapMessage) obj);
 
 					if (sm == null)
-						bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "An unknown error occured while parsing the file message.", "This shouldn't happen."));
+						bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "An unknown error occured while parsing the delete map message.", "This shouldn't happen."));
 					else
 						bufferMessage(sm);
+				} else if (obj instanceof LogMessage) {
+					LogMessage lm = (LogMessage) obj;
+					if (!lm.isLogRequest())
+						bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "LogMessage error", "The server the was passed a log message that wasn't a type of log request."));
+
+					LogMessage responseMsg = server.parseLogMessage(lm);
+					if (responseMsg == null)
+						bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "An unknown error occured while parsing the log message.", "This shouldn't happen."));
+					else
+						bufferMessage(responseMsg);
 				} else
 					bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "Message sending error.", "The input object passed is not a value message class defined in src-shared.networking. Try again."));
 			} catch (IOException ioe) {

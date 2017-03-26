@@ -31,7 +31,6 @@ import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser.ExtensionFilter;
 import networking.AsciiFileMessage;
 import networking.StringMessage;
-import networking.StringMessage.Type;
 import utils.MapCompoundType;
 import utils.MapProperties;
 import utils.MapRegionType;

@@ -24,7 +24,7 @@ import java.io.Serializable;
 public class StringMessage implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public enum Type {
 		ERROR_MESSAGE, INFORMATION_MESSAGE, WARNING_MESSAGE
 	};
