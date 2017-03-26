@@ -24,18 +24,19 @@ import java.nio.file.Files;
 import java.util.List;
 
 import framework.AbstractNetworkedScreenController;
-import framework.IStringMessageReceivable;
+import framework.IMessageReceivable;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser.ExtensionFilter;
 import networking.AsciiFileMessage;
 import networking.StringMessage;
+import networking.StringMessage.Type;
 import utils.MapCompoundType;
 import utils.MapProperties;
 import utils.MapRegionType;
 
-public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreenController implements IStringMessageReceivable {
+public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreenController implements IMessageReceivable {
 	@FXML
 	private TextArea messageTextArea;
 	@FXML
@@ -80,13 +81,19 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 	/**
 	 * Designed to output descriptive messages from the server to the user via a text area.
 	 * 
-	 * @param sm
+	 * @param msg
 	 *           A StringMessage containing the message you wish to output.
 	 */
 	@Override
-	public void outputMessage(StringMessage sm) {
-		messageTextArea.appendText("\n" + sm.getMessageType().name() + ": " + sm.getMsgHeader() + "\n");
-		messageTextArea.appendText("\tDetailed information: " + sm.getMsgContent() + "\n");
+	public void outputMessage(Object msg) {
+
+		if (msg instanceof StringMessage) {
+			StringMessage sm = (StringMessage) msg;
+
+			messageTextArea.appendText("\n" + sm.getMessageType().name() + ": " + sm.getMsgHeader() + "\n");
+			messageTextArea.appendText("\tDetailed information: " + sm.getMsgContent() + "\n");
+		} else
+			errorAlert("Communication Error", "Server is sending a message of an unexpected type.", "Check the server logs for additional information.");
 	}
 
 	/**
@@ -94,8 +101,8 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 	 * 
 	 * @throws IOException
 	 *            There was an issue reading one of the selected files from the disk.
-	 * @throws IllegalAccessException
-	 *            There was an issue parsing the map properties.
+	 * @throws IllegalAccessExce
+	 *            import networking.StringMessage;ption There was an issue parsing the map properties.
 	 */
 	private void sendToServer() {
 		Thread thread = new Thread(() -> {

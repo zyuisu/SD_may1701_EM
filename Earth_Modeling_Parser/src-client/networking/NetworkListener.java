@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import framework.AbstractNetworkedScreenController;
-import framework.IStringMessageReceivable;
+import framework.IMessageReceivable;
 import javafx.application.Platform;
 import networking.StringMessage.Type;
 import singleton.MainModel;
@@ -66,48 +66,52 @@ public class NetworkListener extends Thread {
 		}
 		run = true;
 
-		while (run)
+		while (run) {
 			try {
-				StringMessage msg = (StringMessage) input.readObject();
-				AbstractNetworkedScreenController controller = MainModel.getModel().getControllerData().getCurrentController();
+				Object msg = input.readObject();
 
-				if (controller instanceof IStringMessageReceivable) {
-					IStringMessageReceivable smController = (IStringMessageReceivable) controller;
+				// Check to see if it is an alive ping from the server, as those are always ints (Integer with autoboxing).
+				if (!(msg instanceof Integer)) {
+
+					AbstractNetworkedScreenController controller = MainModel.getModel().getControllerData().getCurrentController();
+
 					if (msg == null)
 						Platform.runLater(() -> {
-							try {
-								smController.outputMessage(new StringMessage(Type.ERROR_MESSAGE, "There was an issue talking to the server.", "The server passed an invalid or incomplete message."));
-							} catch (IllegalAccessException e) {
-								e.printStackTrace();
-							}
+							controller.errorAlert("Communication Error", "There was an issue talking to the server.", "The server passed an invalid or incomplete message.");
 						});
-					else
+
+					if (controller instanceof IMessageReceivable) {
+						IMessageReceivable smController = (IMessageReceivable) controller;
 						Platform.runLater(() -> {
 							smController.outputMessage(msg);
 						});
-				} else if (msg == null)
-					Platform.runLater(() -> {
-						controller.errorAlert("Communication Error", "There was an issue talking to the server.", "The server passed an invalid or incomplete message.");
-					});
-				else if (msg.getMessageType() == Type.ERROR_MESSAGE)
-					Platform.runLater(() -> {
-						controller.errorAlert("Server Error", msg.getMsgHeader(), msg.getMsgContent());
-					});
-				else if (msg.getMessageType() == Type.WARNING_MESSAGE)
-					Platform.runLater(() -> {
-						controller.warningAlert("Server Warning", msg.getMsgHeader(), msg.getMsgContent());
-					});
-				else
-					Platform.runLater(() -> {
-						controller.informationAlert("Server Message", msg.getMsgHeader(), msg.getMsgContent());
-					});
+					} else {
+						StringMessage sm = (StringMessage) msg;
+
+						if (sm.getMessageType() == Type.ERROR_MESSAGE)
+							Platform.runLater(() -> {
+								controller.errorAlert("Server Error", sm.getMsgHeader(), sm.getMsgContent());
+							});
+						else if (sm.getMessageType() == Type.WARNING_MESSAGE)
+							Platform.runLater(() -> {
+								controller.warningAlert("Server Warning", sm.getMsgHeader(), sm.getMsgContent());
+							});
+						else
+							Platform.runLater(() -> {
+								controller.informationAlert("Server Message", sm.getMsgHeader(), sm.getMsgContent());
+							});
+					}
+				}
 			} catch (IOException ioe) {
 				System.out.println("The connection to the server has been terminated.");
 				ioe.printStackTrace();
 			} catch (ClassNotFoundException cnfe) {
-				System.out.println("The object sent could not be parsed. This might just be an alive ping from the server.");
+				System.out.println("The object sent could not be parsed, because the class doesn't exist.");
 				cnfe.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+		}
 	}
 
 	/**

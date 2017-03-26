@@ -24,7 +24,7 @@ import java.io.Serializable;
 public class StringMessage implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
+	
 	public enum Type {
 		ERROR_MESSAGE, INFORMATION_MESSAGE, WARNING_MESSAGE
 	};
@@ -37,7 +37,7 @@ public class StringMessage implements Serializable {
 	 * Constructs a StringMessage based on passed parameters.
 	 * 
 	 * @param type
-	 *           The StringMessage.TYPE that this type represents.
+	 *           The StringMessage.Type that this type represents.
 	 * @param msgHeader
 	 *           The String that will be displayed as the header of the message. Should be simple.
 	 * @param msgContent

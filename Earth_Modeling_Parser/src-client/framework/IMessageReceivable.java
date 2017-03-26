@@ -19,9 +19,7 @@
 
 package framework;
 
-import networking.StringMessage;
-
-public interface IStringMessageReceivable {
+public interface IMessageReceivable {
 
 	/**
 	 * Designed to output descriptive messages from the server to the user via a text area.
@@ -29,5 +27,5 @@ public interface IStringMessageReceivable {
 	 * @param sm
 	 *           A StringMessage containing the message you wish to output.
 	 */
-	public void outputMessage(StringMessage sm);
+	public void outputMessage(Object sm);
 }
