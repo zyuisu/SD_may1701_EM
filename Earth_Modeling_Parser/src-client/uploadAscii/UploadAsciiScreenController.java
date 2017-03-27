@@ -55,6 +55,8 @@ public class UploadAsciiScreenController extends AbstractNetworkedScreenControll
 	@FXML
 	private Button sendToServerBtn;
 	@FXML
+	private Button goToBrowseLogsScreenBtn;
+	@FXML
 	private Button goToMultipleAsciiScreenBtn;
 	@FXML
 	private CheckBox deleteMapCheckBox;
@@ -132,6 +134,10 @@ public class UploadAsciiScreenController extends AbstractNetworkedScreenControll
 
 		goToMultipleAsciiScreenBtn.setOnAction(event -> {
 			parentController.goToUploadMultipleAsciiScreen();
+		});
+
+		goToBrowseLogsScreenBtn.setOnAction(event -> {
+			parentController.goToBrowseLogsScreen();
 		});
 	}
 

@@ -19,10 +19,7 @@
 
 package networking;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.Files;
 import java.util.ArrayList;
 
 public class LogMessage implements Serializable {
@@ -152,21 +149,11 @@ public class LogMessage implements Serializable {
 	}
 
 	/**
-	 * Writes the passed file byte array to a file at the specified location.
-	 * 
-	 * @param fileLocation
-	 *           The location at which the new file should be stored.
-	 * @return The file where the converted byte array is stored.
-	 * @throws IOException
-	 *            If the file created through fileLocation couldn't be written to.
+	 * @return A String containing the log response.
 	 */
-	public File getLogResponse(String fileLocation) throws IOException {
-		if (isLogResponse()) {
-			File file = new File(fileLocation + "log.txt");
-			Files.write(file.toPath(), logResponse);
-
-			return file;
-		}
+	public String getLogResponse() {
+		if (isLogResponse())
+			return new String(logResponse);
 
 		return null;
 	}

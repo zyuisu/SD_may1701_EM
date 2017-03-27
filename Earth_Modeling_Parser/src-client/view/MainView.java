@@ -54,8 +54,7 @@ public class MainView extends Application {
 		// Set the title and make the application a fixed size.
 		primaryStage.setTitle("Visual Earth Modelling System");
 		primaryStage.setResizable(true);
-		// primaryStage.sizeToScene();
-		primaryStage.centerOnScreen();
+		primaryStage.sizeToScene();
 
 		// Add the stage to the singleton.
 		MainModel.getModel().getMainData().setMainStage(primaryStage);

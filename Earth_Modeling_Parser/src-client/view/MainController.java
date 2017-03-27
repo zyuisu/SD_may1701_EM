@@ -36,6 +36,7 @@ public class MainController extends AbstractMainScreenController {
 	public static final String LOGIN_SCREEN_FXML = "/login/LoginScreen.fxml";
 	public static final String UPLOAD_ASCII_SCREEN_FXML = "/uploadAscii/UploadAsciiScreen.fxml";
 	public static final String UPLOAD_MULTIPLE_ASCII_SCREEN_FXML = "/uploadAscii/UploadMultipleAsciiScreen.fxml";
+	public static final String BROWSE_LOGS_SCREEN_FXML = "/browseLogs/BrowseLogsScreen.fxml";
 
 	/**
 	 * Method so that we can dynamically access the login screen at runtime. Sends the user back to the login screen (previously allocated singleton data is not cleared).
@@ -56,6 +57,13 @@ public class MainController extends AbstractMainScreenController {
 	 */
 	public void goToUploadMultipleAsciiScreen() {
 		goToScreen(UPLOAD_MULTIPLE_ASCII_SCREEN_FXML);
+	}
+
+	/**
+	 * Sends the user to the browse logs screen.
+	 */
+	public void goToBrowseLogsScreen() {
+		goToScreen(BROWSE_LOGS_SCREEN_FXML);
 	}
 
 	/**
