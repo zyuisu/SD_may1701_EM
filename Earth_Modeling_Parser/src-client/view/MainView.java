@@ -20,8 +20,12 @@
 package view;
 
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import singleton.MainModel;
 
@@ -35,8 +39,14 @@ public class MainView extends Application {
 		MainModel.getModel().getMainData().setMainController(mainController);
 
 		// Initialize display components.
-		Group root = new Group();
+		//Group root = new Group();
+		//Pane root = new Pane();
+		//Scene scene = new Scene(root, 1280, 720);
+		StackPane root = new StackPane();
+		root.setAlignment(Pos.CENTER);
+		//root.getChildren().add(mainController);
 		Scene scene = new Scene(root, 1280, 720);
+		
 
 		// Add mainController.
 		root.getChildren().addAll(mainController);
@@ -55,6 +65,8 @@ public class MainView extends Application {
 		primaryStage.setTitle("Visual Earth Modelling System");
 		primaryStage.setResizable(true);
 		primaryStage.sizeToScene();
+	
+		
 
 		// Add the stage to the singleton.
 		MainModel.getModel().getMainData().setMainStage(primaryStage);
