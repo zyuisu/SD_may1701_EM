@@ -104,7 +104,7 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 			messageTextArea.appendText("\n" + sm.getMessageType().name() + ": " + sm.getMsgHeader() + "\n");
 			messageTextArea.appendText("\tDetailed information: " + sm.getMsgContent() + "\n");
 
-			progressBar.setProgress(((double) (++numMapsProcessed)) / ((double) selectedFiles.size() - 1));
+			progressBar.setProgress(((++numMapsProcessed)) / ((double) selectedFiles.size() - 1));
 		} else
 			errorAlert("Communication Error", "Server is sending a message of an unexpected type.", "Check the server logs for additional information.");
 	}

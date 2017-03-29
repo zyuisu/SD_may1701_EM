@@ -479,7 +479,6 @@ public class EarthModellingDaemon {
 		if (convertedSet.contains(properties)) {
 			Logger.warn("The file {} has already been converted!", properties.toString());
 			deleteFile(asciiFile);
-			removeLocalMapFiles(properties);
 			return "The file " + properties.toString() + " has already been converted.";
 		}
 

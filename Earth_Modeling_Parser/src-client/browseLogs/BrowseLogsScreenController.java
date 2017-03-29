@@ -25,6 +25,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import networking.LogMessage;
+import networking.StringMessage;
 
 public class BrowseLogsScreenController extends AbstractNetworkedScreenController implements IMessageReceivable {
 	@FXML
@@ -75,6 +76,10 @@ public class BrowseLogsScreenController extends AbstractNetworkedScreenControlle
 				selectLogsListView.getItems().setAll(lm.getListOfLogsResponse());
 			else if (lm.isLogResponse())
 				messageTextArea.appendText(lm.getLogResponse());
+		} else if (msg instanceof StringMessage)// DEBUG notifications, shouldn't display this alert.
+		{
+			StringMessage sm = (StringMessage) msg;
+			informationAlert("Server Message", sm.getMsgHeader(), sm.getMsgContent());
 		} else
 			errorAlert("Communication Error", "Server is sending a message of an unexpected type.", "Check the server logs for additional information.");
 	}

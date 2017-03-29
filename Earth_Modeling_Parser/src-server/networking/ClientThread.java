@@ -146,8 +146,8 @@ public class ClientThread extends Thread {
 						bufferMessage(sm);
 				} else if (obj instanceof LogMessage) {
 					LogMessage lm = (LogMessage) obj;
-					if (!lm.isLogRequest())
-						bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "LogMessage error", "The server the was passed a log message that wasn't a type of log request."));
+					if (!lm.isRequest())
+						bufferMessage(new StringMessage(StringMessage.Type.ERROR_MESSAGE, "LogMessage error", "The server was passed a log message that wasn't a type of log request."));
 
 					LogMessage responseMsg = server.parseLogMessage(lm);
 					if (responseMsg == null)
