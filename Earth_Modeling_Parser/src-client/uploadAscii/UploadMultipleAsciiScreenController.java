@@ -64,9 +64,14 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 			selectedFiles = promptUserForMultipleFiles("Select ASCII Files", selectFilesBtn, filter);
 
 			if (selectedFiles != null) {
+				messageTextArea.clear();
+				progressBar.setVisible(false);
+				progressText.setVisible(false);
 				messageTextArea.appendText("Selected files:\n");
+
 				for (File f : selectedFiles)
 					messageTextArea.appendText(f.getName() + "\n");
+				messageTextArea.appendText("\n");
 			}
 		});
 
@@ -99,9 +104,13 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 			messageTextArea.appendText("\n" + sm.getMessageType().name() + ": " + sm.getMsgHeader() + "\n");
 			messageTextArea.appendText("\tDetailed information: " + sm.getMsgContent() + "\n");
 
-			progressBar.setProgress(((double) (numMapsProcessed++)) / ((double) selectedFiles.size()));
+			progressBar.setProgress(((double) (++numMapsProcessed)) / ((double) selectedFiles.size() - 1));
 		} else
 			errorAlert("Communication Error", "Server is sending a message of an unexpected type.", "Check the server logs for additional information.");
+	}
+
+	private void clearAll() {
+
 	}
 
 	/**
@@ -109,16 +118,19 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 	 * 
 	 * @throws IOException
 	 *            There was an issue reading one of the selected files from the disk.
-	 * @throws IllegalAccessExce
-	 *            import networking.StringMessage;ption There was an issue parsing the map properties.
+	 * @throws IllegalAccessExcetion
+	 *            There was an issue parsing the map properties.
 	 */
 	private void sendToServer() {
-		numMapsProcessed++;
-		progressText.setVisible(true);
-		progressBar.setVisible(true);
-		progressBar.setProgress(0.0);
-
 		Thread thread = new Thread(() -> {
+			selectFilesBtn.setVisible(false);
+			sendToServerBtn.setVisible(false);
+
+			numMapsProcessed = 0;
+			progressText.setVisible(true);
+			progressBar.setVisible(true);
+			progressBar.setProgress(0.0);
+
 			for (File f : selectedFiles) {
 				MapProperties mp = parseMapProperties(f);
 				if (mp != null)
@@ -126,13 +138,17 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 						byte[] fileAsBytes = Files.readAllBytes(f.toPath());
 						AsciiFileMessage afm = new AsciiFileMessage(mp, fileAsBytes, false);
 						sendMessageToServer(afm);
-						Thread.sleep(5000L); // Wait for 5 seconds. -- Don't hammer the server.
+						Thread.sleep(1000L); // Wait for a second. -- Don't hammer the server.
 					} catch (Exception e) {
 						errorAlert("Cannot Construct Server Message", "Something is wrong with your selection:", e.getMessage());
 					}
 				else
-					messageTextArea.appendText("ERROR PROCESSING MAP PROPERTIES for: " + f.getName() + " -----\n");
+					messageTextArea.appendText("----ERROR PROCESSING MAP PROPERTIES for: " + f.getName() + " -----\n");
 			}
+
+			selectFilesBtn.setVisible(true);
+			sendToServerBtn.setVisible(true);
+			selectedFiles = null;
 		});
 
 		thread.setDaemon(true); // In case it gets stuck and the user terminates the application.
