@@ -27,7 +27,9 @@ import framework.AbstractNetworkedScreenController;
 import framework.IMessageReceivable;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser.ExtensionFilter;
 import networking.AsciiFileMessage;
 import networking.StringMessage;
@@ -39,6 +41,10 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 	@FXML
 	private TextArea messageTextArea;
 	@FXML
+	private Text progressText;
+	@FXML
+	private ProgressBar progressBar;
+	@FXML
 	private Button backBtn;
 	@FXML
 	private Button selectFilesBtn;
@@ -46,6 +52,7 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 	private Button sendToServerBtn;
 
 	private List<File> selectedFiles;
+	private int numMapsProcessed = 0; // We assume the server only sends one message per map.
 
 	/**
 	 * Initializes the controller class. Automatically called after the FXML file has been loaded.
@@ -91,6 +98,8 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 
 			messageTextArea.appendText("\n" + sm.getMessageType().name() + ": " + sm.getMsgHeader() + "\n");
 			messageTextArea.appendText("\tDetailed information: " + sm.getMsgContent() + "\n");
+
+			progressBar.setProgress(((double) (numMapsProcessed++)) / ((double) selectedFiles.size()));
 		} else
 			errorAlert("Communication Error", "Server is sending a message of an unexpected type.", "Check the server logs for additional information.");
 	}
@@ -104,6 +113,11 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 	 *            import networking.StringMessage;ption There was an issue parsing the map properties.
 	 */
 	private void sendToServer() {
+		numMapsProcessed++;
+		progressText.setVisible(true);
+		progressBar.setVisible(true);
+		progressBar.setProgress(0.0);
+
 		Thread thread = new Thread(() -> {
 			for (File f : selectedFiles) {
 				MapProperties mp = parseMapProperties(f);
@@ -111,7 +125,6 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 					try {
 						byte[] fileAsBytes = Files.readAllBytes(f.toPath());
 						AsciiFileMessage afm = new AsciiFileMessage(mp, fileAsBytes, false);
-						messageTextArea.appendText("\nData file for map : " + mp.toString() + " sent to the server.\n");
 						sendMessageToServer(afm);
 						Thread.sleep(5000L); // Wait for 5 seconds. -- Don't hammer the server.
 					} catch (Exception e) {

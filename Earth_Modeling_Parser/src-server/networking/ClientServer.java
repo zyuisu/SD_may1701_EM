@@ -242,7 +242,7 @@ public class ClientServer extends Thread {
 				try {
 					String exceptions = EarthModellingDaemon.createMap(afm.getFile(), afm.getMapProperties());
 					if (exceptions != null)
-						return new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue creating map: " + afm.getMapProperties().toString() + ".", "Is it possible that the map you wish to create already exists?\n" + exceptions);
+						return new StringMessage(StringMessage.Type.ERROR_MESSAGE, "There was an issue creating map: " + afm.getMapProperties().toString() + ".", exceptions);
 					else
 						return new StringMessage(StringMessage.Type.INFORMATION_MESSAGE, "Success!", "The map " + afm.getMapProperties().toString() + " was sucessfully created.");
 				} catch (Exception e) {
