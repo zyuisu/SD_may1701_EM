@@ -18,13 +18,18 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<<<<<<< HEAD
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+=======
+<?import javafx.scene.layout.AnchorPane?>
+>>>>>>> branch 'master' of file:///U:\git\SD_may1701_EM
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<<<<<<< HEAD
 
 <GridPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uploadAscii.UploadAsciiScreenController">
    <columnConstraints>
@@ -109,7 +114,35 @@
             		</Label>
                </children>
             </VBox>
+=======
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uploadAscii.UploadAsciiScreenController">
+	<children>
+		<Label fx:id="message" alignment="CENTER" layoutX="315.0" layoutY="696.0" prefHeight="21.0" prefWidth="400.0" text="Visualization of Earth Modelling Systems v0" textFill="RED" AnchorPane.leftAnchor="315.0" AnchorPane.topAnchor="696.0">
+			<font>
+				<Font size="14.0" />
+			</font>
+		</Label>
+      <VBox layoutX="34.0" layoutY="23.0" prefHeight="191.0" prefWidth="194.0">
+         <children>
+            <ComboBox fx:id="regionCB" pickOnBounds="false" prefWidth="150.0" promptText="Select Region:" />
+            <ComboBox fx:id="compoundCB" prefWidth="150.0" promptText="Select Compound:" visible="false" />
+            <TextField fx:id="yearTextField" promptText="Enter the year." visible="false" />
+            <TextField fx:id="monthTextField" prefHeight="25.0" prefWidth="147.0" promptText="Enter the month (0-11)." visible="false" />
+>>>>>>> branch 'master' of file:///U:\git\SD_may1701_EM
          </children>
       </VBox>
+<<<<<<< HEAD
    </children>
 </GridPane>
+=======
+      <TextArea fx:id="selectedFilesTextArea" editable="false" layoutX="444.0" layoutY="23.0" prefHeight="450.0" prefWidth="701.0" />
+      <Button fx:id="selectFilesBtn" layoutX="260.0" layoutY="140.0" mnemonicParsing="false" text="Select File To Upload" />
+      <Button fx:id="sendToServerBtn" layoutX="1030.0" layoutY="561.0" mnemonicParsing="false" text="Send to Server" />
+      <CheckBox fx:id="overwriteCheckBox" layoutX="251.0" layoutY="87.0" mnemonicParsing="false" text="Overwrite Existing Map?" />
+      <CheckBox fx:id="yearlyMapCheckBox" layoutX="251.0" layoutY="23.0" mnemonicParsing="false" selected="true" text="Yearly Map (no month)" />
+      <CheckBox fx:id="deleteMapCheckBox" layoutX="251.0" layoutY="55.0" mnemonicParsing="false" text="Delete An Existing Map" />
+      <Button fx:id="goToMultipleAsciiScreenBtn" layoutX="515.0" layoutY="561.0" mnemonicParsing="false" text="Use Automated ASCII Parser" />
+      <Button fx:id="goToBrowseLogsScreenBtn" layoutX="551.0" layoutY="608.0" mnemonicParsing="false" text="View Server Logs" />
+	</children>
+</AnchorPane>
+>>>>>>> branch 'master' of file:///U:\git\SD_may1701_EM
