@@ -66,10 +66,10 @@ public class MainView extends Application {
 		MainModel.getModel().getMainData().setMainStage(primaryStage);
 
 		// Go to the first screen.
-		//mainController.goToLoginScreen();//resize done
+		mainController.goToLoginScreen();//resize done
 		//mainController.goToUploadMultipleAsciiScreen();//resize done
 		//mainController.goToBrowseLogsScreen();
-		mainController.goToUploadAsciiScreen();
+		//mainController.goToUploadAsciiScreen();
 		
 	}
 
