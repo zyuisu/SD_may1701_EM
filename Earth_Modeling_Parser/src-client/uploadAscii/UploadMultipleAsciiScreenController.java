@@ -109,10 +109,6 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 			errorAlert("Communication Error", "Server is sending a message of an unexpected type.", "Check the server logs for additional information.");
 	}
 
-	private void clearAll() {
-
-	}
-
 	/**
 	 * Helper that sends all the selected files to the server. Intended to be run in its own thread.
 	 * 
