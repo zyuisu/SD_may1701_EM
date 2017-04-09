@@ -104,7 +104,15 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 			messageTextArea.appendText("\n" + sm.getMessageType().name() + ": " + sm.getMsgHeader() + "\n");
 			messageTextArea.appendText("\tDetailed information: " + sm.getMsgContent() + "\n");
 
-			progressBar.setProgress(((++numMapsProcessed)) / ((double) selectedFiles.size() - 1));
+			numMapsProcessed++;
+			double progress = numMapsProcessed / (double) selectedFiles.size();
+			progressBar.setProgress(progress);
+
+			if (progress >= 1) {
+				selectFilesBtn.setVisible(true);
+				sendToServerBtn.setVisible(true);
+				selectedFiles = null;
+			}
 		} else
 			errorAlert("Communication Error", "Server is sending a message of an unexpected type.", "Check the server logs for additional information.");
 	}
@@ -141,10 +149,6 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 				else
 					messageTextArea.appendText("----ERROR PROCESSING MAP PROPERTIES for: " + f.getName() + " -----\n");
 			}
-
-			selectFilesBtn.setVisible(true);
-			sendToServerBtn.setVisible(true);
-			selectedFiles = null;
 		});
 
 		thread.setDaemon(true); // In case it gets stuck and the user terminates the application.
