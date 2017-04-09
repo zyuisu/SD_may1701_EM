@@ -16,16 +16,13 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
 
 <GridPane prefHeight="720.0" prefWidth="1207.0" style="-fx-grid-lines-visible: false;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uploadAscii.UploadAsciiScreenController">
   <columnConstraints>
@@ -51,79 +48,64 @@
             <Insets left="10.0" right="5.0" top="20.0" />
          </GridPane.margin>
       </VBox>
-      <SplitPane dividerPositions="0.5" mouseTransparent="true" orientation="VERTICAL" prefHeight="252.0" prefWidth="172.0" scaleShape="false" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-        <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" mouseTransparent="true" prefHeight="122.0" prefWidth="82.0">
-               <children>
-                  <SplitPane dividerPositions="0.5" mouseTransparent="true" orientation="VERTICAL" prefHeight="122.0" prefWidth="172.0">
-                    <items>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" mouseTransparent="true" prefHeight="62.0" prefWidth="170.0">
-                           <children>
-                              <CheckBox fx:id="yearlyMapCheckBox" mnemonicParsing="false" selected="true" text="Yearly Map (no month)" />
-                           </children>
-                        </AnchorPane>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" mouseTransparent="true" prefHeight="62.0" prefWidth="134.0">
-                           <children>
-                              <CheckBox fx:id="deleteMapCheckBox" mnemonicParsing="false" text="Delete An Existing Map" />
-                           </children>
-                        </AnchorPane>
-                    </items>
-                  </SplitPane>
-               </children>
-            </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="120.0" prefWidth="170.0">
-               <children>
-                  <SplitPane dividerPositions="0.5" layoutX="-1.0" orientation="VERTICAL" prefHeight="122.0" prefWidth="172.0">
-                    <items>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" mouseTransparent="true" prefHeight="62.0" prefWidth="154.0">
-                           <children>
-                              <CheckBox fx:id="overwriteCheckBox" mnemonicParsing="false" text="Overwrite Existing Map?" />
-                           </children>
-                        </AnchorPane>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
-                           <children>
-                              <Button fx:id="selectFilesBtn" mnemonicParsing="false" text="Select File To Upload" />
-                           </children>
-                        </AnchorPane>
-                    </items>
-                  </SplitPane>
-               </children>
-            </AnchorPane>
-        </items>
-         <GridPane.margin>
-            <Insets left="5.0" right="5.0" top="20.0" />
-         </GridPane.margin>
-      </SplitPane>
       <TextArea prefHeight="472.0" prefWidth="855.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowSpan="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
          <GridPane.margin>
             <Insets left="5.0" right="20.0" top="20.0" />
          </GridPane.margin>
       </TextArea>
-      <SplitPane dividerPositions="0.5" mouseTransparent="true" prefHeight="206.0" prefWidth="831.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-        <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="204.0" prefWidth="290.0">
-               <children>
-                  <Button fx:id="sendToServerBtn" layoutX="160.0" layoutY="87.0" mnemonicParsing="false" text="Send to Server" />
-               </children>
-            </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="204.0" prefWidth="416.0">
-               <children>
-                  <Button fx:id="goToMultipleAsciiScreenBtn" layoutX="110.0" layoutY="59.0" mnemonicParsing="false" text="Use Automated ASCII Parser" />
-                  <Button fx:id="goToBrowseLogsScreenBtn" layoutX="140.0" layoutY="136.0" mnemonicParsing="false" text="View Server Logs" />
-               </children>
-               <padding>
-                  <Insets bottom="10.0" left="5.0" right="20.0" top="20.0" />
-               </padding>
-            </AnchorPane>
-        </items>
-         <GridPane.margin>
-            <Insets left="5.0" right="20.0" />
-         </GridPane.margin>
-      </SplitPane>
 		<Label fx:id="message" alignment="CENTER" prefHeight="27.0" prefWidth="566.0" text="Visualization of Earth Modelling Systems v0" textFill="RED" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
 			<font>
 				<Font size="14.0" />
 			</font>
+         <GridPane.margin>
+            <Insets bottom="20.0" top="10.0" />
+         </GridPane.margin>
 		</Label>
+      <VBox prefHeight="252.0" prefWidth="185.0" GridPane.columnIndex="1">
+         <children>
+            <CheckBox fx:id="yearlyMapCheckBox" mnemonicParsing="false" selected="true" text="Yearly Map (no month)" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets bottom="25.0" right="10.0" />
+               </VBox.margin>
+            </CheckBox>
+            <CheckBox fx:id="deleteMapCheckBox" mnemonicParsing="false" text="Delete An Existing Map" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets bottom="25.0" right="10.0" />
+               </VBox.margin>
+            </CheckBox>
+            <CheckBox fx:id="overwriteCheckBox" mnemonicParsing="false" text="Overwrite Existing Map?" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets bottom="25.0" right="10.0" />
+               </VBox.margin>
+            </CheckBox>
+            <Button fx:id="selectFilesBtn" mnemonicParsing="false" text="Select File To Upload" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets right="10.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+         <GridPane.margin>
+            <Insets left="5.0" right="10.0" top="20.0" />
+         </GridPane.margin>
+      </VBox>
+      <VBox prefHeight="196.0" prefWidth="198.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+         <children>
+            <Button fx:id="sendToServerBtn" mnemonicParsing="false" text="Send to Server" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets left="140.0" top="80.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="goToMultipleAsciiScreenBtn" mnemonicParsing="false" text="Use Automated ASCII Parser" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets bottom="5.0" left="475.0" top="-40.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="goToBrowseLogsScreenBtn" mnemonicParsing="false" text="View Server Logs" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets left="500.0" top="5.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
    </children>
 </GridPane>
