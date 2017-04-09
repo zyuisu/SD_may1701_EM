@@ -29,6 +29,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
 import main.ConvertedSet;
+import networking.ServerInformation;
 import utils.FileLocations;
 import utils.MapCompoundType;
 import utils.MapRegionType;
@@ -67,7 +68,12 @@ public class JavaScriptGenerator {
 
 		// Add button listener.
 		strBuff.append(
-				"loadMapBtn.addEventListener('click', function(){ require([ 'esri/Map', 'esri/views/SceneView', 'esri/layers/MapImageLayer', 'esri/widgets/Legend', 'dojo/domReady!', 'dojo/on', 'dojo/dom', ], function( Map, SceneView, MapImageLayer, Legend, domReady, on, dom) { var region = dom.byId('region'); var comp = dom.byId('compound'); var year = dom.byId('year'); var month = dom.byId('month'); var selectMonth; if (month.options[month.selectedIndex].text == 'Choose a month.'){ selectMonth = 'm-1'; } else{ selectMonth = month.value; } if (selectMonth != 'm-1') { new_url = 'http://proj-se491.cs.iastate.edu:6080/arcgis/rest/services/EarthModelingTest/' + region.value + compound.value + 'y' + year.value + 'm' + selectMonth + '/MapServer' } else { new_url = 'http://proj-se491.cs.iastate.edu:6080/arcgis/rest/services/EarthModelingTest/' + region.value + compound.value + 'y' + year.value + selectMonth + '/MapServer' } var url = new_url; var lyr = new MapImageLayer({ url: url, opacity: 0.75 }); var map = new Map({ basemap: 'oceans', layers: [lyr] }); var view = new SceneView({ container: 'viewDiv', map: map }); var monthTitle = month.options[month.selectedIndex].text; var legendTitle; if (monthTitle == 'Choose a month.') { legendTitle = comp.options[comp.selectedIndex].text + ' ' + year.options[year.selectedIndex].text; } else { legendTitle = month.options[month.selectedIndex].text + ' ' + year.options[year.selectedIndex].text; } view.then(function() { var legend = new Legend({ view: view, layerInfos: [{ layer: lyr, title: legendTitle }] }); view.ui.add(legend, 'bottom-right'); }); lyr.then(function() { view.goTo(lyr.fullExtent); }); }); }); }");
+				"loadMapBtn.addEventListener('click', function(){ require([ 'esri/Map', 'esri/views/SceneView', 'esri/layers/MapImageLayer', 'esri/widgets/Legend', 'dojo/domReady!', 'dojo/on', 'dojo/dom', ], function( Map, SceneView, MapImageLayer, Legend, domReady, on, dom) { var region = dom.byId('region'); var comp = dom.byId('compound'); var year = dom.byId('year'); var month = dom.byId('month'); var selectMonth; if (month.options[month.selectedIndex].text == 'Choose a month.'){ selectMonth = 'm-1'; } else{ selectMonth = month.value; } if (selectMonth != 'm-1') { new_url = '");
+		strBuff.append(ServerInformation.ARCGIS_PUBLISH_URL);
+		strBuff.append("' + region.value + compound.value + 'y' + year.value + 'm' + selectMonth + '/MapServer'; } else { new_url = '");
+		strBuff.append(ServerInformation.ARCGIS_PUBLISH_URL);
+		strBuff.append(
+				"' + region.value + compound.value + 'y' + year.value + selectMonth + '/MapServer'; } var url = new_url; var lyr = new MapImageLayer({ url: url, opacity: 0.75 }); var map = new Map({ basemap: 'oceans', layers: [lyr] }); var view = new SceneView({ container: 'viewDiv', map: map }); var monthTitle = month.options[month.selectedIndex].text; var legendTitle; if (monthTitle == 'Choose a month.') { legendTitle = comp.options[comp.selectedIndex].text + ' ' + year.options[year.selectedIndex].text; } else { legendTitle = month.options[month.selectedIndex].text + ' ' + year.options[year.selectedIndex].text; } view.then(function() { var legend = new Legend({ view: view, layerInfos: [{ layer: lyr, title: legendTitle }] }); view.ui.add(legend, 'bottom-right'); }); lyr.then(function() { view.goTo(lyr.fullExtent); }); }); }); }");
 
 		// Output finalized JS.
 		output.write(strBuff.toString());
