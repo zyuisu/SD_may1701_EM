@@ -42,7 +42,7 @@
 						<Font size="18.0" />
 					</font>
 				</Text>
-				<TextField fx:id="usernameTextField" onAction="#initialize"
+				<TextField fx:id="usernameTextField"
 					prefHeight="0.0" prefWidth="171.0">
 					<HBox.margin>
 						<Insets left="50.0" />
@@ -75,7 +75,7 @@
 				</PasswordField>
 			</children>
 		</HBox>
-		<Button fx:id="loginButton" mnemonicParsing="false" onAction="#initialize"
+		<Button fx:id="loginButton" mnemonicParsing="false"
 			text="Login">
 			<VBox.margin>
 				<Insets bottom="150.0" left="260.0" top="-50.0" />
