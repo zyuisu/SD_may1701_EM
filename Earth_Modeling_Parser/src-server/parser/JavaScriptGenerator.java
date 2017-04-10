@@ -73,7 +73,7 @@ public class JavaScriptGenerator {
 		strBuff.append("' + region.value + compound.value + 'y' + year.value + 'm' + selectMonth + '/MapServer'; } else { new_url = '");
 		strBuff.append(ServerInformation.ARCGIS_PUBLISH_URL);
 		strBuff.append(
-				"' + region.value + compound.value + 'y' + year.value + selectMonth + '/MapServer'; } var url = new_url; var lyr = new MapImageLayer({ url: url, opacity: 0.75 }); var map = new Map({ basemap: 'oceans', layers: [lyr] }); var view = new SceneView({ container: 'viewDiv', map: map }); var monthTitle = month.options[month.selectedIndex].text; var legendTitle; if (monthTitle == 'Choose a month.') { legendTitle = comp.options[comp.selectedIndex].text + ' ' + year.options[year.selectedIndex].text; } else { legendTitle = month.options[month.selectedIndex].text + ' ' + year.options[year.selectedIndex].text; } view.then(function() { var legend = new Legend({ view: view, layerInfos: [{ layer: lyr, title: legendTitle }] }); view.ui.add(legend, 'bottom-right'); }); lyr.then(function() { view.goTo(lyr.fullExtent); }); }); }); }");
+				"' + region.value + compound.value + 'y' + year.value + selectMonth + '/MapServer'; } var url = new_url; var request; if(window.XMLHttpRequest){ request = new XMLHttpRequest(); } else { request = new ActiveXObject('Microsoft.XMLHTTP'); } request.open('GET', url, false); request.send(); if (request.status !== 200) { alert('The server cannot find that map.'); } else { var lyr = new MapImageLayer({ url: url, opacity: 0.75 }); var map = new Map({ basemap: 'oceans', layers: [lyr] }); var view = new SceneView({ container: 'viewDiv', map: map }); var monthTitle = month.options[month.selectedIndex].text; var legendTitle; if (monthTitle == 'Choose a month.') { legendTitle = comp.options[comp.selectedIndex].text + ' ' + year.options[year.selectedIndex].text; } else { legendTitle = month.options[month.selectedIndex].text + ' ' + year.options[year.selectedIndex].text; } view.then(function() { var legend = new Legend({ view: view, layerInfos: [{ layer: lyr, title: legendTitle }] }); view.ui.add(legend, 'bottom-right'); }); lyr.then(function() { view.goTo(lyr.fullExtent); }); } }); }); }");
 
 		// Output finalized JS.
 		output.write(strBuff.toString());
@@ -107,7 +107,7 @@ public class JavaScriptGenerator {
 	 *           The StringBuilder upon which the event listener should be appended to.
 	 */
 	private void generateRegionEventListener(StringBuilder strBuff) {
-		strBuff.append("regionList.addEventListener('click', function() {");
+		strBuff.append("regionList.addEventListener('change', function() {");
 		ArrayList<String> regionArrays = generateRegionArrays(strBuff);
 
 		// Clear arrays for reallocation.
@@ -180,7 +180,7 @@ public class JavaScriptGenerator {
 	 *           The StringBuilder upon which the event listener should be appended to.
 	 */
 	private void generateCompoundEventListener(StringBuilder strBuff) {
-		strBuff.append("compoundList.addEventListener('click', function() {");
+		strBuff.append("compoundList.addEventListener('change', function() {");
 		ArrayList<String> compoundArrays = generateCompoundArrays(strBuff);
 
 		// Clear array for reallocation.
@@ -254,7 +254,7 @@ public class JavaScriptGenerator {
 	 *           The StringBuilder upon which the event listener should be appended to.
 	 */
 	private void generateYearEventListener(StringBuilder strBuff) {
-		strBuff.append("yearList.addEventListener('click', function() {");
+		strBuff.append("yearList.addEventListener('change', function() {");
 		ArrayList<String> yearArrays = generateMonthArrays(strBuff);
 
 		// Clear array for reallocation.

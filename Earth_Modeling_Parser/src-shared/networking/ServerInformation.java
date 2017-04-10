@@ -23,7 +23,7 @@ public class ServerInformation {
 
 	public final static String DAEMON_SERVER_ADDRESS = "proj-se491.cs.iastate.edu";
 	public final static int SERVER_PORT = 1443;
-	
+
 	public final static String ARCGIS_PUBLISH_URL = "http://proj-se491.cs.iastate.edu:6080/arcgis/rest/services/EarthModelingTest/";
 
 	public final static String WEB_SERVER_ADDRESS = "may1701.sd.ece.iastate.edu";
