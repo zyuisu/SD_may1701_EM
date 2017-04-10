@@ -107,7 +107,7 @@ public class JavaScriptGenerator {
 	 *           The StringBuilder upon which the event listener should be appended to.
 	 */
 	private void generateRegionEventListener(StringBuilder strBuff) {
-		strBuff.append("regionList.addEventListener('click', function() {");
+		strBuff.append("regionList.addEventListener('change', function() {");
 		ArrayList<String> regionArrays = generateRegionArrays(strBuff);
 
 		// Clear arrays for reallocation.
@@ -180,7 +180,7 @@ public class JavaScriptGenerator {
 	 *           The StringBuilder upon which the event listener should be appended to.
 	 */
 	private void generateCompoundEventListener(StringBuilder strBuff) {
-		strBuff.append("compoundList.addEventListener('click', function() {");
+		strBuff.append("compoundList.addEventListener('change', function() {");
 		ArrayList<String> compoundArrays = generateCompoundArrays(strBuff);
 
 		// Clear array for reallocation.
@@ -254,7 +254,7 @@ public class JavaScriptGenerator {
 	 *           The StringBuilder upon which the event listener should be appended to.
 	 */
 	private void generateYearEventListener(StringBuilder strBuff) {
-		strBuff.append("yearList.addEventListener('click', function() {");
+		strBuff.append("yearList.addEventListener('change', function() {");
 		ArrayList<String> yearArrays = generateMonthArrays(strBuff);
 
 		// Clear array for reallocation.
