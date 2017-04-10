@@ -21,3 +21,4 @@ Parsed_CSVs/
 Original_ASCII_files/
 *.log
 *.project
+/.classpath

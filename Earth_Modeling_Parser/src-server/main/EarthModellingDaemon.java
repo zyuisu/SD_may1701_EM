@@ -564,8 +564,19 @@ public class EarthModellingDaemon {
 			Logger.error("Issue generating new JavaScript.", e);
 			return false;
 		}
+		
+		String miniJS = FileLocations.TEMP_WORKING_DIRECTORY_LOCATION + "minifiedAutoJS.js";
+		String[] arguments = { "-jar", FileLocations.JS_MINIFIER_JAR_LOCATION, "--js", FileLocations.JAVASCRIPT_FILE_LOCATION, "--js_output_file", miniJS };
+		
+		try {
+			ArrayList<String> output = runExecutable(FileLocations.JAVA_EXECUTABLE_LOCATION, arguments, 10L, TimeUnit.SECONDS);
+			Logger.info(output);
+		} catch (IOException | InterruptedException | TimeoutException e) {
+			Logger.error("Failed to minify the JS.");
+			return false;
+		}
 
-		return transferJSToWebServer(FileLocations.JAVASCRIPT_FILE_LOCATION, ServerInformation.WEB_SERVER_JAVASCRIPT_LOCATION);
+		return transferJSToWebServer(miniJS, ServerInformation.WEB_SERVER_JAVASCRIPT_LOCATION);
 	}
 
 	/**

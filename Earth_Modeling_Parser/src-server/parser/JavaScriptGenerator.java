@@ -55,7 +55,7 @@ public class JavaScriptGenerator {
 		StringBuilder strBuff = new StringBuilder();
 
 		// Get dropdown elements from DOM.
-		strBuff.append("function loadList(){ var regionList = document.getElementById('region'); var compoundList = document.getElementById('compound'); var yearList = document.getElementById('year'); var monthList = document.getElementById('month'); var loadMapBtn = document.getElementById('loadMapBtn'); ");
+		strBuff.append("function loadList(){ var regionList = document.getElementById('region'); var compoundList = document.getElementById('compound'); var yearList = document.getElementById('year'); var monthList = document.getElementById('month'); var loadMapBtn = document.getElementById('loadMapBtn'); function populateList(list, arr) { for (var i = 0; i < arr.length; ++i) { list[i + 1] = new Option(arr[i], arr[i]); } } function clearList(list) { for (var i = list.length - 1; i > 0; i--) { list[i] = null; } } function populateMonthList(arr) { for (var i = 0; i < arr.length; ++i) { var monthName; switch (arr[i]) { default: break; case '0': monthName = 'January'; break; case '1': monthName = 'February'; break; case '2': monthName = 'March'; break; case '3': monthName = 'April'; break; case '4': monthName = 'May'; break; case '5': monthName = 'June'; break; case '6': monthName = 'July'; break; case '7': monthName = 'August'; break; case '8': monthName = 'September'; break; case '9': monthName = 'October'; break; case '10': monthName = 'November'; break; case '11': monthName = 'December'; break; } monthList[i + 1] = new Option(monthName, arr[i]); } if (arr.length > 0) { monthList.style.display = 'inline'; } }");
 
 		// Generate event listeners.
 		allocateRegionList(strBuff);
@@ -111,9 +111,7 @@ public class JavaScriptGenerator {
 		ArrayList<String> regionArrays = generateRegionArrays(strBuff);
 
 		// Clear arrays for reallocation.
-		strBuff.append("for (var i = compoundList.length-1; i > 0; i--){ compoundList[i] = null; }");
-		strBuff.append("for (var i = yearList.length-1; i > 0; i--){ yearList[i] = null; }");
-		strBuff.append("for (var i = monthList.length-1; i > 0; i--){ monthList[i] = null; }");
+		strBuff.append("clearList(compoundList); clearList(yearList); clearList(monthList);");
 
 		// Hide month upon change.
 		strBuff.append("monthList.style.display = 'none'; ");
@@ -124,15 +122,9 @@ public class JavaScriptGenerator {
 		for (MapRegionType mr : MapRegionType.values()) {
 			strBuff.append("case '");
 			strBuff.append(mr.name());
-			strBuff.append("': for (var i = 0; i < ");
+			strBuff.append("': populateList(compoundList, ");
 			strBuff.append(regionArrays.get(index));
-			strBuff.append(".length; ++i){");
-			strBuff.append("compoundList[i+1] = new Option(");
-			strBuff.append(regionArrays.get(index));
-			strBuff.append("[i], ");
-			strBuff.append(regionArrays.get(index));
-			strBuff.append("[i]); ");
-			strBuff.append("} break; ");
+			strBuff.append("); break; ");
 
 			index++;
 		}
@@ -184,8 +176,7 @@ public class JavaScriptGenerator {
 		ArrayList<String> compoundArrays = generateCompoundArrays(strBuff);
 
 		// Clear array for reallocation.
-		strBuff.append("for (var i = yearList.length-1; i > 0; i--){ yearList[i] = null; }");
-		strBuff.append("for (var i = monthList.length-1; i > 0; i--){ monthList[i] = null; }");
+		strBuff.append("clearList(yearList); clearList(monthList);");
 
 		// Hide month upon change.
 		strBuff.append("monthList.style.display = 'none'; ");
@@ -197,15 +188,9 @@ public class JavaScriptGenerator {
 			strBuff.append("case '");
 			String caseName = arrName.substring(0, arrName.length() - 3);
 			strBuff.append(caseName);
-			strBuff.append("': for (var i = 0; i < ");
+			strBuff.append("': populateList(yearList, ");
 			strBuff.append(compoundArrays.get(index));
-			strBuff.append(".length; ++i){");
-			strBuff.append("yearList[i+1] = new Option(");
-			strBuff.append(compoundArrays.get(index));
-			strBuff.append("[i], ");
-			strBuff.append(compoundArrays.get(index));
-			strBuff.append("[i]); ");
-			strBuff.append("} break; ");
+			strBuff.append("); break; ");
 
 			index++;
 		}
@@ -258,7 +243,7 @@ public class JavaScriptGenerator {
 		ArrayList<String> yearArrays = generateMonthArrays(strBuff);
 
 		// Clear array for reallocation.
-		strBuff.append("for (var i = monthList.length-1; i > 0; i--){ monthList[i] = null; }");
+		strBuff.append("clearList(monthList);");
 
 		// Hide month upon change.
 		strBuff.append("monthList.style.display = 'none'; ");
@@ -270,20 +255,9 @@ public class JavaScriptGenerator {
 			strBuff.append("case '");
 			String caseName = arrName.substring(0, arrName.length() - 3);
 			strBuff.append(caseName);
-			strBuff.append("': for (var i = 0; i < ");
+			strBuff.append("': populateMonthList(");
 			strBuff.append(yearArrays.get(index));
-			strBuff.append(".length; ++i){ var monthName;");
-			strBuff.append("switch (");
-			strBuff.append(yearArrays.get(index));
-			strBuff.append(
-					"[i]){ default: break; case '0': monthName = 'January'; break; case '1': monthName = 'February'; break; case '2': monthName = 'March'; break; case '3': monthName = 'April'; break; case '4': monthName = 'May'; break; case '5': monthName = 'June'; break; case '6': monthName = 'July'; break; case '7': monthName = 'August'; break; case '8': monthName = 'September'; break; case '9': monthName = 'October'; break; case '10': monthName = 'November'; break; case '11': monthName = 'December'; break; ");
-			strBuff.append("} monthList[i+1] = new Option(");
-			strBuff.append("monthName,");
-			strBuff.append(yearArrays.get(index));
-			strBuff.append("[i]); ");
-			strBuff.append("} if (");
-			strBuff.append(arrName);
-			strBuff.append(".length > 0){ monthList.style.display = 'inline'; } break; ");
+			strBuff.append("); break; ");
 
 			index++;
 		}
