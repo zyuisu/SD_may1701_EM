@@ -404,7 +404,7 @@ public class EarthModellingDaemon {
 
 		if (convertedSet.remove(properties))
 			if (!generateAndTransferJavaScript())
-				return "Error transfering updated JS after removing map: " + properties.toString() + ".";
+				return "Error transferring updated JS after removing map: " + properties.toString() + ".";
 
 		return null;
 	}
@@ -540,7 +540,7 @@ public class EarthModellingDaemon {
 		deleteFile(asciiFile);
 
 		if (!generateAndTransferJavaScript())
-			return "Error transfering updated JS after creating map: " + properties.toString() + ".";
+			return "Error transferring updated JS after creating map: " + properties.toString() + ".";
 
 		return null;
 	}
