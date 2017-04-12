@@ -38,33 +38,64 @@ public class AsciiToCsv {
 	/*
 	 * Values explicitly given in the Input ASCII File
 	 */
-	// The number of columns
+	
+	/**
+	 * The Number of Columns (Incoming Client Document Variable)
+	 */
 	private double ncols;
-	// The number of rows
+	/**
+	 * The Number of Rows (Incoming Client Document Variable)
+	 */
 	private double nrows;
-	// X (longitude) coordinate of Lower Left corner of Map
+	/**
+	 * X (Longitude Coordinate of Lower Left Corner of Map (Incoming Client Document Variable)
+	 */
 	private double xllcorner;
-	// Y (Latitude) coordinate of Lower Left Corner of Map
+	/**
+	 * Y (Latitude) Coordinate of Lower Left Corner of Map (Incoming Client Document Variable)
+	 */
 	private double yllcorner;
-	// Size of step from one point to another
+	/**
+	 * Size of step from one point to another (Incoming Client Document Variable)
+	 */
 	private double cellSize;
-	// Value which indicates no output to be read
+	/**
+	 * Value which indicates no output to be read (Incoming Client Document Variable)
+	 */
 	private double NODATA_value;
 
 	/*
 	 * Parsing Values
 	 */
 	// The number of lines found in the Header (should not exceed 30)
+	/**
+	 * 
+	 */
 	private int linesInHeader;
 	// Whether or not the header has been successfully parsed
+	/**
+	 * 
+	 */
 	private boolean headerParsed;
 	// The max value which shows up in the Ascii Table
+	/**
+	 * 
+	 */
 	private double maxValue;
 	// The min value which shows up in the Ascii Table
+	/**
+	 * 
+	 */
 	private double minValue;
 	// Longitude of the Upper Left Corner of the Map to be printed (the starting point when reading the table)
+	/**
+	 * 
+	 */
 	private double longitude;
 	// Latitude of the Upper Left Corner of the map to be printed (the starting point when reading the table)
+	/**
+	 * 
+	 */
 	private double latitude;
 
 	/**
@@ -83,55 +114,109 @@ public class AsciiToCsv {
 		this.minValue = Double.MAX_VALUE;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getMaxValue() {
 		return maxValue;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getMinValue() {
 		return minValue;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getLongitude() {
 		return longitude;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getLatitude() {
 		return latitude;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getNcols() {
 		return this.ncols;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getNrows() {
 		return this.nrows;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getXllCorner() {
 		return this.xllcorner;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getYllCorner() {
 		return this.yllcorner;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getCellSize() {
 		return this.cellSize;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getNODATA() {
 		return this.NODATA_value;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getLinesInHeader() {
 		return this.linesInHeader;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean getHeaderParsed() {
 		return this.headerParsed;
 	}
 
-	public boolean parseHeaders(File ftp) throws IOException {
+	/**
+	 * 
+	 * @param ftp
+	 * @return
+	 * @throws IOException
+	 */
+	protected boolean parseHeaders(File ftp) throws IOException {
 
 		// Open the file to Scan headers from
 		BufferedReader f = new BufferedReader(new FileReader(ftp));
@@ -180,7 +265,12 @@ public class AsciiToCsv {
 		return true;
 	}
 
-	public boolean setHeaderValue(String line) {
+	/**
+	 * 
+	 * @param line
+	 * @return
+	 */
+	protected boolean setHeaderValue(String line) {
 		// Open scanner for reading line
 		Scanner scanheaders = new Scanner(line);
 		// Read first value in the line
@@ -266,7 +356,13 @@ public class AsciiToCsv {
 			return null;
 	}
 
-	public ArrayList<String> parseBody(File ftp) throws IOException {
+	/**
+	 * 
+	 * @param ftp
+	 * @return
+	 * @throws IOException
+	 */
+	protected ArrayList<String> parseBody(File ftp) throws IOException {
 
 		// Should never happen
 		if (!this.getHeaderParsed()) {
@@ -348,7 +444,7 @@ public class AsciiToCsv {
 	 * @param rows
 	 * @param columns
 	 */
-	public void addValueToList(Double value, ArrayList<String> lines, int rows, int columns) {
+	protected void addValueToList(Double value, ArrayList<String> lines, int rows, int columns) {
 		// No values have been added to array list
 		// Set min and max. Set to value 0
 		if (this.getMaxValue() == Double.MAX_VALUE && this.getMinValue() == Double.MAX_VALUE) {
