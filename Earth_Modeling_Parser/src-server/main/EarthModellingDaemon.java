@@ -280,7 +280,7 @@ public class EarthModellingDaemon {
 	 * 
 	 * @param fileLocation
 	 *           The absolute file path of the file on the disk.
-	 * @return true if the file was successfully deleted; false otherwise.
+	 * @return true if and only if the file was successfully deleted; false otherwise.
 	 */
 	private static boolean deleteFile(String fileLocation) {
 		return deleteFile(new File(fileLocation));
@@ -291,7 +291,7 @@ public class EarthModellingDaemon {
 	 * 
 	 * @param f
 	 *           The file that you wish to delete.
-	 * @return true if the file was successfully deleted; false otherwise.
+	 * @return true if and only if the file was successfully deleted; false otherwise.
 	 */
 	private static boolean deleteFile(File f) {
 		if (f == null || f.isDirectory())
@@ -310,7 +310,7 @@ public class EarthModellingDaemon {
 	 * 
 	 * @param fileLocation
 	 *           The absolute file path of the folder on the disk.
-	 * @return true if the folder was successfully deleted; false otherwise.
+	 * @return true if and only if the folder was successfully deleted; false otherwise.
 	 */
 	private static boolean deleteFolder(String fileLocation) {
 		return deleteFolder(new File(fileLocation));
@@ -321,7 +321,7 @@ public class EarthModellingDaemon {
 	 * 
 	 * @param f
 	 *           The folder that you wish to delete.
-	 * @return true if the folder was successfully deleted; false otherwise.
+	 * @return true if and only if folder was successfully deleted; false otherwise.
 	 */
 	private static boolean deleteFolder(File f) {
 		if (f == null || !f.isDirectory())
@@ -377,6 +377,23 @@ public class EarthModellingDaemon {
 		if (!removeLocalMapFiles(properties))
 			return "Error deleting local map files for: " + properties.toString();
 
+		return removeMapFromServerWithoutChecks(properties);
+	}
+
+	/**
+	 * Removes a map from the ArcGIS server by executing a command line argument. Designed to be used by internal methods should map creation succeed, but a succeeding step fails. The calling method is responsible for deleting map files by calling removeLocalMapFiles().
+	 * 
+	 * @param properties
+	 *           The MapProperties that represents what needs to be deleted.
+	 * @return The error if the map wasn't successfully deleted; null if it was.
+	 * @throws IOException
+	 *            Means that FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION couldn't be located.
+	 * @throws InterruptedException
+	 *            Probably means there was an issue while running the command line arguments.
+	 * @throws TimeoutException
+	 *            Means that the the service manager Python script was terminated before completion (took too long).
+	 */
+	private static String removeMapFromServerWithoutChecks(MapProperties properties) throws IOException, InterruptedException, TimeoutException {
 		// required arguments for the delete from server command using executable python script
 		// python.exe "C:\Program Files\ArcGIS\Server\tools\admin\manageservice.py" -u username -p password -s https://proj-se491.iastate.edu:6443 -n EarthModelingTest/service_name -o delete
 		String arguments[] = { "-u", arcgisServerUsername, "-p", arcgisServerPassword, "-s", "https://proj-se491.iastate.edu:6443", "-n", "EarthModelingTest/" + properties.toString(), "-o", "delete" };
@@ -385,10 +402,9 @@ public class EarthModellingDaemon {
 		if (exceptions != null)
 			return "Error running the remove Python script for map: " + properties.toString();
 
-		convertedSet.remove(properties);
-
-		if (!generateAndTransferJavaScript())
-			return "Error transfering updated JS after removing map: " + properties.toString() + ".";
+		if (convertedSet.remove(properties))
+			if (!generateAndTransferJavaScript())
+				return "Error transfering updated JS after removing map: " + properties.toString() + ".";
 
 		return null;
 	}
@@ -401,39 +417,36 @@ public class EarthModellingDaemon {
 	 * @return true if the files were found and deleted; false otherwise.
 	 */
 	public static synchronized boolean removeLocalMapFiles(MapProperties properties) {
-		if (convertedSet.contains(properties)) {
+		boolean ret = true;
 
-			// For ESRI, since some of their functions don't accept negative values as file arguments.
-			String nice = properties.toString().replace("-1", "_1");
+		// For ESRI, since some of their functions don't accept negative values as file arguments.
+		String nice = properties.toString().replace("-1", "_1");
 
-			// Delete corresponding mxd in maps_publishing
-			if (!deleteFile(FileLocations.ABS_MAPS_PUBLISHING_DIRECTORY_LOCATION + nice + ".mxd"))
-				return false;
+		// Delete corresponding mxd in maps_publishing
+		if (!deleteFile(FileLocations.ABS_MAPS_PUBLISHING_DIRECTORY_LOCATION + nice + ".mxd"))
+			ret = false;
 
-			// Delete service definition in temp_publishing
-			if (!deleteFile(FileLocations.ABS_TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION + properties.toString() + ".sd"))
-				return false;
+		// Delete service definition in temp_publishing
+		if (!deleteFile(FileLocations.ABS_TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION + properties.toString() + ".sd"))
+			ret = false;
 
-			// Delete table files from tables folder (.dbf, .dbf.xml, .cpg)
-			if (!deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".dbf"))
-				return false;
-			if (!deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".dbf.xml"))
-				return false;
-			if (!deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".cpg"))
-				return false;
+		// Delete table files from tables folder (.dbf, .dbf.xml, .cpg)
+		if (!deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".dbf"))
+			ret = false;
+		if (!deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".dbf.xml"))
+			ret = false;
+		if (!deleteFile(FileLocations.ABS_CSV_TABLES_OUTPUT_DIRECTORY_LOCATION + nice + ".cpg"))
+			ret = false;
 
-			// Delete .lyr from created_layers
-			if (!deleteFile(FileLocations.ABS_CREATED_LAYERS_DIRECTORY_LOCATION + nice + ".lyr"))
-				return false;
+		// Delete .lyr from created_layers
+		if (!deleteFile(FileLocations.ABS_CREATED_LAYERS_DIRECTORY_LOCATION + nice + ".lyr"))
+			ret = false;
 
-			// Delete gdb from auto_gdbs
-			if (!deleteFolder(FileLocations.ABS_AUTO_GDBS_OUTPUT_DIRECTORY_LOCATION + nice + ".gdb"))
-				return false;
+		// Delete gdb from auto_gdbs
+		if (!deleteFolder(FileLocations.ABS_AUTO_GDBS_OUTPUT_DIRECTORY_LOCATION + nice + ".gdb"))
+			ret = false;
 
-			return true;
-		}
-
-		return false;
+		return ret;
 	}
 
 	/**
@@ -479,7 +492,7 @@ public class EarthModellingDaemon {
 		if (convertedSet.contains(properties)) {
 			Logger.warn("The file {} has already been converted!", properties.toString());
 			deleteFile(asciiFile);
-			return "The file " + properties.toString() + " has already been converted.";
+			return "The file " + properties.toString() + " has already been converted!";
 		}
 
 		File csvFile = convertAsciiToCsv(asciiFile);
@@ -502,9 +515,9 @@ public class EarthModellingDaemon {
 		}
 
 		String[] arguments = { FileLocations.ABS_CSV_OUTPUT_DIRECTORY_LOCATION, properties.toString(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, template, FileLocations.BLANK_MAP_FILE_LOCATION,
-				FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, arcgisServerUsername, arcgisServerPassword, referenceScale, ServerInformation.ARCGIS_PUBLISH_ADMIN_FOLDER, ServerInformation.ARCGIS_PUBLISHING_SERVICES_SUBFOLDER};
+				FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, arcgisServerUsername, arcgisServerPassword, referenceScale, ServerInformation.ARCGIS_PUBLISH_ADMIN_FOLDER, ServerInformation.ARCGIS_PUBLISHING_SERVICES_SUBFOLDER };
 
-		ArrayList<String> al = runPythonScript(FileLocations.PUBLISH_MAP_SCRIPT_LOCATION, arguments);
+		ArrayList<String> al = runPythonScript(FileLocations.PUBLISH_MAP_PYTHON_SCRIPT_LOCATION, arguments);
 		String exceptions = logExceptions(al);
 		if (exceptions != null) {
 			removeLocalMapFiles(properties);
@@ -512,12 +525,13 @@ public class EarthModellingDaemon {
 			return "Error running map generation script for " + properties.toString() + ".";
 		}
 
-		String[] arguments2 = { properties.toString(), arcgisServerUsername, arcgisServerPassword, ServerInformation.ARCGIS_SERVER_NAME, "" + ServerInformation.ARCGIS_SERVER_PORT, ServerInformation.ARCGIS_INNER_SUBSTRING, ServerInformation.ARCGIS_PUBLISHING_SERVICES_SUBFOLDER, ServerInformation.ARCGIS_HTTPS_TOKEN_URL};
-		al = runPythonScript(FileLocations.PUBLISHING_PARAMS_SCRIPT_LOCATION, arguments2);
+		String[] arguments2 = { properties.toString(), arcgisServerUsername, arcgisServerPassword, ServerInformation.ARCGIS_SERVER_NAME, "" + ServerInformation.ARCGIS_SERVER_PORT, ServerInformation.ARCGIS_INNER_SUBSTRING, ServerInformation.ARCGIS_PUBLISHING_SERVICES_SUBFOLDER, ServerInformation.ARCGIS_HTTPS_TOKEN_URL };
+		al = runPythonScript(FileLocations.PUBLISHING_PARAMS_PYTHON_SCRIPT_LOCATION, arguments2);
 
 		exceptions = logExceptions(al);
 		if (exceptions != null) {
 			removeLocalMapFiles(properties);
+			removeMapFromServerWithoutChecks(properties);
 			deleteFile(asciiFile);
 			return "Error running publish parameters script for " + properties.toString() + ".";
 		}
@@ -564,10 +578,10 @@ public class EarthModellingDaemon {
 			Logger.error("Issue generating new JavaScript.", e);
 			return false;
 		}
-		
+
 		String miniJS = FileLocations.TEMP_WORKING_DIRECTORY_LOCATION + "minifiedAutoJS.js";
 		String[] arguments = { "-jar", FileLocations.JS_MINIFIER_JAR_LOCATION, "--js", FileLocations.JAVASCRIPT_FILE_LOCATION, "--js_output_file", miniJS };
-		
+
 		try {
 			ArrayList<String> output = runExecutable(FileLocations.JAVA_EXECUTABLE_LOCATION, arguments, 10L, TimeUnit.SECONDS);
 			Logger.info(output);
