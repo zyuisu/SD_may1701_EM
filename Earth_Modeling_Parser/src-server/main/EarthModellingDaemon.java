@@ -414,7 +414,7 @@ public class EarthModellingDaemon {
 	 * 
 	 * @param properties
 	 *           The MapProperites that represents what needs to be deleted.
-	 * @return true if the files were found and deleted; false otherwise.
+	 * @return true if and only if all files typically created on a successful map generation run were found and deleted; false otherwise.
 	 */
 	public static synchronized boolean removeLocalMapFiles(MapProperties properties) {
 		boolean ret = true;
