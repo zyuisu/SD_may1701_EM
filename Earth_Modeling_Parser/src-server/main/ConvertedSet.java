@@ -64,7 +64,7 @@ public class ConvertedSet implements Serializable {
 	 * @throws IOException
 	 *            Can't read from the existing converted.ser file!
 	 */
-	private void addFromConverted() throws IOException {
+	protected void addFromConverted() throws IOException {
 		try {
 			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FileLocations.CONVERTED_FILE_LOCATION)));
 
