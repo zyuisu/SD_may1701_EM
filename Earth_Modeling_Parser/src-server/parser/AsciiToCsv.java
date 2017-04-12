@@ -65,36 +65,36 @@ public class AsciiToCsv {
 	private double NODATA_value;
 
 	/*
-	 * Parsing Values
+	 * Parsed Values
 	 */
-	// The number of lines found in the Header (should not exceed 30)
+	
 	/**
-	 * 
+	 * The number of lines found in the Header (should not exceed 30)
 	 */
 	private int linesInHeader;
-	// Whether or not the header has been successfully parsed
+	
 	/**
-	 * 
+	 * Whether or not the header has been successfully parsed
 	 */
 	private boolean headerParsed;
-	// The max value which shows up in the Ascii Table
+	 
 	/**
-	 * 
+	 * The max value which shows up in the Ascii Table
 	 */
 	private double maxValue;
-	// The min value which shows up in the Ascii Table
+
 	/**
-	 * 
+	 * The min value which shows up in the Ascii Table
 	 */
 	private double minValue;
-	// Longitude of the Upper Left Corner of the Map to be printed (the starting point when reading the table)
+
 	/**
-	 * 
+	 * Longitude of the Upper Left Corner of the Map to be printed (the starting point when reading the table)
 	 */
 	private double longitude;
-	// Latitude of the Upper Left Corner of the map to be printed (the starting point when reading the table)
+
 	/**
-	 * 
+	 * Latitude of the Upper Left Corner of the map to be printed (the starting point when reading the table)
 	 */
 	private double latitude;
 
@@ -116,7 +116,7 @@ public class AsciiToCsv {
 
 	/**
 	 * 
-	 * @return
+	 * @return the max value that has been parsed from the ascii table
 	 */
 	public double getMaxValue() {
 		return maxValue;
@@ -124,7 +124,7 @@ public class AsciiToCsv {
 
 	/**
 	 * 
-	 * @return
+	 * @return the min value that has been parsed from the ascii table
 	 */
 	public double getMinValue() {
 		return minValue;
@@ -132,7 +132,7 @@ public class AsciiToCsv {
 
 	/**
 	 * 
-	 * @return
+	 * @return the longitude of the upper left corner of the ascii table (the starting point)
 	 */
 	public double getLongitude() {
 		return longitude;
@@ -140,7 +140,7 @@ public class AsciiToCsv {
 
 	/**
 	 * 
-	 * @return
+	 * @return the latitude of the upper left corner of the ascii table (the starting point)
 	 */
 	public double getLatitude() {
 		return latitude;
@@ -148,7 +148,7 @@ public class AsciiToCsv {
 
 	/**
 	 * 
-	 * @return
+	 * @return the number of columns parsed from the header of the ascii document. Represents the expected number of columns.
 	 */
 	public double getNcols() {
 		return this.ncols;
@@ -156,7 +156,7 @@ public class AsciiToCsv {
 
 	/**
 	 * 
-	 * @return
+	 * @return the number of rows parsed from the header of the ascii document. Represents the expected number of columns.
 	 */
 	public double getNrows() {
 		return this.nrows;
@@ -164,7 +164,7 @@ public class AsciiToCsv {
 
 	/**
 	 * 
-	 * @return
+	 * @return longitude coordinate of lower left corner (parsed from header)
 	 */
 	public double getXllCorner() {
 		return this.xllcorner;
@@ -172,7 +172,7 @@ public class AsciiToCsv {
 
 	/**
 	 * 
-	 * @return
+	 * @return latitude coordinate of lower left corner (parsed from header)
 	 */
 	public double getYllCorner() {
 		return this.yllcorner;
@@ -180,7 +180,7 @@ public class AsciiToCsv {
 
 	/**
 	 * 
-	 * @return
+	 * @return the cellsize extracted from the header.
 	 */
 	public double getCellSize() {
 		return this.cellSize;
@@ -188,7 +188,7 @@ public class AsciiToCsv {
 
 	/**
 	 * 
-	 * @return
+	 * @return the value to be ignored in the table (not sent to the resulting CSV)
 	 */
 	public double getNODATA() {
 		return this.NODATA_value;
@@ -196,7 +196,7 @@ public class AsciiToCsv {
 
 	/**
 	 * 
-	 * @return
+	 * @return the number of lines that were found in the header. Should not exceed 30.
 	 */
 	public int getLinesInHeader() {
 		return this.linesInHeader;
@@ -204,7 +204,7 @@ public class AsciiToCsv {
 
 	/**
 	 * 
-	 * @return
+	 * @return true if the header was successfully parsed. Returns false if invalid data was found or the lines are less than 30.
 	 */
 	public boolean getHeaderParsed() {
 		return this.headerParsed;
@@ -212,9 +212,9 @@ public class AsciiToCsv {
 
 	/**
 	 * 
-	 * @param ftp
-	 * @return
-	 * @throws IOException
+	 * @param ftp - The file to parse headers from.
+	 * @return True if the header is successfully parsed (all values extracted in less than 30 lines). False otherwise.
+	 * @throws IOException the File cannot be found, or the program was stopped.
 	 */
 	protected boolean parseHeaders(File ftp) throws IOException {
 
@@ -267,8 +267,10 @@ public class AsciiToCsv {
 
 	/**
 	 * 
-	 * @param line
-	 * @return
+	 * Reads a single line from the header, and attempts to set the value associated with the defined label given in the line.
+	 * 
+	 * @param line The line to parse from. Includes the header value and the associated value.
+	 * @return true if a value was sucessfully parsed. False otherwise.
 	 */
 	protected boolean setHeaderValue(String line) {
 		// Open scanner for reading line
@@ -357,10 +359,13 @@ public class AsciiToCsv {
 	}
 
 	/**
+	 * Attempts to parse the body of the given ASCII file. This is the "table" of values to be parsed.
 	 * 
-	 * @param ftp
-	 * @return
-	 * @throws IOException
+	 * 
+	 * 
+	 * @param ftp the file to parse
+	 * @return the arraylist of values parsed. Index 0 is the min and Index 1 is the max.
+	 * @throws IOException File Not Found
 	 */
 	protected ArrayList<String> parseBody(File ftp) throws IOException {
 
@@ -437,12 +442,13 @@ public class AsciiToCsv {
 	}
 
 	/**
-	 * Helper method for adding values to the ArrayList to be printed Format's strings for output and places in the appropriate spot in ArrayList Index 0 should always be min and Index 1 should always be Max
+	 * Helper method for adding values to the ArrayList to be printed Format's strings for output 
+	 * and places in the appropriate spot in ArrayList. Index 0 should always be min and Index 1 should always be Max.
 	 * 
-	 * @param value
-	 * @param lines
-	 * @param rows
-	 * @param columns
+	 * @param value the value to insert into the arraylist.
+	 * @param lines the arraylist of values being effected.
+	 * @param rows the current number of rows navigated through the body.
+	 * @param columns the current number of columns navigated through the body.
 	 */
 	protected void addValueToList(Double value, ArrayList<String> lines, int rows, int columns) {
 		// No values have been added to array list
