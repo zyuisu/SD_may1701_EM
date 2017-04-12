@@ -502,7 +502,7 @@ public class EarthModellingDaemon {
 		}
 
 		String[] arguments = { FileLocations.ABS_CSV_OUTPUT_DIRECTORY_LOCATION, properties.toString(), FileLocations.CURRENT_WORKING_DIRECTORY_LOCATION, FileLocations.MAP_TEMPLATES_DIRECTORY_LOCATION, FileLocations.MAPS_PUBLISHING_DIRECTORY_LOCATION, FileLocations.TEMP_PUBLISHING_FILES_DIRECTORY_LOCATION, template, FileLocations.BLANK_MAP_FILE_LOCATION,
-				FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, arcgisServerUsername, arcgisServerPassword, referenceScale };
+				FileLocations.CSV_TABLES_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_GDBS_OUTPUT_DIRECTORY_LOCATION, FileLocations.CREATED_LAYERS_DIRECTORY_LOCATION, arcgisServerUsername, arcgisServerPassword, referenceScale, ServerInformation.ARCGIS_PUBLISH_ADMIN_FOLDER, ServerInformation.ARCGIS_PUBLISHING_SERVICES_SUBFOLDER};
 
 		ArrayList<String> al = runPythonScript(FileLocations.PUBLISH_MAP_SCRIPT_LOCATION, arguments);
 		String exceptions = logExceptions(al);
@@ -512,7 +512,7 @@ public class EarthModellingDaemon {
 			return "Error running map generation script for " + properties.toString() + ".";
 		}
 
-		String[] arguments2 = { properties.toString(), arcgisServerUsername, arcgisServerPassword };
+		String[] arguments2 = { properties.toString(), arcgisServerUsername, arcgisServerPassword, ServerInformation.ARCGIS_SERVER_NAME, "" + ServerInformation.ARCGIS_SERVER_PORT, ServerInformation.ARCGIS_INNER_SUBSTRING, ServerInformation.ARCGIS_PUBLISHING_SERVICES_SUBFOLDER, ServerInformation.ARCGIS_HTTPS_TOKEN_URL};
 		al = runPythonScript(FileLocations.PUBLISHING_PARAMS_SCRIPT_LOCATION, arguments2);
 
 		exceptions = logExceptions(al);

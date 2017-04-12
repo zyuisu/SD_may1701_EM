@@ -26,16 +26,19 @@ def main(argv):
     server_user = argv[1]
     # the server password
     server_pass = argv[2]
+    serverName = argv[3]
+    serverPort = int(argv[4])
+    inner_sub_string = argv[5]
+    subfolder = argv[6]
+    token_url = argv[7]
 
-	successful = "VEMS SUCCESS: "
+    successful = "VEMS SUCCESS: "
 	
     # Ask for server name
-    serverName = 'proj-se491.iastate.edu'
-    serverPort = 6443
-
-    print r"Enter the service name in the format <folder>/<name>.<type>."
+    #serverName = 'proj-se491.iastate.edu'
+    #serverPort = 6443
     #service = raw_input(r"For example USA/Chicago.MapServer: ")
-    service = "EarthModelingTest/" + service_to_change + ".MapServer"
+    service = subfolder + "/" + service_to_change + ".MapServer"
     minInstancesNum = 0
     maxInstancesNum = 8
     maxUsageTime = 15
@@ -44,13 +47,13 @@ def main(argv):
     capabilities = u"Map"
     
     # Get a token
-    token = getToken(server_user, server_pass, serverName, serverPort)
+    token = getToken(server_user, server_pass, serverName, serverPort, token_url)
     if token == "":
         print "Could not generate a token with the username and password provided."    
         return
     
     print successful + "Received Token From Server"
-	serviceURL = "/arcgis/admin/services/" + service
+    serviceURL = inner_sub_string + service
     
     # This request only needs the token and the response formatting parameter 
     params = urllib.urlencode({'token': token, 'f': 'json'})
@@ -74,7 +77,7 @@ def main(argv):
         if not assertJsonSuccess(data):          
             print "Error when reading service information. " + str(data)
         else:
-            print "Service information read successfully. Now changing properties..."
+            print successful + "Service information read successfully. Now changing properties..."
 
         # Deserialize response into Python object
         dataObj = json.loads(data)
@@ -94,7 +97,7 @@ def main(argv):
         updatedSvcJson = json.dumps(dataObj)
 
         # Call the edit operation on the service. Pass in modified JSON.
-        editSvcURL = "/arcgis/admin/services/" + service + "/edit"
+        editSvcURL = inner_sub_string + service + "/edit"
         params = urllib.urlencode({'token': token, 'f': 'json', 'service': updatedSvcJson})
         httpConn.request("POST", editSvcURL, params, headers)
         
@@ -119,9 +122,9 @@ def main(argv):
 
 # A function to generate a token given username, password and the adminURL.
 # This code was used from the ESRI website, with small modifications for connection parameters
-def getToken(username, password, serverName, serverPort):
+def getToken(username, password, serverName, serverPort, tokenURL):
     # Token URL is typically http://server[:port]/arcgis/admin/generateToken
-    tokenURL = "https://proj-se491.iastate.edu:6443/arcgis/admin/generateToken"
+    #tokenURL = "https://proj-se491.iastate.edu:6443/arcgis/admin/generateToken"
     
     params = urllib.urlencode({'username': username, 'password': password, 'client': 'requestip', 'f': 'json'})
     
@@ -166,3 +169,4 @@ def assertJsonSuccess(data):
 # Script start 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
+

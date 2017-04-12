@@ -1,11 +1,11 @@
-# Copyright (C) 2017 Kellen Johnson
+# Copyright (C) Kellen Johnson
 # This file is part the Visual Earth Modeling System (VEMS).
 # VEMS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 # VEMS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License along with VEMS. If not, see <http://www.gnu.org/licenses/>.
 #
 # author Kellen Johnson
-
+#
 # attributions from http://pro.arcgis.com/en/pro-app/tool-reference/conversion/excel-to-table.htm for Excel to Table
 # attributions from http://pro.arcgis.com/en/pro-app/tool-reference/conversion/table-to-geodatabase.htm for Table to GDB
 # attributions from http://gis.stackexchange.com/questions/155923/create-featuredataset-in-geodatabase-with-arcpy-from-a-table for creating empty GDB
@@ -13,7 +13,11 @@
 
 import arcpy
 
+
+
+
 def main(argv):
+
   
   # The directory were Parsed CSVS are kept
   parsed_csv_dir = ""
@@ -60,6 +64,8 @@ def main(argv):
   server_user = argv[11]
   server_pass = argv[12]
   scale = int(argv[13])
+  con = argv[14]
+  sub_folder = argv[15]
 
   successful = "VEMS SUCCESS: "
 
@@ -139,7 +145,7 @@ def main(argv):
   mapDoc = arcpy.mapping.MapDocument(map_publishing_dir + input_csv_file + ".mxd")
 
   # Provide path to server which hosts map services
-  con =  'https://proj-se491.iastate.edu:6443/arcgis/admin'
+  #con =  'https://proj-se491.iastate.edu:6443/arcgis/admin'
 
   if flag == 1:
       input_csv_file = input_csv_file[0:-2] + "-" + input_csv_file[-1]
@@ -159,19 +165,19 @@ def main(argv):
   arcpy.mapping.CreateGISServerConnectionFile ('PUBLISH_GIS_SERVICES', wrkspc, 'CONNECTION.ags', con, 'ARCGIS_SERVER', {True}, {None}, server_user, server_pass, {True})
 
   # Create service definition draft (sddraft)
-  arcpy.mapping.CreateMapSDDraft(mapDoc, sddraft, service, 'FROM_CONNECTION_FILE', wrkspc + '\CONNECTION.ags', True, 'EarthModelingTest', None, None)
+  arcpy.mapping.CreateMapSDDraft(mapDoc, sddraft, service, 'FROM_CONNECTION_FILE', wrkspc + '\CONNECTION.ags', True, sub_folder, None, None)
 
   # Analyze the service definition draft (required for publication services)
   analysis = arcpy.mapping.AnalyzeForSD(sddraft)
 
   # Print errors, warnings, and messages returned from the analysis
-  print "The following information was returned during analysis of the MXD:"
+  print successful + "The following information was returned during analysis of the MXD:"
   for key in ('messages', 'warnings', 'errors'):
-    print '----' + key.upper() + '---'
+    print successful + '----' + key.upper() + '---'
     vars = analysis[key]
     for ((message, code), layerlist) in vars.iteritems():
-      print '    ', message, ' (CODE %i)' % code
-      print '       applies to:'
+      print successful + '    ', message, ' (CODE %i)' % code
+      print successful + '       applies to:'
 
   # Stage and upload the service if the sddraft analysis did not contain errors
   if analysis['errors'] == {}:
@@ -184,7 +190,7 @@ def main(argv):
   else: 
       print "Service could not be published because errors were found during analysis."
 
-  print arcpy.GetMessages()
+  print successful + arcpy.GetMessages()
 
 if __name__ == "__main__":
    main(sys.argv[1:])
