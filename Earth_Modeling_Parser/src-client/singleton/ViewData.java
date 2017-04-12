@@ -22,7 +22,7 @@ package singleton;
 import javafx.stage.Stage;
 import view.MainController;
 
-public class MainData {
+public class ViewData {
 	// Store reference to our mainController for GUI logic.
 	private MainController mainController;
 
@@ -32,7 +32,7 @@ public class MainData {
 	/**
 	 * Default constructor to use in singleton.
 	 */
-	public MainData() {
+	public ViewData() {
 	}
 
 	/**

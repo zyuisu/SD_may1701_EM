@@ -31,14 +31,14 @@ public class MainModel {
 	}
 
 	// Instantiate data classes to store information.
-	private MainData mainData = new MainData();
+	private ViewData mainData = new ViewData();
 	private ControllerData controllerData = new ControllerData();
 	private NetworkData networkData = new NetworkData();
 
 	/**
 	 * @return The current instance of MainData.
 	 */
-	public MainData getMainData() {
+	public ViewData getMainData() {
 		return mainData;
 	}
 
