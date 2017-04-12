@@ -53,7 +53,7 @@ public final class ReferenceScales {
 
 		for (MapRegionType mr : MapRegionType.values())
 			if (!fields.containsKey(mr.name()))
-				throw new IllegalArgumentException("You need to define a 'public static final int MapRegionType.name()' reference scale for region " + mr.name() + " in class utils.ReferenceScales.");
+				throw new IllegalStateException("You need to define a 'public static final int MapRegionType.name()' reference scale for region " + mr.name() + " in class utils.ReferenceScales.");
 	}
 
 	/**
