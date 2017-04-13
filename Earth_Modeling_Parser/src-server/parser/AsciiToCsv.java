@@ -27,6 +27,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import org.pmw.tinylog.Logger;
@@ -38,7 +39,7 @@ public class AsciiToCsv {
 	/*
 	 * Values explicitly given in the Input ASCII File
 	 */
-	
+
 	/**
 	 * The Number of Columns (Incoming Client Document Variable)
 	 */
@@ -67,17 +68,17 @@ public class AsciiToCsv {
 	/*
 	 * Parsed Values
 	 */
-	
+
 	/**
 	 * The number of lines found in the Header (should not exceed 30)
 	 */
 	private int linesInHeader;
-	
+
 	/**
 	 * Whether or not the header has been successfully parsed
 	 */
 	private boolean headerParsed;
-	 
+
 	/**
 	 * The max value which shows up in the Ascii Table
 	 */
@@ -236,7 +237,7 @@ public class AsciiToCsv {
 
 				// Avoids infinite loop by limiting lines in header to 30
 				if (count > 30) {
-					Logger.debug("Over 30 lines found in header. Check input file and try again.");
+					Logger.error("Over 30 lines found in header. Check input file and try again.");
 					scanner.close();
 					return false;
 				}
@@ -253,7 +254,7 @@ public class AsciiToCsv {
 				this.headerParsed = true;
 			else if (count > 30) {
 				System.out.println("The file header is having trouble being parsed. Please check the input file.");
-				Logger.debug("The file header is having trouble being parsed. Please check the input file.");
+				Logger.error("The file header is having trouble being parsed. Please check the input file.");
 				// Close scanners to avoid resource leak
 				scanner.close();
 				return false;
@@ -271,39 +272,44 @@ public class AsciiToCsv {
 	 * 
 	 * @param line The line to parse from. Includes the header value and the associated value.
 	 * @return true if a value was sucessfully parsed. False otherwise.
+	 * @throws InputMismatchException If a non-double value is attempted to be ripped from the file
 	 */
-	protected boolean setHeaderValue(String line) {
+	protected boolean setHeaderValue(String line) throws InputMismatchException {
 		// Open scanner for reading line
 		Scanner scanheaders = new Scanner(line);
 		// Read first value in the line
 		String head = scanheaders.next();
 
-		// Decide which value is given in this line, set the corresponding value
-		switch (head) {
-			case "":
-				// empty line, do nothing, shouldn't happen
-				scanheaders.close();
-				return false;
-			case "ncols":
-				this.ncols = scanheaders.nextDouble();
-				break;
-			case "nrows":
-				this.nrows = scanheaders.nextDouble();
-				break;
-			case "xllcorner":
-				this.xllcorner = scanheaders.nextDouble();
-				break;
-			case "yllcorner":
-				this.yllcorner = scanheaders.nextDouble();
-				break;
-			case "cellsize":
-				this.cellSize = scanheaders.nextDouble();
-				break;
-			case "NODATA_value":
-				this.NODATA_value = scanheaders.nextDouble();
-				break;
+		try{
+			// Decide which value is given in this line, set the corresponding value
+			switch (head) {
+				case "":
+					// empty line, do nothing, shouldn't happen
+					scanheaders.close();
+					return false;
+				case "ncols":
+					this.ncols = scanheaders.nextDouble();
+					break;
+				case "nrows":
+					this.nrows = scanheaders.nextDouble();
+					break;
+				case "xllcorner":
+					this.xllcorner = scanheaders.nextDouble();
+					break;
+				case "yllcorner":
+					this.yllcorner = scanheaders.nextDouble();
+					break;
+				case "cellsize":
+					this.cellSize = scanheaders.nextDouble();
+					break;
+				case "NODATA_value":
+					this.NODATA_value = scanheaders.nextDouble();
+					break;
+			}
+		}catch(Exception e){
+			Logger.error("Non double attempted to be parsed from the header. Please re-check your input file");
+			return false;
 		}
-
 		// Compute Longitude of Upper Left Corner
 		this.longitude = this.getXllCorner();
 		// Compute Latitude of Upper Left Corner
@@ -366,12 +372,13 @@ public class AsciiToCsv {
 	 * @param ftp the file to parse
 	 * @return the arraylist of values parsed. Index 0 is the min and Index 1 is the max.
 	 * @throws IOException File Not Found
+	 * @throws InputMismatchException a non double value was found in the Table
 	 */
-	protected ArrayList<String> parseBody(File ftp) throws IOException {
+	protected ArrayList<String> parseBody(File ftp) throws IOException, InputMismatchException {
 
 		// Should never happen
 		if (!this.getHeaderParsed()) {
-			Logger.debug("Header was not successfully parsed. Check the input file. Failing in ParseBody method of AsciiToCsv.");
+			Logger.error("Header was not successfully parsed. Check the input file. Failing in ParseBody method of AsciiToCsv.");
 			return null;
 		} else {
 
@@ -412,12 +419,19 @@ public class AsciiToCsv {
 
 				// While we continue to find doubles in the line
 				while (linescan.hasNextDouble()) {
-					// Get the next value in the line
-					double value = linescan.nextDouble();
-					// If we want to print the value
-					if (value != NODATA_value)
-						// add to array list
-						this.addValueToList(value, lines, rows, columns);
+					try{
+						
+						// Get the next value in the line
+						double value = linescan.nextDouble();
+
+						// If we want to print the value
+						if (value != NODATA_value)
+							// add to array list
+							this.addValueToList(value, lines, rows, columns);
+					}catch(Exception e){
+						Logger.error("1: Non double value found in the body of the Table. Please check your input file.");
+						return null;
+					}
 					columns++;
 					// If the current number of columns equals NCols, go to next row
 					if (columns % this.getNcols() == 0) {
@@ -427,6 +441,14 @@ public class AsciiToCsv {
 						rows++;
 					}
 				}
+				// Check if failed on non-double.
+				if ((linescan.hasNext() && !(linescan.next().trim().equals("")))) {
+					Logger.error("2: Non double value found in the body of the Table. Please check your input file.");
+					linescan.close();
+					return null;
+				}
+					
+				
 				// Avoid resource leak
 				linescan.close();
 			}
