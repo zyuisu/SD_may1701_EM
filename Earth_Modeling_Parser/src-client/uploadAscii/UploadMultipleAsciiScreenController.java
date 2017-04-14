@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import framework.AbstractNetworkedScreenController;
 import framework.IMessageReceivable;
@@ -53,6 +54,7 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 
 	private List<File> selectedFiles;
 	private int numMapsProcessed = 0; // We assume the server only sends one message per map.
+	private final Semaphore readyForMap = new Semaphore(1);
 
 	/**
 	 * Initializes the controller class. Automatically called after the FXML file has been loaded.
@@ -99,6 +101,8 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 	public void outputMessage(Object msg) {
 
 		if (msg instanceof StringMessage) {
+			readyForMap.release(); // mutex release.
+
 			StringMessage sm = (StringMessage) msg;
 
 			messageTextArea.appendText("\n" + sm.getMessageType().name() + ": " + sm.getMsgHeader() + "\n");
@@ -111,6 +115,7 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 			if (progress >= 1) {
 				selectFilesBtn.setVisible(true);
 				sendToServerBtn.setVisible(true);
+				backBtn.setVisible(true);
 				selectedFiles = null;
 			}
 		} else
@@ -129,6 +134,7 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 		Thread thread = new Thread(() -> {
 			selectFilesBtn.setVisible(false);
 			sendToServerBtn.setVisible(false);
+			backBtn.setVisible(false);
 
 			numMapsProcessed = 0;
 			progressText.setVisible(true);
@@ -139,10 +145,11 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 				MapProperties mp = parseMapProperties(f);
 				if (mp != null)
 					try {
+						readyForMap.acquire(); // mutex lock.
+
 						byte[] fileAsBytes = Files.readAllBytes(f.toPath());
 						AsciiFileMessage afm = new AsciiFileMessage(mp, fileAsBytes, false);
 						sendMessageToServer(afm);
-						Thread.sleep(1000L); // Wait for a second. -- Don't hammer the server.
 					} catch (Exception e) {
 						errorAlert("Cannot Construct Server Message", "Something is wrong with your selection:", e.getMessage());
 					}

@@ -213,9 +213,11 @@ public class AsciiToCsv {
 
 	/**
 	 * 
-	 * @param ftp - The file to parse headers from.
+	 * @param ftp
+	 *           - The file to parse headers from.
 	 * @return True if the header is successfully parsed (all values extracted in less than 30 lines). False otherwise.
-	 * @throws IOException the File cannot be found, or the program was stopped.
+	 * @throws IOException
+	 *            the File cannot be found, or the program was stopped.
 	 */
 	protected boolean parseHeaders(File ftp) throws IOException {
 
@@ -270,9 +272,11 @@ public class AsciiToCsv {
 	 * 
 	 * Reads a single line from the header, and attempts to set the value associated with the defined label given in the line.
 	 * 
-	 * @param line The line to parse from. Includes the header value and the associated value.
+	 * @param line
+	 *           The line to parse from. Includes the header value and the associated value.
 	 * @return true if a value was sucessfully parsed. False otherwise.
-	 * @throws InputMismatchException If a non-double value is attempted to be ripped from the file
+	 * @throws InputMismatchException
+	 *            If a non-double value is attempted to be ripped from the file
 	 */
 	protected boolean setHeaderValue(String line) throws InputMismatchException {
 		// Open scanner for reading line
@@ -280,7 +284,7 @@ public class AsciiToCsv {
 		// Read first value in the line
 		String head = scanheaders.next();
 
-		try{
+		try {
 			// Decide which value is given in this line, set the corresponding value
 			switch (head) {
 				case "":
@@ -306,7 +310,7 @@ public class AsciiToCsv {
 					this.NODATA_value = scanheaders.nextDouble();
 					break;
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			Logger.error("Non double attempted to be parsed from the header. Please re-check your input file");
 			return false;
 		}
@@ -369,10 +373,13 @@ public class AsciiToCsv {
 	 * 
 	 * 
 	 * 
-	 * @param ftp the file to parse
+	 * @param ftp
+	 *           the file to parse
 	 * @return the arraylist of values parsed. Index 0 is the min and Index 1 is the max.
-	 * @throws IOException File Not Found
-	 * @throws InputMismatchException a non double value was found in the Table
+	 * @throws IOException
+	 *            File Not Found
+	 * @throws InputMismatchException
+	 *            a non double value was found in the Table
 	 */
 	protected ArrayList<String> parseBody(File ftp) throws IOException, InputMismatchException {
 
@@ -419,8 +426,8 @@ public class AsciiToCsv {
 
 				// While we continue to find doubles in the line
 				while (linescan.hasNextDouble()) {
-					try{
-						
+					try {
+
 						// Get the next value in the line
 						double value = linescan.nextDouble();
 
@@ -428,7 +435,7 @@ public class AsciiToCsv {
 						if (value != NODATA_value)
 							// add to array list
 							this.addValueToList(value, lines, rows, columns);
-					}catch(Exception e){
+					} catch (Exception e) {
 						Logger.error("1: Non double value found in the body of the Table. Please check your input file.");
 						return null;
 					}
@@ -447,8 +454,7 @@ public class AsciiToCsv {
 					linescan.close();
 					return null;
 				}
-					
-				
+
 				// Avoid resource leak
 				linescan.close();
 			}
@@ -464,13 +470,16 @@ public class AsciiToCsv {
 	}
 
 	/**
-	 * Helper method for adding values to the ArrayList to be printed Format's strings for output 
-	 * and places in the appropriate spot in ArrayList. Index 0 should always be min and Index 1 should always be Max.
+	 * Helper method for adding values to the ArrayList to be printed Format's strings for output and places in the appropriate spot in ArrayList. Index 0 should always be min and Index 1 should always be Max.
 	 * 
-	 * @param value the value to insert into the arraylist.
-	 * @param lines the arraylist of values being effected.
-	 * @param rows the current number of rows navigated through the body.
-	 * @param columns the current number of columns navigated through the body.
+	 * @param value
+	 *           the value to insert into the arraylist.
+	 * @param lines
+	 *           the arraylist of values being effected.
+	 * @param rows
+	 *           the current number of rows navigated through the body.
+	 * @param columns
+	 *           the current number of columns navigated through the body.
 	 */
 	protected void addValueToList(Double value, ArrayList<String> lines, int rows, int columns) {
 		// No values have been added to array list
