@@ -590,11 +590,11 @@ public class EarthModellingDaemon {
 			return false;
 		}
 
-		return transferJSToWebServer(miniJS, ServerInformation.WEB_SERVER_JAVASCRIPT_LOCATION);
+		return transferFileToWebServer(miniJS, ServerInformation.WEB_SERVER_JAVASCRIPT_DIRECTORY_LOCATION);
 	}
 
 	/**
-	 * Transfers the generated JS file to the web server using WINSCP.
+	 * Transfers the a file to the web server using WINSCP.
 	 * 
 	 * @param pathOfFileToTransfer
 	 *           The path of the file to transfer (on the local disk).
@@ -602,9 +602,9 @@ public class EarthModellingDaemon {
 	 *           The path of the file to transfer (on the destination server).
 	 * @return true if the file was successfully sent to the server; false otherwise.
 	 */
-	private static boolean transferJSToWebServer(String pathOfFileToTransfer, String pathOnDestinationServer) {
+	private static boolean transferFileToWebServer(String pathOfFileToTransfer, String pathOnDestinationServer) {
 		String ssh = ServerInformation.WEB_SERVER_HOSTKEY;
-		String address = "sftp://" + webServerUsername + ":" + webServerPassword + "@" + ServerInformation.WEB_SERVER_ADDRESS + "/www/Testing_ED/";
+		String address = "sftp://" + webServerUsername + ":" + webServerPassword + "@" + ServerInformation.WEB_SERVER_ADDRESS + pathOnDestinationServer;
 		String command = "\"put \"\"" + pathOfFileToTransfer + "\"\"\"";
 		String compounded = "\"open " + address + " -hostkey=\"\"" + ssh + "\"\"\" " + command + " \"exit\"";
 		String[] arguments = { "/command", compounded };
