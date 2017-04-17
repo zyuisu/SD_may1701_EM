@@ -39,8 +39,8 @@ public final class ReferenceScales {
 	private Map<String, Field> fields;
 
 	/**
-	 * Creates a ReferenceScales object to compare scale values. This class uses reflection to verify and return defined parameters at runtime. You need not understand how it works; just trust that it does. If you got an IllegalArgumentException upon initialisation of an instance of this class, it means you forgot to define the appropriate constant for a
-	 * given MapRegionType.
+	 * Creates a ReferenceScales object to compare scale values. This class uses reflection to verify and return defined parameters at runtime. You need not understand how it works; just trust that it does. If you got an IllegalStateException upon initialization of an instance of this class, it means you forgot to define the appropriate constant for a given
+	 * MapRegionType.
 	 */
 	public ReferenceScales() {
 		fields = new HashMap<String, Field>();
@@ -65,7 +65,7 @@ public final class ReferenceScales {
 	 * @throws IllegalArgumentException
 	 *            The mr.name() is not an instance of this class.
 	 * @throws IllegalAccessException
-	 *            The underlying field is inaccessable (check access control modifier).
+	 *            The underlying field is inaccessible (check access control modifier).
 	 */
 	public int getReferenceScale(MapRegionType mr) throws IllegalArgumentException, IllegalAccessException {
 		return fields.get(mr.name()).getInt(this);
