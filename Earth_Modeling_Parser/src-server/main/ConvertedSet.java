@@ -70,7 +70,7 @@ public class ConvertedSet implements Serializable {
 
 			Object o = ois.readObject();
 			if (!(o instanceof Set))
-				Logger.error("The converted set at: " + FileLocations.CONVERTED_FILE_LOCATION + "does not appear to actually be a set.");
+				Logger.error("The converted set at: " + FileLocations.CONVERTED_FILE_LOCATION + " does not appear to actually be a set.");
 
 			@SuppressWarnings("unchecked")
 			Set<MapProperties> inSet = (Set<MapProperties>) o;
