@@ -129,6 +129,7 @@ public class EarthModellingDaemon {
 	 * @throws TimeoutException
 	 *            The process was terminated because it took too long to finish executing!
 	 */
+	@SuppressWarnings("unused")
 	private static ArrayList<String> runPythonScript(String scriptLocation) throws IOException, InterruptedException, TimeoutException {
 		return runPythonScript(scriptLocation, null);
 	}
@@ -170,6 +171,7 @@ public class EarthModellingDaemon {
 	 * @throws TimeoutException
 	 *            The process was terminated because it took too long to finish executing!
 	 */
+	@SuppressWarnings("unused")
 	private static ArrayList<String> runExecutable(String exeLocation) throws IOException, InterruptedException, TimeoutException {
 		return runExecutable(exeLocation, null);
 	}

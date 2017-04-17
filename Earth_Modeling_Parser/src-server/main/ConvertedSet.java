@@ -68,7 +68,12 @@ public class ConvertedSet implements Serializable {
 		try {
 			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FileLocations.CONVERTED_FILE_LOCATION)));
 
-			Set<MapProperties> inSet = (Set<MapProperties>) ois.readObject();
+			Object o = ois.readObject();
+			if (!(o instanceof Set))
+				Logger.error("The converted set at: " + FileLocations.CONVERTED_FILE_LOCATION + "does not appear to actually be a set.");
+
+			@SuppressWarnings("unchecked")
+			Set<MapProperties> inSet = (Set<MapProperties>) o;
 			set = inSet;
 
 			ois.close();

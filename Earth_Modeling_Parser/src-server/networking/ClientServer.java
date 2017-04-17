@@ -177,10 +177,10 @@ public class ClientServer extends Thread {
 	 */
 	public void end() {
 		run = false;
-
 		// Break a blocking call by connecting to the socket.
 		try {
-			new Socket("localhost", serverPort);
+			Socket closeSocket = new Socket("localhost", serverPort);
+			closeSocket.close();
 		} catch (IOException ioe) {
 			Logger.error("Error trying to stop the server: {}", ioe);
 		} catch (Exception e) {
@@ -200,7 +200,7 @@ public class ClientServer extends Thread {
 			if (lm.isListOfLogsRequest()) {
 				File logDir = new File(FileLocations.LOGS_DIRECTORY_LOCATION);
 
-				ArrayList<String> logNames = new ArrayList();
+				ArrayList<String> logNames = new ArrayList<String>();
 				for (File f : logDir.listFiles())
 					if (f.getName().contains(".log"))
 						logNames.add(f.getName().replace(".log", "").replace("log.", ""));

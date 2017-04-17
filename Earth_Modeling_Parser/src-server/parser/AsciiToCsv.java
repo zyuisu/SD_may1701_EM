@@ -437,6 +437,7 @@ public class AsciiToCsv {
 							this.addValueToList(value, lines, rows, columns);
 					} catch (Exception e) {
 						Logger.error("1: Non double value found in the body of the Table. Please check your input file.");
+						linescan.close();
 						return null;
 					}
 					columns++;
