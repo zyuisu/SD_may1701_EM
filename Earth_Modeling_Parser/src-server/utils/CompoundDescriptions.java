@@ -31,14 +31,14 @@ public final class CompoundDescriptions {
 
 	// REMINDER: SHOULD BE DEFINED WITH EXACT NAMES IN MapCompoundType. Like following:
 	// public static final String MapCompoundType.name() {Full Name, Alias, What Does it Do, Summary}
-	public static final String[] CH4 = { "Carbon TetraHydride", "Methane", "Warm's the atmosphere", "Global Warming!" };
-	public static final String[] ET = { "ET Full Name", "ET Alias", "ET What does it do", "ET Summary" };
-	public static final String[] LEACHNO3 = { "LEACHNO3 Full Name", "LEACHNO3 Alias", "LEACHNO3 What does it do", "LEACHNO3 Summary" };
-	public static final String[] N2O = { "N2O Full Name", "N2O Alias", "N2O What does it do", "N2O Summary" };
-	public static final String[] NPP = { "NPP Full Name", "NPP Alias", "NPP What does it do", "NPP Summary" };
-	public static final String[] NUPTAKE = { "NUPTAKE Full Name", "NUPTAKE Alias", "NUPTAKE What does it do", "NUPTAKE Summary" };
-	public static final String[] RH = { "RH Full Name", "RH Alias", "RH What does it do", "RH Summary" };
-	public static final String[] SOC = { "SOC Full Name", "SOC Alias", "SOC What does it do", "SOC Summary" };
+	public static final String[] CH4 = {"CH<sub>4</sub>", "Carbon TetraHydride", "Methane", "Warm's the atmosphere", "Global Warming!" };
+	public static final String[] ET = { "ET", "ET Full Name", "ET Alias", "ET What does it do", "ET Summary" };
+	public static final String[] LEACHNO3 = {"LEACHNO<sub>3</sub>",  "LEACHNO3 Full Name", "LEACHNO3 Alias", "LEACHNO3 What does it do", "LEACHNO3 Summary" };
+	public static final String[] N2O = {"N<sub>2</sub>O",  "N2O Full Name", "N2O Alias", "N2O What does it do", "N2O Summary" };
+	public static final String[] NPP = {"NPP",  "NPP Full Name", "NPP Alias", "NPP What does it do", "NPP Summary" };
+	public static final String[] NUPTAKE = {"NUPTAKE",  "NUPTAKE Full Name", "NUPTAKE Alias", "NUPTAKE What does it do", "NUPTAKE Summary" };
+	public static final String[] RH = {"RH",  "RH Full Name", "RH Alias", "RH What does it do", "RH Summary" };
+	public static final String[] SOC = {"SOC",  "SOC Full Name", "SOC Alias", "SOC What does it do", "SOC Summary" };
 	// public static final String[] NEW_ENUMERATION_NAME = {Full Name, Alias, What Does it Do, Summary};
 
 	// --------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ public final class CompoundDescriptions {
 
 		for (Field f : this.getClass().getFields()) {
 			int mod = f.getModifiers();
-			if (Modifier.isFinal(mod) && Modifier.isStatic(mod) && Modifier.isPublic(mod) && f.getType().isArray() && f.getType().getComponentType().equals(String.class) && (Array.getLength(f.get(this)) == 4))
+			if (Modifier.isFinal(mod) && Modifier.isStatic(mod) && Modifier.isPublic(mod) && f.getType().isArray() && f.getType().getComponentType().equals(String.class) && (Array.getLength(f.get(this)) == 5))
 				;
 			fields.put(f.getName(), f);
 		}
