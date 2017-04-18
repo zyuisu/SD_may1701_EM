@@ -576,7 +576,7 @@ public class EarthModellingDaemon {
 	private static boolean generateAndTransferJavaScript() {
 		try {
 			new JavaScriptGenerator(convertedSet);
-		} catch (IOException e) {
+		} catch (IOException | IllegalArgumentException | IllegalAccessException e) {
 			Logger.error("Issue generating new JavaScript.", e);
 			return false;
 		}

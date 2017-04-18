@@ -28,14 +28,16 @@ public final class CompoundDescriptions {
 
 	// REMINDER: SHOULD BE DEFINED WITH EXACT NAMES IN MapCompoundType. Like following:
 	// public static final String MapCompoundType.name()
-	public static final String CH4 = "methane";
-	public static final String ET = "etetetet";
-	public static final String LEACHNO3 = "leachleachleach";
-	public static final String N2O = "nitrous oxide";
-	public static final String NPP = "net primary production";
-	public static final String NUPTAKE = "nitrogen uptake";
-	public static final String RH = "rhrhrhrhrhrhrhrh";
-	public static final String SOC = "socosocsocsoc";
+	// Compound Name, Full Name, Alias, What Does it Do, Summary
+	
+	public static final String[] CH4 = {MapCompoundType.CH4.toString(), "Carbon TetraHydride", "Methane", "Warm's the atmosphere", "Global Warming!"};
+	public static final String[] ET = {MapCompoundType.ET.toString(), "ET Full Name", "ET Alias", "ET What does it do", "ET Summary"};
+	public static final String[] LEACHNO3 = {MapCompoundType.LEACHNO3.toString(), "LEACHNO3 Full Name", "LEACHNO3 Alias", "LEACHNO3 What does it do", "LEACHNO3 Summary"};
+	public static final String[] N2O = {MapCompoundType.N2O.toString(), "N2O Full Name", "N2O Alias", "N2O What does it do", "N2O Summary"};
+	public static final String[] NPP = {MapCompoundType.NPP.toString(), "NPP Full Name", "NPP Alias", "NPP What does it do", "NPP Summary"};
+	public static final String[] NUPTAKE = {MapCompoundType.NUPTAKE.toString(), "NUPTAKE Full Name", "NUPTAKE Alias", "NUPTAKE What does it do", "NUPTAKE Summary"};
+	public static final String[] RH = {MapCompoundType.RH.toString(), "RH Full Name", "RH Alias", "RH What does it do", "RH Summary"};
+	public static final String[] SOC = {MapCompoundType.SOC.toString(), "SOC Full Name", "SOC Alias", "SOC What does it do", "SOC Summary"};
 	// public static final String NEW_ENUMERATION_NAME = "Description of compound.";
 
 	// --------------------------------------------------------------------------------------------------
@@ -52,7 +54,7 @@ public final class CompoundDescriptions {
 
 		for (Field f : ReferenceScales.class.getFields()) {
 			int mod = f.getModifiers();
-			if (Modifier.isFinal(mod) && Modifier.isStatic(mod) && Modifier.isPublic(mod) && f.getType().equals(String.class))
+			if (Modifier.isFinal(mod) && Modifier.isStatic(mod) && Modifier.isPublic(mod) && f.getType().isArray() && f.getType().getComponentType().equals(String.class))
 				fields.put(f.getName(), f);
 		}
 
@@ -72,7 +74,7 @@ public final class CompoundDescriptions {
 	 * @throws IllegalAccessException
 	 *            The underlying field is inaccessible (check access control modifier).
 	 */
-	public String getCompoundDescription(MapCompoundType mc) throws IllegalArgumentException, IllegalAccessException {
-		return (String) fields.get(mc.name()).get(this);
+	public String[] getCompoundDescription(MapCompoundType mc) throws IllegalArgumentException, IllegalAccessException {
+		return (String[]) fields.get(mc.name()).get(this);
 	}
 }

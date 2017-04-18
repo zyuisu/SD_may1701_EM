@@ -30,6 +30,7 @@ import java.util.ArrayList;
 
 import main.ConvertedSet;
 import networking.ServerInformation;
+import utils.CompoundDescriptions;
 import utils.FileLocations;
 import utils.MapCompoundType;
 import utils.MapRegionType;
@@ -46,7 +47,7 @@ public class JavaScriptGenerator {
 	 * @param set
 	 *           The ConvertedSet that represents the maps that are already being hosted by the map server.
 	 */
-	public JavaScriptGenerator(ConvertedSet set) throws IOException {
+	public JavaScriptGenerator(ConvertedSet set) throws IOException, IllegalArgumentException, IllegalAccessException {
 		convertedSet = set;
 
 		File temp = new File(FileLocations.TEMP_WORKING_DIRECTORY_LOCATION + "temp.html");
@@ -56,8 +57,41 @@ public class JavaScriptGenerator {
 
 		// Get dropdown elements from DOM.
 		strBuff.append(
-				"function loadList(){ require(['esri/Map', 'esri/views/SceneView', 'esri/layers/MapImageLayer', 'esri/widgets/Legend', 'dojo/domReady!', 'dojo/on', 'dojo/dom', ],  function(Map, SceneView, MapImageLayer, Legend, domReady, on, dom) {var regionList = document.getElementById('region'); var compoundList = document.getElementById('compound'); var yearList = document.getElementById('year'); var monthList = document.getElementById('month'); var loadMapBtn = document.getElementById('loadMapBtn'); var legendCheck = document.getElementById('legendShow'); var legend; var map = new Map({ basemap: 'oceans' }); var view = new SceneView({ container: 'viewDiv', map: map }); function populateList(list, arr) { for (var i = 0; i < arr.length; ++i) { list[i + 1] = new Option(arr[i], arr[i]); } } function clearList(list) { for (var i = list.length - 1; i > 0; i--) { list[i] = null; } } function populateMonthList(arr) { for (var i = 0; i < arr.length; ++i) { var monthName; switch (arr[i]) { default: break; case '0': monthName = 'January'; break; case '1': monthName = 'February'; break; case '2': monthName = 'March'; break; case '3': monthName = 'April'; break; case '4': monthName = 'May'; break; case '5': monthName = 'June'; break; case '6': monthName = 'July'; break; case '7': monthName = 'August'; break; case '8': monthName = 'September'; break; case '9': monthName = 'October'; break; case '10': monthName = 'November'; break; case '11': monthName = 'December'; break; } monthList[i + 1] = new Option(monthName, arr[i]); } if (arr.length > 0) { monthList.style.display = 'inline'; } }");
+				"function loadList(){ require(['esri/Map', 'esri/views/SceneView', 'esri/layers/MapImageLayer', 'esri/widgets/Legend', 'dojo/domReady!', 'dojo/on', 'dojo/dom', ],  function(Map, SceneView, MapImageLayer, Legend, domReady, on, dom) {var regionList = document.getElementById('region'); var compoundList = document.getElementById('compound'); var yearList = document.getElementById('year'); var monthList = document.getElementById('month'); var loadMapBtn = document.getElementById('loadMapBtn'); var legendCheck = document.getElementById('legendShow'); var legend; var map = new Map({ basemap: 'oceans' }); var view = new SceneView({ container: 'viewDiv', map: map });");
+		
+		
+		/*CompoundDescriptions cd = new CompoundDescriptions();
+		String CH4[] = cd.getCompoundDescription(MapCompoundType.CH4);
+		String ET[] = cd.getCompoundDescription(MapCompoundType.ET);
+		String LEACHNO3[] = cd.getCompoundDescription(MapCompoundType.LEACHNO3);
+		String N2O[] = cd.getCompoundDescription(MapCompoundType.N2O);
+		String NPP[] = cd.getCompoundDescription(MapCompoundType.NPP);
+		String NUPTAKE[] = cd.getCompoundDescription(MapCompoundType.NUPTAKE);
+		String RH[] = cd.getCompoundDescription(MapCompoundType.RH);
+		String SOC[] = cd.getCompoundDescription(MapCompoundType.SOC);*/
+		strBuff.append("var explainBtn = document.getElementById('explain'); var PopupBtn = document.getElementById('Popup'); var helpBtn = document.getElementById('help'); function popUp(reset){ if(reset == 0){ var popup = document.getElementById(\"Popup\"); popup.classList.toggle(\"show\"); $(\".popuptext\").show(); console.log(\"running popUp()\"); } } function replacePopupTextCompound(reset){ var popup = document.getElementById(\"Popup\"); if(reset == 1){ var compound = \"\";  } else{ var compoundList = document.getElementById(\"compound\"); var compound = compoundList.options[compoundList.selectedIndex].text; } var s; switch(compound){  default: s = 	\"<h2>Visualization of Earth's Modeling Systems</h2>1. Select a region.<br>2. Select a compound.<br>3. Select a year.<br>4. If applicable, select a month. Currently, only CH4 is updated monthly.<br>5. Click on the 'Load Map' button.<br><br>NOTE: Viewing freshly uploaded maps may require you to refresh your browser's cache. On most browsers, this can can be done by pressing the following buttons simultaneously: 'Ctrl+Shift+R'.\"; break;");
+		
+		String CH4[] = {"CH4", "Carbon TetraHydride", "Methane", "Warm's the atmosphere", "Global Warming!"};
+		strBuff.append("case \"" + CH4[0] + "\": s = \"<h2>CH<sub>4</sub> Explanation </h2><h3>Full Name:" + CH4[1]  + "</h3><h3>Alias: " + CH4[2] + "</h3>What Does it Do?:" + CH4[3] + "<br>Summary: " + CH4[4] + "\" ; break;");
+		strBuff.append("");
+		strBuff.append("");
+		strBuff.append("");
+		strBuff.append("");
+		strBuff.append("");
+		strBuff.append("");
+		strBuff.append("");
+		
+		strBuff.append("} if(s === popup.innerHTML){ popUp(0);} else{ popup.innerHTML = s; popUp(1); } } helpBtn.addEventListener('click', function(){ replacePopupTextCompound(1); }); explainBtn.addEventListener('click', function(){ replacePopupTextCompound(0); });");
+		
+		
+		
+		
+		
+		
+		strBuff.append(" function populateList(list, arr) { for (var i = 0; i < arr.length; ++i) { list[i + 1] = new Option(arr[i], arr[i]); } } function clearList(list) { for (var i = list.length - 1; i > 0; i--) { list[i] = null; } } function populateMonthList(arr) { for (var i = 0; i < arr.length; ++i) { var monthName; switch (arr[i]) { default: break; case '0': monthName = 'January'; break; case '1': monthName = 'February'; break; case '2': monthName = 'March'; break; case '3': monthName = 'April'; break; case '4': monthName = 'May'; break; case '5': monthName = 'June'; break; case '6': monthName = 'July'; break; case '7': monthName = 'August'; break; case '8': monthName = 'September'; break; case '9': monthName = 'October'; break; case '10': monthName = 'November'; break; case '11': monthName = 'December'; break; } monthList[i + 1] = new Option(monthName, arr[i]); } if (arr.length > 0) { monthList.style.display = 'inline'; } }");
 
+		
+		
 		// Generate event listeners.
 		allocateRegionList(strBuff);
 		generateRegionEventListener(strBuff);
