@@ -42,7 +42,6 @@ def main(argv):
     # Ask for server name
     #serverName = 'proj-se491.iastate.edu'
     #serverPort = 6443
-    #service = raw_input(r"For example USA/Chicago.MapServer: ")
     service = subfolder + "/" + service_to_change + ".MapServer"
     minInstancesNum = 0
     maxInstancesNum = 8
