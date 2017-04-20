@@ -14,7 +14,7 @@
 /**
  * @author Anish Kunduru
  * 
- *         Server-side that parses handles the streams between server and client.
+ *         Server-side class that parses and handles the network streams between the server and an individual client.
  */
 
 package networking;
