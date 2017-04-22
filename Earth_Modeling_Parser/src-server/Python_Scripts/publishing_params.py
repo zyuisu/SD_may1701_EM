@@ -14,10 +14,8 @@ import sys
 # For reading passwords without echoing
 import getpass
 # Sources: http://server.arcgis.com/en/server/latest/administer/linux/example-edit-service-properties.htm
-
-
 # This code was used from the ESRI website, with modifications made for connection parameters
-# Defines the entry point into the script
+# Additional changes made for the service fields to be changed
 def main(argv):
 
     # the name of the service to have parameters changed
@@ -26,10 +24,17 @@ def main(argv):
     server_user = argv[1]
     # the server password
     server_pass = argv[2]
+    # the name of the server being used
     serverName = argv[3]
+    # Server port number
     serverPort = int(argv[4])
+    # folders leading up to service folder
+    # Example: /arcgis/admin/services/
     inner_sub_string = argv[5]
+    # subfolder after substring 
+    # Example: EarthModelingTest
     subfolder = argv[6]
+    # The name of the associated server token page
     token_url = argv[7]
 
     successful = "VEMS SUCCESS: "
@@ -37,7 +42,6 @@ def main(argv):
     # Ask for server name
     #serverName = 'proj-se491.iastate.edu'
     #serverPort = 6443
-    #service = raw_input(r"For example USA/Chicago.MapServer: ")
     service = subfolder + "/" + service_to_change + ".MapServer"
     minInstancesNum = 0
     maxInstancesNum = 8
@@ -123,7 +127,7 @@ def main(argv):
 # A function to generate a token given username, password and the adminURL.
 # This code was used from the ESRI website, with small modifications for connection parameters
 def getToken(username, password, serverName, serverPort, tokenURL):
-    # Token URL is typically http://server[:port]/arcgis/admin/generateToken
+
     #tokenURL = "https://proj-se491.iastate.edu:6443/arcgis/admin/generateToken"
     
     params = urllib.urlencode({'username': username, 'password': password, 'client': 'requestip', 'f': 'json'})
