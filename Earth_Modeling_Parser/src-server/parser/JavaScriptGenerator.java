@@ -37,7 +37,9 @@ import utils.MapRegionType;
 
 public class JavaScriptGenerator {
 
-	public ConvertedSet convertedSet;
+	private ConvertedSet convertedSet;
+	private CompoundDescriptions compoundDescriptions;
+	public static final String helpText = "<h2>Visualization of Earth's Modeling Systems</h2> 1. Select a region.<br> 2. Select a compound.<br> 3. Select a year.<br> 4. If applicable, select a month. Currently, only CH4 is updated monthly.<br> 5. Click on the 'Load Map' button.<br><br> NOTE: Viewing freshly uploaded maps may require you to refresh your browser's cache. On most browsers, this can can be done by pressing the following buttons simultaneously: 'Ctrl+Shift+R'.";
 
 	/**
 	 * Dynamically generates the HTML file based on values saved in ConvertedSet. It is expected that this method will be called upon each map generation/removal. NOTE: This method relies on the accuracy of the values stored in ConvertedSet.
@@ -51,8 +53,9 @@ public class JavaScriptGenerator {
 	 * @throws IllegalArgumentException
 	 *            Likely cause by an issue with the generateCompoundDescriptionEventListener().
 	 */
-	public JavaScriptGenerator(ConvertedSet set) throws IOException, IllegalArgumentException, IllegalAccessException {
+	public JavaScriptGenerator(ConvertedSet set, CompoundDescriptions descriptions) throws IOException, IllegalArgumentException, IllegalAccessException {
 		convertedSet = set;
+		compoundDescriptions = descriptions;
 
 		File temp = new File(FileLocations.TEMP_WORKING_DIRECTORY_LOCATION + "temp.html");
 		PrintWriter output = new PrintWriter(new BufferedWriter(new FileWriter(temp)));
@@ -61,7 +64,7 @@ public class JavaScriptGenerator {
 
 		// Get dropdown elements from DOM.
 		strBuff.append(
-				"function loadList(){ require(['esri/Map', 'esri/views/SceneView', 'esri/layers/MapImageLayer', 'esri/widgets/Legend', 'dojo/domReady!', 'dojo/on', 'dojo/dom', ],  function(Map, SceneView, MapImageLayer, Legend, domReady, on, dom) {var regionList = document.getElementById('region'); var compoundList = document.getElementById('compound'); var yearList = document.getElementById('year'); var monthList = document.getElementById('month'); var loadMapBtn = document.getElementById('loadMapBtn'); var legendCheck = document.getElementById('legendShow'); var explainBtn = document.getElementById('explain'); var PopupBtn = document.getElementById('Popup'); var helpBtn = document.getElementById('help'); var legend; var map = new Map({ basemap: 'oceans' }); var view = new SceneView({ container: 'viewDiv', map: map }); function popUp(reset){ if(reset == 0){ var popup = document.getElementById(\"Popup\"); popup.classList.toggle(\"show\"); $(\".popuptext\").show(); console.log(\"running popUp()\"); } } function replacePopupTextCompound(reset){ var popup = document.getElementById(\"Popup\"); if(reset == 1){ var compound = \"\";  } else{ var compoundList = document.getElementById(\"compound\"); var compound = compoundList.options[compoundList.selectedIndex].text; } var s; switch(compound){  default: s = 	\"<h2>Visualization of Earth's Modeling Systems</h2>1. Select a region.<br>2. Select a compound.<br>3. Select a year.<br>4. If applicable, select a month. Currently, only CH4 is updated monthly.<br>5. Click on the 'Load Map' button.<br><br>NOTE: Viewing freshly uploaded maps may require you to refresh your browser's cache. On most browsers, this can can be done by pressing the following buttons simultaneously: 'Ctrl+Shift+R'.\"; break; "); 
+				"function loadList(){ require(['esri/Map', 'esri/views/SceneView', 'esri/layers/MapImageLayer', 'esri/widgets/Legend', 'dojo/domReady!', 'dojo/on', 'dojo/dom', ],  function(Map, SceneView, MapImageLayer, Legend, domReady, on, dom) {var regionList = document.getElementById('region'); var compoundList = document.getElementById('compound'); var yearList = document.getElementById('year'); var monthList = document.getElementById('month'); var loadMapBtn = document.getElementById('loadMapBtn'); var legendCheck = document.getElementById('legendShow'); var explainBtn = document.getElementById('explain'); var popup = document.getElementById('popup'); var helpBtn = document.getElementById('help'); var legend; var map = new Map({ basemap: 'oceans' }); var view = new SceneView({ container: 'viewDiv', map: map }); var popupLastPressedByCompoundInfo = false; var popupLastPressedByHelp = false;"); 
 		generateCompoundDescriptionEventListener(strBuff);
 		
 		strBuff.append(
@@ -103,22 +106,29 @@ public class JavaScriptGenerator {
 	 * @throws IllegalArgumentException
 	 */
 	private void generateCompoundDescriptionEventListener(StringBuilder strBuff) throws IllegalArgumentException, IllegalAccessException {
-
-		CompoundDescriptions cd = new CompoundDescriptions();
-		/*
-		 * String CH4[] = cd.getCompoundDescription(MapCompoundType.CH4); String ET[] = cd.getCompoundDescription(MapCompoundType.ET); String LEACHNO3[] = cd.getCompoundDescription(MapCompoundType.LEACHNO3); String N2O[] = cd.getCompoundDescription(MapCompoundType.N2O); String NPP[] = cd.getCompoundDescription(MapCompoundType.NPP); String NUPTAKE[] =
-		 * cd.getCompoundDescription(MapCompoundType.NUPTAKE); String RH[] = cd.getCompoundDescription(MapCompoundType.RH); String SOC[] = cd.getCompoundDescription(MapCompoundType.SOC);
-		 * 
-		 * String CH4[] = {"CH4", "Carbon TetraHydride", "Methane", "Warm's the atmosphere", "Global Warming!"}; strBuff.append("case \"" + CH4[0] + "\": s = \"<h2>CH<sub>4</sub> Explanation </h2><h3>Full Name:" + CH4[1] + "</h3><h3>Alias: " + CH4[2] + "</h3>What Does it Do?:" + CH4[3] + "<br>Summary: " + CH4[4] + "\" ; break;"); strBuff.append("");
-		 * strBuff.append(""); strBuff.append(""); strBuff.append(""); strBuff.append(""); strBuff.append(""); strBuff.append("");
-		 */
-
+		
+		strBuff.append("function setPopupText(isHelpButton) { if (popupLastPressedByCompoundInfo || popupLastPressedByHelp) { var compound; if(isHelpButton){ compound = \"\"; } else{ compound = compoundList.options[compoundList.selectedIndex].text; } switch(compound){ default: popup.innerHTML =\"");
+		strBuff.append(helpText);
+		strBuff.append("\"; break;");
+		
 		for (MapCompoundType mc : MapCompoundType.values()) {
-			String[] arr = cd.getCompoundDescription(mc);
-			strBuff.append("case \"" + mc.name() + "\": s = \"<h2>" + arr[0] + " Explanation </h2><h3>Full Name: " + arr[1] + "</h3>Definition: " + arr[2] + "<br>Sources: " + arr[3] + "<br>Effects: " + arr[4] + "\" ; break;");
+			String[] arr = compoundDescriptions.getCompoundDescription(mc);
+			strBuff.append("case \"");
+			strBuff.append(mc.name());
+			strBuff.append("\": popup.innerHTML = \"<h2>");
+			strBuff.append(arr[0]);
+			strBuff.append(" Explanation </h2><h3>Full Name: "); 
+			strBuff.append(arr[1]);
+			strBuff.append("</h3>Definition: ");
+			strBuff.append(arr[2]);
+			strBuff.append("<br>Sources: ");
+			strBuff.append(arr[3]);
+			strBuff.append("<br>Effects: ");
+			strBuff.append(arr[4]);
+			strBuff.append("\" ; break;");
 		}
 
-		strBuff.append("} if(s === popup.innerHTML){ popUp(0);} else{ popup.innerHTML = s; popUp(1); } } helpBtn.addEventListener('click', function(){ replacePopupTextCompound(1); }); explainBtn.addEventListener('click', function(){ replacePopupTextCompound(0); });");
+		strBuff.append("} $(popup).show(); } } helpBtn.addEventListener('click', function(){if (popupLastPressedByCompoundInfo) { $(popup).hide();	popupLastPressedByCompoundInfo = false; }	else { popupLastPressedByCompoundInfo = true; popupLastPressedByHelp = false; setPopupText(true); }}); explainBtn.addEventListener('click', function(){ if (popupLastPressedByCompoundInfo) { $(popup).hide(); popupLastPressedByCompoundInfo = false; } else	{ popupLastPressedByCompoundInfo = true; popupLastPressedByHelp = false; setPopupText(false); }});");
 	}
 
 	/**
@@ -220,7 +230,7 @@ public class JavaScriptGenerator {
 		strBuff.append("monthList.style.display = 'none'; ");
 
 		// To dynamically allocate values in yearList.
-		strBuff.append("var region = regionList.options[regionList.selectedIndex].text; var compound = compoundList.options[compoundList.selectedIndex].text; var regionCompound = region.concat(compound); switch(regionCompound){ default: break; ");
+		strBuff.append("var region = regionList.options[regionList.selectedIndex].text; var compound = compoundList.options[compoundList.selectedIndex].text; var regionCompound = region.concat(compound); setPopupText(false); switch(regionCompound){ default: break; ");
 		int index = 0;
 		for (String arrName : compoundArrays) {
 			strBuff.append("case '");
