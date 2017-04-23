@@ -585,10 +585,15 @@ public class EarthModellingDaemon {
 		String[] arguments = { "-jar", FileLocations.JS_MINIFIER_JAR_LOCATION, "--js", FileLocations.JAVASCRIPT_FILE_LOCATION, "--js_output_file", miniJS };
 
 		try {
-			ArrayList<String> output = runExecutable(FileLocations.JAVA_EXECUTABLE_LOCATION, arguments, 10L, TimeUnit.SECONDS);
-			Logger.info(output);
+			String errOutput = logExceptions(runExecutable(FileLocations.JAVA_EXECUTABLE_LOCATION, arguments, 10L, TimeUnit.SECONDS));
+			if (errOutput != null)
+			{
+				Logger.error(errOutput);
+				return false;
+			}
+			
 		} catch (IOException | InterruptedException | TimeoutException e) {
-			Logger.error("Failed to minify the JS.");
+			Logger.error("FLogger.info(output);ailed to minify the JS.");
 			return false;
 		}
 
