@@ -109,7 +109,9 @@ public class JavaScriptGenerator {
 	 */
 	private void generateCompoundDescriptionEventListener(StringBuilder strBuff) throws IllegalArgumentException, IllegalAccessException {
 		
-		strBuff.append("function setPopupText(isHelpButton) { if (popupLastPressedByCompoundInfo || popupLastPressedByHelp) { var compound; if(isHelpButton){ compound = \"\"; } else{ compound = compoundList.options[compoundList.selectedIndex].text; } switch(compound){ default: popup.innerHTML =\"");
+		strBuff.append("function setPopupText() { if (popupLastPressedByHelp) { popup.innerHTML =\"");
+		strBuff.append(helpText);
+		strBuff.append("\"; $(popup).show(); } else if(popupLastPressedByCompoundInfo){ var compound = compoundList.options[compoundList.selectedIndex].text; switch(compound){ default: popup.innerHTML =\"");
 		strBuff.append(helpText);
 		strBuff.append("\"; break;");
 		
@@ -130,7 +132,7 @@ public class JavaScriptGenerator {
 			strBuff.append("\" ; break;");
 		}
 
-		strBuff.append("} $(popup).show(); } } helpBtn.addEventListener('click', function(){if (popupLastPressedByCompoundInfo) { $(popup).hide();	popupLastPressedByCompoundInfo = false; }	else { popupLastPressedByCompoundInfo = true; popupLastPressedByHelp = false; setPopupText(true); }}); explainBtn.addEventListener('click', function(){ if (popupLastPressedByCompoundInfo) { $(popup).hide(); popupLastPressedByCompoundInfo = false; } else	{ popupLastPressedByCompoundInfo = true; popupLastPressedByHelp = false; setPopupText(false); }});");
+		strBuff.append("} $(popup).show(); } } helpBtn.addEventListener('click', function() { if (popupLastPressedByHelp) { $(popup).hide(); popupLastPressedByHelp = false; } else { popupLastPressedByHelp = true; popupLastPressedByCompoundInfo = false; setPopupText(); } }); explainBtn.addEventListener('click', function() { if (popupLastPressedByCompoundInfo) { $(popup).hide(); popupLastPressedByCompoundInfo = false; } else { popupLastPressedByCompoundInfo = true; popupLastPressedByHelp = false; setPopupText(); } });");
 	}
 
 	/**
@@ -232,7 +234,7 @@ public class JavaScriptGenerator {
 		strBuff.append("monthList.style.display = 'none'; ");
 
 		// To dynamically allocate values in yearList.
-		strBuff.append("var region = regionList.options[regionList.selectedIndex].text; var compound = compoundList.options[compoundList.selectedIndex].text; var regionCompound = region.concat(compound); setPopupText(false); switch(regionCompound){ default: break; ");
+		strBuff.append("var region = regionList.options[regionList.selectedIndex].text; var compound = compoundList.options[compoundList.selectedIndex].text; var regionCompound = region.concat(compound); setPopupText(); switch(regionCompound){ default: break; ");
 		int index = 0;
 		for (String arrName : compoundArrays) {
 			strBuff.append("case '");
