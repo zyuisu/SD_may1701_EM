@@ -64,7 +64,7 @@ public class JavaScriptGenerator {
 
 		// Get dropdown elements from DOM.
 		strBuff.append(
-				"function loadList(){ require(['esri/Map', 'esri/views/SceneView', 'esri/layers/MapImageLayer', 'esri/widgets/Legend', 'dojo/domReady!', 'dojo/on', 'dojo/dom', ],  function(Map, SceneView, MapImageLayer, Legend, domReady, on, dom) {var regionList = document.getElementById('region'); var compoundList = document.getElementById('compound'); var yearList = document.getElementById('year'); var monthList = document.getElementById('month'); var loadMapBtn = document.getElementById('loadMapBtn'); var legendCheck = document.getElementById('legendShow'); var explainBtn = document.getElementById('explain'); var popup = document.getElementById('popup'); var helpBtn = document.getElementById('help'); var legend; var map = new Map({ basemap: 'oceans' }); var view = new SceneView({ container: 'viewDiv', map: map }); var popupLastPressedByCompoundInfo = false; var popupLastPressedByHelp = false; helpText = \"");
+				"function loadList(){ require(['esri/Map', 'esri/views/SceneView', 'esri/layers/MapImageLayer', 'esri/widgets/Legend', 'dojo/domReady!', 'dojo/on', 'dojo/dom', ],  function(Map, SceneView, MapImageLayer, Legend, domReady, on, dom) {var regionList = document.getElementById('region'); var compoundList = document.getElementById('compound'); var yearList = document.getElementById('year'); var monthList = document.getElementById('month'); var loadMapBtn = document.getElementById('loadMapBtn'); var legendCheck = document.getElementById('legendShow'); var explainBtn = document.getElementById('explain'); var popup = document.getElementById('popup'); var helpBtn = document.getElementById('help'); var legend; var map = new Map({ basemap: 'oceans' }); var view = new SceneView({ container: 'viewDiv', map: map }); var popupLastPressedByCompoundInfo = false; var popupLastPressedByHelp = false; var helpText = \"");
 		strBuff.append(helpText);
 		strBuff.append("\";");
 		generateCompoundDescriptionEventListener(strBuff);
@@ -129,7 +129,7 @@ public class JavaScriptGenerator {
 		}
 
 		strBuff.append(
-				"} $(popup).show(); } } helpBtn.addEventListener('click', function() { if (popupLastPressedByHelp) { $(popup).hide(); popupLastPressedByHelp = false; } else { popupLastPressedByHelp = true; popupLastPressedByCompoundInfo = false; setPopupText(); } }); explainBtn.addEventListener('click', function() { if (popupLastPressedByCompoundInfo) { $(popup).hide(); popupLastPressedByCompoundInfo = false; } else { popupLastPressedByCompoundInfo = true; popupLastPressedByHelp = false; setPopupText(); } });");
+				"} $(popup).show(); } } helpBtn.addEventListener('click', function() { if (popupLastPressedByHelp) { $(popup).hide(); popupLastPressedByHelp = false; } else { popupLastPressedByHelp = true; popupLastPressedByCompoundInfo = false; setPopupText(); } }); explainBtn.addEventListener('click', function() { if (popupLastPressedByCompoundInfo) { $(popup).hide(); popupLastPressedByCompoundInfo = false; } else { popupLastPressedByCompoundInfo = true; popupLastPressedByHelp = false; setPopupText(); } }); popup.addEventListener('click', function(){ $(popup).hide(); popupLastPressedByCompoundInfo = false; popupLastPressedByHelp = false; });");
 	}
 
 	/**
