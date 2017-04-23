@@ -66,9 +66,9 @@ public class JavaScriptGenerator {
 		strBuff.append(
 				"function loadList(){ require(['esri/Map', 'esri/views/SceneView', 'esri/layers/MapImageLayer', 'esri/widgets/Legend', 'dojo/domReady!', 'dojo/on', 'dojo/dom', ],  function(Map, SceneView, MapImageLayer, Legend, domReady, on, dom) {var regionList = document.getElementById('region'); var compoundList = document.getElementById('compound'); var yearList = document.getElementById('year'); var monthList = document.getElementById('month'); var loadMapBtn = document.getElementById('loadMapBtn'); var legendCheck = document.getElementById('legendShow'); var explainBtn = document.getElementById('explain'); var popup = document.getElementById('popup'); var helpBtn = document.getElementById('help'); var legend; var map = new Map({ basemap: 'oceans' }); var view = new SceneView({ container: 'viewDiv', map: map }); var popupLastPressedByCompoundInfo = false; var popupLastPressedByHelp = false; helpText = \"");
 		strBuff.append(helpText);
-		strBuff.append("\"");
+		strBuff.append("\";");
 		generateCompoundDescriptionEventListener(strBuff);
-		
+
 		strBuff.append(
 				"function populateList(list, arr) { for (var i = 0; i < arr.length; ++i) { list[i + 1] = new Option(arr[i], arr[i]); } } function clearList(list) { for (var i = list.length - 1; i > 0; i--) { list[i] = null; } } function populateMonthList(arr) { for (var i = 0; i < arr.length; ++i) { var monthName; switch (arr[i]) { default: break; case '0': monthName = 'January'; break; case '1': monthName = 'February'; break; case '2': monthName = 'March'; break; case '3': monthName = 'April'; break; case '4': monthName = 'May'; break; case '5': monthName = 'June'; break; case '6': monthName = 'July'; break; case '7': monthName = 'August'; break; case '8': monthName = 'September'; break; case '9': monthName = 'October'; break; case '10': monthName = 'November'; break; case '11': monthName = 'December'; break; } monthList[i + 1] = new Option(monthName, arr[i]); } if (arr.length > 0) { monthList.style.display = 'inline'; } }");
 
@@ -108,20 +108,16 @@ public class JavaScriptGenerator {
 	 * @throws IllegalArgumentException
 	 */
 	private void generateCompoundDescriptionEventListener(StringBuilder strBuff) throws IllegalArgumentException, IllegalAccessException {
-		
-		strBuff.append("function setPopupText() { if (popupLastPressedByHelp) { popup.innerHTML =\"");
-		strBuff.append(helpText);
-		strBuff.append("\"; $(popup).show(); } else if(popupLastPressedByCompoundInfo){ var compound = compoundList.options[compoundList.selectedIndex].text; switch(compound){ default: popup.innerHTML =\"");
-		strBuff.append(helpText);
-		strBuff.append("\"; break;");
-		
+
+		strBuff.append("function setPopupText() { if (popupLastPressedByHelp) { popup.innerHTML = helpText; $(popup).show(); } else if(popupLastPressedByCompoundInfo){ var compound = compoundList.options[compoundList.selectedIndex].text; switch(compound){ default: popup.innerHTML = helpText; break;");
+
 		for (MapCompoundType mc : MapCompoundType.values()) {
 			String[] arr = compoundDescriptions.getCompoundDescription(mc);
 			strBuff.append("case \"");
 			strBuff.append(mc.name());
 			strBuff.append("\": popup.innerHTML = \"<h2>");
 			strBuff.append(arr[0]);
-			strBuff.append(" Explanation </h2><h3>Full Name: "); 
+			strBuff.append(" Explanation </h2><h3>Full Name: ");
 			strBuff.append(arr[1]);
 			strBuff.append("</h3>Definition: ");
 			strBuff.append(arr[2]);
@@ -132,7 +128,8 @@ public class JavaScriptGenerator {
 			strBuff.append("\" ; break;");
 		}
 
-		strBuff.append("} $(popup).show(); } } helpBtn.addEventListener('click', function() { if (popupLastPressedByHelp) { $(popup).hide(); popupLastPressedByHelp = false; } else { popupLastPressedByHelp = true; popupLastPressedByCompoundInfo = false; setPopupText(); } }); explainBtn.addEventListener('click', function() { if (popupLastPressedByCompoundInfo) { $(popup).hide(); popupLastPressedByCompoundInfo = false; } else { popupLastPressedByCompoundInfo = true; popupLastPressedByHelp = false; setPopupText(); } });");
+		strBuff.append(
+				"} $(popup).show(); } } helpBtn.addEventListener('click', function() { if (popupLastPressedByHelp) { $(popup).hide(); popupLastPressedByHelp = false; } else { popupLastPressedByHelp = true; popupLastPressedByCompoundInfo = false; setPopupText(); } }); explainBtn.addEventListener('click', function() { if (popupLastPressedByCompoundInfo) { $(popup).hide(); popupLastPressedByCompoundInfo = false; } else { popupLastPressedByCompoundInfo = true; popupLastPressedByHelp = false; setPopupText(); } });");
 	}
 
 	/**

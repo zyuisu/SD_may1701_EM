@@ -24,8 +24,6 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pmw.tinylog.Logger;
-
 public final class ReferenceScales {
 
 	// REMINDER: SHOULD BE DEFINED WITH EXACT NAMES IN MapRegionType. Like following:

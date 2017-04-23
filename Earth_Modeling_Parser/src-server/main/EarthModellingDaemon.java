@@ -589,12 +589,11 @@ public class EarthModellingDaemon {
 
 		try {
 			String errOutput = logExceptions(runExecutable(FileLocations.JAVA_EXECUTABLE_LOCATION, arguments, 10L, TimeUnit.SECONDS));
-			if (errOutput != null)
-			{
+			if (errOutput != null) {
 				Logger.error(errOutput);
 				return false;
 			}
-			
+
 		} catch (IOException | InterruptedException | TimeoutException e) {
 			Logger.error("FLogger.info(output);ailed to minify the JS.");
 			return false;
