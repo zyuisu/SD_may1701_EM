@@ -68,7 +68,6 @@ public final class CompoundDescriptions {
 		for (MapCompoundType mc : MapCompoundType.values())
 			if (!fields.containsKey(mc.name())) {
 				String issue = "You need to define a 'public static final String MapCompoundType.name()' compound description array for compound " + mc.name() + " in class utils.CompoundDescriptions.";
-				Logger.error(issue);
 				throw new IllegalStateException(issue);
 			}
 	}

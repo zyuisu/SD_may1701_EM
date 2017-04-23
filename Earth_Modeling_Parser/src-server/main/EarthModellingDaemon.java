@@ -35,6 +35,7 @@ import networking.ClientServer;
 import networking.ServerInformation;
 import parser.AsciiToCsv;
 import parser.JavaScriptGenerator;
+import utils.CompoundDescriptions;
 import utils.FileLocations;
 import utils.MapProperties;
 import utils.ReferenceScales;
@@ -47,6 +48,7 @@ public class EarthModellingDaemon {
 	private static boolean run = false;
 	private static ClientServer clientServer;
 	private static ReferenceScales referenceScales;
+	private static CompoundDescriptions compoundDescriptions;
 
 	private static String keystorePassword;
 	private static String arcgisServerUsername;
@@ -82,7 +84,8 @@ public class EarthModellingDaemon {
 		try {
 			convertedSet = new ConvertedSet();
 			referenceScales = new ReferenceScales();
-		} catch (IOException e) {
+			compoundDescriptions = new CompoundDescriptions();
+		} catch (Exception e) {
 			Logger.error(e);
 		}
 
@@ -575,7 +578,7 @@ public class EarthModellingDaemon {
 	 */
 	private static boolean generateAndTransferJavaScript() {
 		try {
-			new JavaScriptGenerator(convertedSet);
+			new JavaScriptGenerator(convertedSet, compoundDescriptions);
 		} catch (IOException | IllegalArgumentException | IllegalAccessException e) {
 			Logger.error("Issue generating new JavaScript.", e);
 			return false;
