@@ -66,7 +66,7 @@ public class JavaScriptGenerator {
 		strBuff.append(
 				"function loadList(){ require(['esri/Map', 'esri/views/SceneView', 'esri/layers/MapImageLayer', 'esri/widgets/Legend', 'dojo/domReady!', 'dojo/on', 'dojo/dom', ],  function(Map, SceneView, MapImageLayer, Legend, domReady, on, dom) {var regionList = document.getElementById('region'); var compoundList = document.getElementById('compound'); var yearList = document.getElementById('year'); var monthList = document.getElementById('month'); var loadMapBtn = document.getElementById('loadMapBtn'); var legendCheck = document.getElementById('legendShow'); var explainBtn = document.getElementById('explain'); var popup = document.getElementById('popup'); var helpBtn = document.getElementById('help'); var legend; var map = new Map({ basemap: 'oceans' }); var view = new SceneView({ container: 'viewDiv', map: map }); var popupLastPressedByCompoundInfo = false; var popupLastPressedByHelp = false; var helpText = \"");
 		strBuff.append(helpText);
-		strBuff.append("\";");
+		strBuff.append("\"; popup.innerHTML = helpText;");
 		generateCompoundDescriptionEventListener(strBuff);
 
 		strBuff.append(
