@@ -39,7 +39,7 @@ public class JavaScriptGenerator {
 
 	private ConvertedSet convertedSet;
 	private CompoundDescriptions compoundDescriptions;
-	public static final String helpText = "<h2>Visualization of Earth's Modeling Systems</h2> 1. Select a region.<br> 2. Select a compound.<br> 3. Select a year.<br> 4. If applicable, select a month. Currently, only CH4 is updated monthly.<br> 5. Click on the 'Load Map' button.<br><br> NOTE: Viewing freshly uploaded maps may require you to refresh your browser's cache. On most browsers, this can can be done by pressing the following buttons simultaneously: 'Ctrl+Shift+R'. <br> An explanation button (the '?' button) is present next to the compound selection menu to provide a detailed description of the selected compound.";
+	public static final String helpText = "<h2>Visualization of Earth's Modeling Systems</h2> How To Use: <br> 1. Select a region.<br> 2. Select a compound.<br> 3. Select a year.<br> 4. If applicable, select a month. Currently, only CH4 is updated monthly.<br> 5. Click on the 'Load Map' button.<br><br> NOTE: Viewing freshly uploaded maps may require you to refresh your browser's cache. On most browsers, this can can be done by pressing the following buttons simultaneously: 'Ctrl+Shift+R'. <br> An explanation button (the '?' button) is present next to the compound selection menu to provide a detailed description of the selected compound.";
 
 	/**
 	 * Dynamically generates the HTML file based on values saved in ConvertedSet. It is expected that this method will be called upon each map generation/removal. NOTE: This method relies on the accuracy of the values stored in ConvertedSet.
