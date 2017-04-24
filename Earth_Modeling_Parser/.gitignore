@@ -19,6 +19,4 @@ local.properties
 *.pydevproject
 .recommenders/
 resources/converted.ser
-Parsed_CSVs/
-Original_ASCII_files/
 *.log
