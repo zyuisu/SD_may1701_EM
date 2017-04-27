@@ -124,11 +124,6 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 
 	/**
 	 * Helper that sends all the selected files to the server. Intended to be run in its own thread.
-	 * 
-	 * @throws IOException
-	 *            There was an issue reading one of the selected files from the disk.
-	 * @throws IllegalAccessExcetion
-	 *            There was an issue parsing the map properties.
 	 */
 	private void sendToServer() {
 		Thread thread = new Thread(() -> {
