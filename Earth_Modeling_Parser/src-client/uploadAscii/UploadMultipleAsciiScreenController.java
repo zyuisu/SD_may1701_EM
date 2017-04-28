@@ -140,12 +140,12 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 				if (mp != null)
 					try {
 						readyForMap.acquire(); // mutex lock.
-
+						
 						byte[] fileAsBytes = Files.readAllBytes(f.toPath());
 						AsciiFileMessage afm = new AsciiFileMessage(mp, fileAsBytes, false);
 						sendMessageToServer(afm);
 					} catch (Exception e) {
-						errorAlert("Cannot Construct Server Message", "Something is wrong with your selection:", e.getMessage());
+						messageTextArea.appendText("---ERROR: Cannot Construct Server Message. Something is wrong with file: " + f.getName() + ". Please verify that the file and its contents are valid and try again.-----\n");
 					}
 				else
 					messageTextArea.appendText("----ERROR PROCESSING MAP PROPERTIES for: " + f.getName() + " -----\n");
