@@ -283,9 +283,9 @@ public class AsciiToCsv {
 		Scanner scanheaders = new Scanner(line);
 
 		try {
-		// Read first value in the line
+			// Read first value in the line
 			String head = scanheaders.next();
-			
+
 			// Decide which value is given in this line, set the corresponding value
 			switch (head) {
 				case "":
