@@ -229,11 +229,11 @@ public class AsciiToCsv {
 		char count = 0;
 
 		// Repeat until header is completely parsed or the function returns false
-		while (!this.getHeaderParsed()) {
+		while (scanner.hasNextLine() && !this.getHeaderParsed()) {
 
 			// Skip lines for reading until a line with values other than whitespace is found
 			String headers = "";
-			while (headers.replace(" ", "").equals("")) {
+			while (scanner.hasNextLine() && headers.replace(" ", "").equals("")) {
 				headers = scanner.nextLine();
 				count++;
 
@@ -281,10 +281,11 @@ public class AsciiToCsv {
 	protected boolean setHeaderValue(String line) throws InputMismatchException {
 		// Open scanner for reading line
 		Scanner scanheaders = new Scanner(line);
-		// Read first value in the line
-		String head = scanheaders.next();
 
 		try {
+		// Read first value in the line
+			String head = scanheaders.next();
+			
 			// Decide which value is given in this line, set the corresponding value
 			switch (head) {
 				case "":
@@ -404,7 +405,7 @@ public class AsciiToCsv {
 
 			// Skip all lines in header to access table.
 			char skip = 0;
-			while (skip != this.getLinesInHeader()) {
+			while (scanner.hasNextLine() && skip != this.getLinesInHeader()) {
 				scanner.nextLine();
 				skip++;
 			}

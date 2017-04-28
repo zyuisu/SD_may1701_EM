@@ -140,7 +140,7 @@ public class UploadMultipleAsciiScreenController extends AbstractNetworkedScreen
 				if (mp != null)
 					try {
 						readyForMap.acquire(); // mutex lock.
-						
+
 						byte[] fileAsBytes = Files.readAllBytes(f.toPath());
 						AsciiFileMessage afm = new AsciiFileMessage(mp, fileAsBytes, false);
 						sendMessageToServer(afm);
