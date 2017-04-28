@@ -94,7 +94,7 @@ public class MainController extends AbstractMainScreenController {
 	/**
 	 * Replaces the page. We will override this when we extend this class because we are fancy and want style (animations).
 	 * 
-	 * @param loadScreen
+	 * @param screen
 	 *           The page that you wish to display.
 	 */
 	@Override

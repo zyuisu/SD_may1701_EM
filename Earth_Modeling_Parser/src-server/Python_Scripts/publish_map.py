@@ -49,6 +49,10 @@ def main(argv):
   server_pass = ""
   # the reference scale to be passed to the published map
   scale = 0
+  # path to admin folder on the arcgis server
+  con = ""
+  # full path to sub_folder in which to publish the map service
+  sub_folder = ""
 
   parsed_csv_dir = argv[0]
   input_csv_file = argv[1]
@@ -74,7 +78,7 @@ def main(argv):
       input_csv_file = input_csv_file[0:-2] + "_" + input_csv_file[-1]
       flag = 1
 
-  #Define Constants
+  # Define Constants
   arcpy.env.workspace = arcpy_workspace
   x = "longitude"
   y = "latitude"
@@ -138,6 +142,11 @@ def main(argv):
   mxd_new.saveACopy(map_publishing_dir + input_csv_file + ".mxd")
   print successful + "Copy of Map Service Saved"
 
+  # Code attributions from:
+  # https://server.arcgis.com/en/server/10.4/administer/windows/example-publish-a-map-service-from-a-map-document-mxd-.htm
+  # Modifications made to publish to our specific Server, for specific logging, and login information.
+  #
+
   # Define local variables
   # Set the publishing files directory
   wrkspc = temp_publishing_dir
@@ -157,7 +166,7 @@ def main(argv):
   # name of sd (required for publication)
   sd = wrkspc + service + '.sd'
   # Summary (not needed)
-  summary = 'General reference map '
+  summary = 'General reference map.'
   # Tags, not Needed
   tags = 'Test'
 

@@ -24,8 +24,6 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pmw.tinylog.Logger;
-
 public final class ReferenceScales {
 
 	// REMINDER: SHOULD BE DEFINED WITH EXACT NAMES IN MapRegionType. Like following:
@@ -56,7 +54,6 @@ public final class ReferenceScales {
 		for (MapRegionType mr : MapRegionType.values())
 			if (!fields.containsKey(mr.name())) {
 				String issue = "You need to define a 'public static final int MapRegionType.name()' reference scale for region " + mr.name() + " in class utils.ReferenceScales.";
-				Logger.error(issue);
 				throw new IllegalStateException(issue);
 			}
 	}

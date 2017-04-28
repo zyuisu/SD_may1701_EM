@@ -85,9 +85,6 @@ public class ClientServer extends Thread {
 
 	/**
 	 * Scans the approvedClients.txt file and adds all values to the HashMap.
-	 * 
-	 * @throws IOException
-	 *            Can't read from the existing approvedClients.txt file!
 	 */
 	private void addFromApprovedList() {
 		try {
@@ -263,8 +260,6 @@ public class ClientServer extends Thread {
 	 * 
 	 * @param dmm
 	 *           The DeleteMapMessage that represents the map to be deleted.
-	 * @param client
-	 *           A reference to the ClientThread that is making the call (to return error or success messages). * @return A StringMessage letting the user know if the process was successful or not (outputs the error).
 	 */
 	public synchronized StringMessage parseDeleteMapMessage(DeleteMapMessage dmm) {
 		try {

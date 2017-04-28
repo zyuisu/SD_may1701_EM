@@ -13,7 +13,7 @@
 
 /**
  * Our main GUI program displays our application.
- * 
+ *
  * @author Anish Kunduru
  */
 
@@ -36,12 +36,8 @@ public class MainView extends Application {
 		MainModel.getModel().getMainData().setMainController(mainController);
 
 		// Initialize display components.
-		// Group root = new Group();
-		// Pane root = new Pane();
-		// Scene scene = new Scene(root, 1280, 720);
 		StackPane root = new StackPane();
 		root.setAlignment(Pos.CENTER);
-		// root.getChildren().add(mainController);
 		Scene scene = new Scene(root, 1280, 720);
 
 		// Add mainController.

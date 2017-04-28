@@ -34,7 +34,7 @@ public class ControllerData {
 	/**
 	 * Set the current controller so that it can be accessed by other pages. The loadScreen() types should be defined in MainController as MainController.NAME_SCREEN.
 	 * 
-	 * @param currentController
+	 * @param controller
 	 *           The currently active controller. This application will require all controllers to be able to handle networked requests by being of type AbstractNetworkedScreenController.
 	 */
 	public void setCurrentController(AbstractNetworkedScreenController controller) {
