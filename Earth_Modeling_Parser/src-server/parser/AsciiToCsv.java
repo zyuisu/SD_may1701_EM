@@ -64,6 +64,11 @@ public class AsciiToCsv {
 	 * Value which indicates no output to be read (Incoming Client Document Variable)
 	 */
 	private double NODATA_value;
+	
+	/**
+	 * Number of values found in the table
+	 */
+	private long values_parsed;
 
 	/*
 	 * Parsed Values
@@ -110,6 +115,7 @@ public class AsciiToCsv {
 		this.cellSize = 0;
 		this.NODATA_value = 0;
 		this.linesInHeader = 0;
+		this.values_parsed = 0;
 		this.headerParsed = false;
 		this.maxValue = Double.MAX_VALUE;
 		this.minValue = Double.MAX_VALUE;
@@ -209,6 +215,14 @@ public class AsciiToCsv {
 	 */
 	public boolean getHeaderParsed() {
 		return this.headerParsed;
+	}
+	
+	public long getvalues_parsed(){
+		return this.values_parsed;
+	}
+	
+	public void increment_values_parsed(){
+		this.values_parsed++;
 	}
 
 	/**
@@ -431,6 +445,7 @@ public class AsciiToCsv {
 
 						// Get the next value in the line
 						double value = linescan.nextDouble();
+						increment_values_parsed();
 
 						// If we want to print the value
 						if (value != NODATA_value)
@@ -463,9 +478,14 @@ public class AsciiToCsv {
 
 			// Print out Max and Min (TESTING PURPOSES)
 			Logger.debug("Max: {}, Min: {}", this.getMaxValue(), this.getMinValue());
-
 			// Avoid resource leak
 			scanner.close();
+			
+			if((long) (this.getNcols() * this.getNrows()) != this.getvalues_parsed()){
+				Logger.error("Number of rows and columns in the header do not match the number of values in the document. Please check your input file.");
+				return null;
+			}
+			
 			// Return the arrayList containing all of the read lines
 			return lines;
 		}
