@@ -584,7 +584,8 @@ public class EarthModellingDaemon {
 			return false;
 		}
 
-		String miniJS = FileLocations.TEMP_WORKING_DIRECTORY_LOCATION + "minifiedAutoJS.js";
+		//String miniJS = FileLocations.TEMP_WORKING_DIRECTORY_LOCATION + "minifiedAutoJS.js";
+		String miniJS = ServerInformation.WEB_SERVER_JAVASCRIPT_DIRECTORY_LOCATION + "minifiedAutoJS.js";
 		String[] arguments = { "-jar", FileLocations.JS_MINIFIER_JAR_LOCATION, "--js", FileLocations.JAVASCRIPT_FILE_LOCATION, "--js_output_file", miniJS };
 
 		try {
@@ -595,11 +596,13 @@ public class EarthModellingDaemon {
 			}
 
 		} catch (IOException | InterruptedException | TimeoutException e) {
-			Logger.error("FLogger.info(output);ailed to minify the JS.");
+			Logger.error("Failed to minify the JS.");
+			//Logger.info(output);
 			return false;
 		}
-
-		return transferFileToWebServer(miniJS, ServerInformation.WEB_SERVER_JAVASCRIPT_DIRECTORY_LOCATION);
+	
+		return true;
+		//return transferFileToWebServer(miniJS, ServerInformation.WEB_SERVER_JAVASCRIPT_DIRECTORY_LOCATION);
 	}
 
 	/**

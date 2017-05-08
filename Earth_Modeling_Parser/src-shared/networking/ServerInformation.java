@@ -32,8 +32,11 @@ public class ServerInformation {
 	public final static String ARCGIS_HTTPS_TOKEN_URL = "https://clu-vems.las.iastate.edu:6443/arcgis/admin/generateToken";
 	public final static int ARCGIS_SERVER_PORT = 6443;
 
-	public final static String WEB_SERVER_ADDRESS = "may1701.sd.ece.iastate.edu";
-	public final static String WEB_SERVER_JAVASCRIPT_DIRECTORY_LOCATION = "/www/VEMS/";
+	//public final static String WEB_SERVER_ADDRESS = "may1701.sd.ece.iastate.edu";
+	public final static String WEB_SERVER_ADDRESS = "clu-vems.las.iastate.edu";
+	//public final static String WEB_SERVER_JAVASCRIPT_DIRECTORY_LOCATION = "/www/VEMS/";
+	public final static String WEB_SERVER_JAVASCRIPT_DIRECTORY_LOCATION = "C:\\inetpub\\wwwroot\\";
+	//public final static String WEB_SERVER_HOSTKEY = "ssh-ed25519 256 7d:8e:ef:2b:9a:66:dc:98:ff:7e:5d:fc:b7:61:94:69";
 	public final static String WEB_SERVER_HOSTKEY = "ssh-ed25519 256 7d:8e:ef:2b:9a:66:dc:98:ff:7e:5d:fc:b7:61:94:69";
 
 	private ServerInformation() {
