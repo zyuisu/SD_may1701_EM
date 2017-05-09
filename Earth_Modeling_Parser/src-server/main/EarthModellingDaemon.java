@@ -401,7 +401,7 @@ public class EarthModellingDaemon {
 	private static String removeMapFromServerWithoutChecks(MapProperties properties) throws IOException, InterruptedException, TimeoutException {
 		// required arguments for the delete from server command using executable python script
 		// python.exe "C:\Program Files\ArcGIS\Server\tools\admin\manageservice.py" -u username -p password -s https://proj-se491.iastate.edu:6443 -n EarthModelingTest/service_name -o delete
-		String arguments[] = { "-u", arcgisServerUsername, "-p", arcgisServerPassword, "-s", "https://proj-se491.iastate.edu:6443", "-n", "EarthModelingTest/" + properties.toString(), "-o", "delete" };
+		String arguments[] = { "-u", arcgisServerUsername, "-p", arcgisServerPassword, "-s", "https://clu-vems.eeob.iastate.edu:6443", "-n", "EarthModelingTest/" + properties.toString(), "-o", "delete" };
 		String exceptions = logExceptions(runPythonScript(FileLocations.ARCSERVER_MANAGE_SERVICE_FILE_LOCATION, arguments));
 
 		if (exceptions != null)
@@ -584,7 +584,8 @@ public class EarthModellingDaemon {
 			return false;
 		}
 
-		String miniJS = FileLocations.TEMP_WORKING_DIRECTORY_LOCATION + "minifiedAutoJS.js";
+		//String miniJS = FileLocations.TEMP_WORKING_DIRECTORY_LOCATION + "minifiedAutoJS.js";
+		String miniJS = ServerInformation.WEB_SERVER_JAVASCRIPT_DIRECTORY_LOCATION + "minifiedAutoJS.js";
 		String[] arguments = { "-jar", FileLocations.JS_MINIFIER_JAR_LOCATION, "--js", FileLocations.JAVASCRIPT_FILE_LOCATION, "--js_output_file", miniJS };
 
 		try {
@@ -595,11 +596,13 @@ public class EarthModellingDaemon {
 			}
 
 		} catch (IOException | InterruptedException | TimeoutException e) {
-			Logger.error("FLogger.info(output);ailed to minify the JS.");
+			Logger.error("Failed to minify the JS.");
+			//Logger.info(output);
 			return false;
 		}
-
-		return transferFileToWebServer(miniJS, ServerInformation.WEB_SERVER_JAVASCRIPT_DIRECTORY_LOCATION);
+	
+		return true;
+		//return transferFileToWebServer(miniJS, ServerInformation.WEB_SERVER_JAVASCRIPT_DIRECTORY_LOCATION);
 	}
 
 	/**
