@@ -25,7 +25,7 @@ public class ServerInformation {
 	public final static int SERVER_PORT = 1443;
 
 	public final static String ARCGIS_SERVER_NAME = "clu-vems.eeob.iastate.edu";
-	public final static String ARCGIS_PUBLISH_URL = "http://clu-vems.eeob.iastate.edu:6080/arcgis/rest/services/EarthModelingTest/";
+	public final static String ARCGIS_PUBLISH_URL = "https://clu-vems.eeob.iastate.edu:6443/arcgis/rest/services/EarthModelingTest/";
 	public final static String ARCGIS_INNER_SUBSTRING = "/arcgis/admin/services/";
 	public final static String ARCGIS_PUBLISHING_SERVICES_SUBFOLDER = "EarthModelingTest";
 	public final static String ARCGIS_PUBLISH_ADMIN_FOLDER = "https://clu-vems.eeob.iastate.edu:6443/arcgis/admin";
